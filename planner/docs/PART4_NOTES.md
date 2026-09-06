@@ -17,6 +17,9 @@ This document covers the model design, relationships, deletion behavior,
 constraints, ordering, migration steps, CRUD/test evidence, setup
 instructions, and team responsibilities for Part 4.
 
+**Repository:** https://github.com/AshleyZhou-31/cozyday (private)
+**Environment:** Python 3.12.10 · Django 5.2.17 · project `cozyday` · app `planner`
+
 ---
 
 ## 2. Model Purposes
@@ -31,6 +34,23 @@ instructions, and team responsibilities for Part 4.
 
 Each model's docstring in `models.py` states what real-world entity it
 represents and why it exists in the system, per the assignment requirement.
+
+**Alignment with the CozyDay feature set:**
+
+| CozyDay feature (from project proposal) | Backed by |
+|---|---|
+| Flexible Planning / Today's Focus | `PlanItem` |
+| Mood Tracking | `DailyCheckIn` |
+| Life Log and Quick Capture | `LifeEntry` |
+| Weekly Reflection and Summary | `WeeklyReflection` |
+| Customizable Dashboard labels | `Category` |
+
+The five models cover every proposed feature **except** Personalized Daily
+Cheer and the Capacity Gauge / Low-Capacity Mode. Those are intentionally
+**not** given their own tables — they are computed/derived features that
+will read from `PlanItem` and `DailyCheckIn` at request time rather than
+storing precomputed results. This keeps the schema minimal for Part 4 while
+still supporting those features once the logic is built in a later part.
 
 ---
 
@@ -167,6 +187,15 @@ python manage.py runserver
 ```
 
 Visit `http://127.0.0.1:8000/admin/` to access Django Admin.
+
+**Superuser credentials:** username `mohitg2`, password `uiuc12345`, per the
+assignment's main instructions and the account Ashley already created.
+
+> ⚠️ **Flag for the instructor:** the assignment sheet lists two different
+> superuser credentials — `mohitg2` / `uiuc12345` in the main Part 4
+> instructions, and `tester` / `uiuc12345` in the Step-by-Step Checklist.
+> This project uses `mohitg2` to match the main instructions. Confirm with
+> the grader if `tester` was actually expected.
 
 ---
 
