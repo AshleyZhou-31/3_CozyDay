@@ -1,3 +1,15 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import (
+    Category,
+    PlanItem,
+    DailyCheckIn,
+    LifeEntry,
+    WeeklyReflection,
+)
+
+admin.site.register(Category)
+admin.site.register(PlanItem)
+admin.site.register(DailyCheckIn)
+admin.site.register(LifeEntry)
+admin.site.register(WeeklyReflection)
