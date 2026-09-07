@@ -44,14 +44,13 @@ represents and why it exists in the system, per the assignment requirement.
 | Mood Tracking | `DailyCheckIn` |
 | Life Log and Quick Capture | `LifeEntry` |
 | Weekly Reflection and Summary | `WeeklyReflection` |
-| Customizable Dashboard labels | `Category` |
+| Planning categories/labels | `Category` |
 
-The five models cover every proposed feature **except** Personalized Daily
-Cheer and the Capacity Gauge / Low-Capacity Mode. Those are intentionally
-**not** given their own tables — they are computed/derived features that
-will read from `PlanItem` and `DailyCheckIn` at request time rather than
-storing precomputed results. This keeps the schema minimal for Part 4 while
-still supporting those features once the logic is built in a later part.
+The five models establish the initial data foundation for planning,
+check-ins, life entries, and written weekly reflections. Dashboard
+customization, saved focus selections, personalized cheer, and
+capacity-related behavior remain future work and may require additional
+fields or models. These features are not implemented in Part 4.
 
 ---
 
@@ -64,13 +63,17 @@ still supporting those features once the logic is built in a later part.
 - **User → DailyCheckIn** (one-to-many): `on_delete=CASCADE`.
 - **User → LifeEntry** (one-to-many): `on_delete=CASCADE`.
 - **User → WeeklyReflection** (one-to-many): `on_delete=CASCADE`.
-- **Category → PlanItem** (one-to-many, **optional**): a `PlanItem` may
-  optionally belong to one `Category` (`null=True, blank=True`).
+- **Category → PlanItem** (optional): `category_id` on `PlanItem` is
+  nullable (`null=True, blank=True`). Each `PlanItem` has **zero or one**
+  `Category`; each `Category` has **zero or many** `PlanItem`s.
   `on_delete=SET_NULL` — deleting a category should not delete the tasks
   attached to it.
 
-See the ER diagram in `docs/er_diagram.png` (or `.pdf`) for the full visual
-model.
+See the [ER diagram](er_diagram.png) for the full visual model. It shows the
+corrected zero-or-one / zero-or-many cardinality on the Category–PlanItem
+relationship, inline unique-constraint annotations on each table, CASCADE
+labels on all User ownership relationships, and a note identifying `USER`
+as Django's built-in user model with only the fields relevant here shown.
 
 ---
 
@@ -138,8 +141,6 @@ python manage.py showmigrations planner
 
 ## 8. CRUD Evidence and Test Results
 
-*(Rishabh's and Lin's sections below are both complete.)*
-
 ### 8.1 Admin Configuration & CRUD (Lin — branch `lin-admin`)
 
 All 5 models (`Category`, `DailyCheckIn`, `LifeEntry`, `PlanItem`,
@@ -172,19 +173,20 @@ The superuser account (`mohitg2`) was not touched during CASCADE testing — a
 separate temporary non-superuser account (`cascade_test_user`) was created
 and deleted instead, per the assignment's instruction.
 
-**Screenshots** (`lin_admin_screenshots/`):
+**Screenshots** (in [`lin_admin_screenshots/`](lin_admin_screenshots/)):
+
 | File | Shows |
 |---|---|
-| `01_admin_homepage.png` | Admin homepage, all 5 Planner models registered |
-| `05_categories_model_list.png` | Category model list view |
-| `06_plan_item_create_edit_form.png` | Add/Edit form for PlanItem (all fields) |
-| `02_plan_items_model_list_after_create.png` | Confirms Create |
-| `03_plan_items_model_list_after_edit.png` | Confirms Update |
-| `04_plan_items_model_list_after_delete.png` | Confirms Delete |
-| `09_SET_NULL_Before.png` | PlanItem with Category assigned, before deleting the category |
-| `10_SET_NULL_After.png` | Same PlanItem survives with empty Category, after deletion |
-| `08_CASCADE_Before.png` | Both test PlanItems visible, before deleting the test user |
-| `07_CASCADE_After.png` | CASCADE-owned PlanItem removed, after deleting its owning user |
+| [`01_admin_homepage.png`](lin_admin_screenshots/01_admin_homepage.png) | Admin homepage, all 5 Planner models registered |
+| [`05_categories_model_list.png`](lin_admin_screenshots/05_categories_model_list.png) | Category model list view |
+| [`06_plan_item_create_edit_form.png`](lin_admin_screenshots/06_plan_item_create_edit_form.png) | Add/Edit form for PlanItem (all fields) |
+| [`02_plan_items_model_list_after_create.png`](lin_admin_screenshots/02_plan_items_model_list_after_create.png) | Confirms Create |
+| [`03_plan_items_model_list_after_edit.png`](lin_admin_screenshots/03_plan_items_model_list_after_edit.png) | Confirms Update |
+| [`04_plan_items_model_list_after_delete.png`](lin_admin_screenshots/04_plan_items_model_list_after_delete.png) | Confirms Delete |
+| [`10_SET_NULL_Before.png`](lin_admin_screenshots/10_SET_NULL_Before.png) | PlanItem with Category assigned, before deleting the category |
+| [`09_SET_NULL_After.png`](lin_admin_screenshots/09_SET_NULL_After.png) | Same PlanItem survives with empty Category, after deletion |
+| [`08_CASCADE_Before.png`](lin_admin_screenshots/08_CASCADE_Before.png) | Both test PlanItems visible, before deleting the test user |
+| [`07_CASCADE_After.png`](lin_admin_screenshots/07_CASCADE_After.png) | CASCADE-owned PlanItem removed, after deleting its owning user |
 
 ### 8.2 Test Data & Uniqueness Constraints (Rishabh — branch `rishabh-data-testing`)
 
@@ -218,10 +220,10 @@ model, so none were tested for those two.
 Code committed and pushed to `rishabh-data-testing`; PR into `main` pending
 team review as of this writing.
 
-*(Screenshot: full terminal session — seed command output followed by
+Screenshot: full terminal session — seed command output followed by
 independent row-count verification via `python manage.py shell`, returning
 `(5, 10, 7, 6, 3)`, exactly matching the seeded counts — see
-`docs/rishabh_seed_and_verification.png`.)*
+[planner/docs/rishabh_seed_and_verification.png].
 
 ---
 
@@ -264,10 +266,10 @@ assignment's main instructions and the account Ashley already created.
 
 ## 10. Design Notes
 
-- **Naming:** `<startproject_folder_name>` represents the overall CozyDay
-  project; the `planner` app name was chosen because it represents the core
-  feature domain (planning, check-ins, reflections) housed in Part 4's data
-  model, distinct from other feature apps that may be added later.
+- **Naming:** The Django project is named `cozyday` to match the
+  application's name and its goal of helping students organize life gently.
+  The app is named `planner` because it contains the initial planning and
+  personal-life data models.
 - **Data integrity note:** `DailyCheckIn.mood` and `energy` are `blank=True`,
   meaning a check-in can technically be saved with no mood/energy recorded.
   This is intentional — CozyDay is designed to avoid pressuring users into
@@ -296,6 +298,9 @@ assignment's main instructions and the account Ashley already created.
 
 ## 12. Final Checklist (from assignment)
 
+These remain unchecked pending Ashley's final integration verification of
+the merged project, database, and login credentials.
+
 - [ ] `python manage.py makemigrations --check` — no unexpected changes
 - [ ] `python manage.py migrate`
 - [ ] `python manage.py check` — no issues
@@ -307,4 +312,14 @@ assignment's main instructions and the account Ashley already created.
 - [ ] Final ZIP includes source code, migrations, `requirements.txt`,
       documentation, ER diagram, and final `db.sqlite3`
 - [ ] Final ZIP excludes `.venv`, `.idea`, caches, and secret files
-- [ ] `git status` is clean and `main` is pushed to GitHub
+- [ ] `git status` is clean and `main` is pushed to GitHub *(team workflow
+      check — not itself an assignment deliverable)*
+
+---
+
+## 13. References
+
+- Django Project. *Model field reference.* Django 5.2 documentation.
+  https://docs.djangoproject.com/en/5.2/ref/models/fields/ — used while
+  defining field types, `on_delete` options, and `UniqueConstraint` usage
+  for the models documented above.
