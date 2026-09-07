@@ -1,7 +1,7 @@
 from datetime import date, time, timedelta
 
 from django.contrib.auth import get_user_model
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError, transaction
 
 from planner.models import (
@@ -42,7 +42,6 @@ class Command(BaseCommand):
                 user=user, name=name, defaults={"color": color}
             )
             categories[name] = cat
-        self.stdout.write(self.style.SUCCESS(f"Seeded {len(categories)} categories"))
 
         # ---------- PlanItems ----------
         today = date.today()
@@ -78,9 +77,11 @@ class Command(BaseCommand):
         ]
         for item in plan_items:
             PlanItem.objects.get_or_create(user=user, title=item["title"], defaults=item)
-        self.stdout.write(self.style.SUCCESS(f"Seeded {len(plan_items)} plan items"))
 
         # ---------- DailyCheckIns ----------
+        # Note: dates are computed relative to today(), so running this command again on a
+        # later day will add new check-ins for the new dates rather than matching old ones —
+        # existing rows for past dates are left untouched. No reset/delete logic by design.
         checkin_data = [
             (today, DailyCheckIn.Mood.GOOD, DailyCheckIn.Energy.HIGH, "Productive day, finished two tasks."),
             (today - timedelta(days=1), DailyCheckIn.Mood.OKAY, DailyCheckIn.Energy.MEDIUM, "Bit tired but got through classes."),
@@ -94,7 +95,6 @@ class Command(BaseCommand):
             DailyCheckIn.objects.get_or_create(
                 user=user, date=d, defaults={"mood": mood, "energy": energy, "note": note}
             )
-        self.stdout.write(self.style.SUCCESS(f"Seeded {len(checkin_data)} daily check-ins"))
 
         # ---------- LifeEntries ----------
         life_entry_data = [
@@ -110,7 +110,6 @@ class Command(BaseCommand):
                 user=user, content=content,
                 defaults={"entry_type": entry_type, "tag": tag, "entry_date": entry_date},
             )
-        self.stdout.write(self.style.SUCCESS(f"Seeded {len(life_entry_data)} life entries"))
 
         # ---------- WeeklyReflections ----------
         def monday_of(d):
@@ -126,31 +125,53 @@ class Command(BaseCommand):
             WeeklyReflection.objects.get_or_create(
                 user=user, week_start=week_start, defaults={"reflection": reflection}
             )
-        self.stdout.write(self.style.SUCCESS(f"Seeded {len(reflection_data)} weekly reflections"))
+
+        # ---------- Actual database counts (not input-list lengths) ----------
+        self.stdout.write(self.style.WARNING("\n--- Database counts for rishabh_demo ---"))
+        self.stdout.write(f"Categories: {Category.objects.filter(user=user).count()}")
+        self.stdout.write(f"PlanItems: {PlanItem.objects.filter(user=user).count()}")
+        self.stdout.write(f"DailyCheckIns: {DailyCheckIn.objects.filter(user=user).count()}")
+        self.stdout.write(f"LifeEntries: {LifeEntry.objects.filter(user=user).count()}")
+        self.stdout.write(f"WeeklyReflections: {WeeklyReflection.objects.filter(user=user).count()}")
 
         # ---------- Uniqueness constraint tests ----------
         self.stdout.write(self.style.WARNING("\n--- Running uniqueness constraint tests ---"))
+        failures = []
         self._test_constraint(
             "Category(user, name)",
             lambda: Category.objects.create(user=user, name="School", color="#000000"),
+            failures,
         )
         self._test_constraint(
             "DailyCheckIn(user, date)",
             lambda: DailyCheckIn.objects.create(user=user, date=today, mood=DailyCheckIn.Mood.OKAY),
+            failures,
         )
         self._test_constraint(
             "WeeklyReflection(user, week_start)",
             lambda: WeeklyReflection.objects.create(user=user, week_start=this_monday, reflection="duplicate"),
+            failures,
         )
 
-    def _test_constraint(self, label, attempt_fn):
+        if failures:
+            raise CommandError(
+                "Uniqueness constraint check(s) failed: " + ", ".join(failures)
+            )
+
+    def _test_constraint(self, label, attempt_fn, failures):
         try:
             with transaction.atomic():
                 attempt_fn()
+                # Reaching this line means the duplicate insert did NOT raise
+                # IntegrityError, which is the failure case. Force this block to
+                # roll back so the bad row is never actually committed, then
+                # report the failure once we're safely outside the transaction.
+                transaction.set_rollback(True)
             self.stdout.write(self.style.ERROR(
-                f"[FAIL] {label}: Expected IntegrityError on duplicate, but the save succeeded."
+                f"[FAIL] {label}: Expected IntegrityError on duplicate, but the save succeeded (row rolled back, not persisted)."
             ))
-        except IntegrityError as e:
+            failures.append(label)
+        except IntegrityError:
             self.stdout.write(self.style.SUCCESS(
-                f"[PASS] {label}: Expected IntegrityError, got IntegrityError. ({e.__class__.__name__})"
+                f"[PASS] {label}: Expected IntegrityError, got IntegrityError."
             ))
