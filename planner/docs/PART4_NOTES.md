@@ -178,11 +178,11 @@ and deleted instead, per the assignment's instruction.
 | File | Shows |
 |---|---|
 | [`01_admin_homepage.png`](lin_admin_screenshots/01_admin_homepage.png) | Admin homepage, all 5 Planner models registered |
-| [`05_categories_model_list.png`](lin_admin_screenshots/05_categories_model_list.png) | Category model list view |
-| [`06_plan_item_create_edit_form.png`](lin_admin_screenshots/06_plan_item_create_edit_form.png) | Add/Edit form for PlanItem (all fields) |
 | [`02_plan_items_model_list_after_create.png`](lin_admin_screenshots/02_plan_items_model_list_after_create.png) | Confirms Create |
 | [`03_plan_items_model_list_after_edit.png`](lin_admin_screenshots/03_plan_items_model_list_after_edit.png) | Confirms Update |
 | [`04_plan_items_model_list_after_delete.png`](lin_admin_screenshots/04_plan_items_model_list_after_delete.png) | Confirms Delete |
+| [`05_categories_model_list.png`](lin_admin_screenshots/05_categories_model_list.png) | Category model list view |
+| [`06_plan_item_create_edit_form.png`](lin_admin_screenshots/06_plan_item_create_edit_form.png) | Add/Edit form for PlanItem (all fields) |
 | [`07_CASCADE_After.png`](lin_admin_screenshots/07_CASCADE_After.png) | CASCADE-owned PlanItem removed, after deleting its owning user |
 | [`08_CASCADE_Before.png`](lin_admin_screenshots/08_CASCADE_Before.png) | Both test PlanItems visible, before deleting the test user |
 | [`09_SET_NULL_After.png`](lin_admin_screenshots/09_SET_NULL_After.png) | Same PlanItem survives with empty Category, after deletion |
