@@ -18,6 +18,7 @@ constraints, ordering, migration steps, CRUD/test evidence, setup
 instructions, and team responsibilities for Part 4.
 
 **Repository:** https://github.com/AshleyZhou-31/cozyday (private)
+
 **Environment:** Python 3.12.10 · Django 5.2.17 · project `cozyday` · app `planner`
 
 ---
@@ -137,28 +138,90 @@ python manage.py showmigrations planner
 
 ## 8. CRUD Evidence and Test Results
 
-*(Sourced from Lin's Admin/CRUD screenshots and Rishabh's data-seeding and
-uniqueness-test results — to be inserted once their branches are merged.)*
+*(Rishabh's and Lin's sections below are both complete.)*
 
 ### 8.1 Admin Configuration & CRUD (Lin — branch `lin-admin`)
-- [ ] Screenshot: Admin homepage showing all 5 models registered
-- [ ] Screenshot: model list view (list_display / list_filter / search_fields)
-- [ ] Screenshot: Create/Edit form for a model
-- [ ] Screenshot (before/after): `SET_NULL` — deleting a temporary Category
-  and confirming the linked `PlanItem` survives with an empty category
-- [ ] Screenshot (before/after): `CASCADE` — deleting a temporary
-  non-superuser account and confirming their related records disappear
+
+All 5 models (`Category`, `DailyCheckIn`, `LifeEntry`, `PlanItem`,
+`WeeklyReflection`) are registered and visible on the Admin homepage under
+the `Planner` section, alongside Django's built-in `Groups`/`Users`.
+
+Full CRUD cycle demonstrated on `PlanItem`:
+
+- **Create** — added "Prepare for tomorrow's lab" via the Add plan item
+  form (`User`, `Category`, `Title`, `Item type`, `Timing`, `Scheduled
+  date/time`, `Notes`, `Is completed` all present); confirmed with the
+  "was added successfully" message and the item appearing in the list.
+- **Read** — model list view for both `Plan items` and `Categorys` confirms
+  records display correctly (`Categorys`/`Life entrys` labels are the
+  default pluralization Django generates from the model names — cosmetic
+  only, doesn't affect functionality).
+- **Update** — edited the same plan item; confirmed with the "was changed
+  successfully" message.
+- **Delete** — deleted the same plan item; confirmed with the "was deleted
+  successfully" message and the list dropping to 0 plan items.
+
+**Deletion-behavior tests:**
+
+| Test | Before | After | Result |
+|---|---|---|---|
+| `SET_NULL` (Category → PlanItem) | "SET_NULL Test Item" created with `Category = Test Category` | After deleting the `Test Category` category, the same item survives with `Category = -` (empty) | **PASS** — `on_delete=SET_NULL` confirmed |
+| `CASCADE` (User → PlanItem, via a non-superuser test account) | 2 plan items exist: "CASCADE Test Item" (owned by `cascade_test_user`) and "SET_NULL Test Item" (owned by `lingao`) | After deleting `cascade_test_user`, only 1 plan item remains ("SET_NULL Test Item") — the CASCADE item was removed with its owner | **PASS** — `on_delete=CASCADE` confirmed |
+
+The superuser account (`mohitg2`) was not touched during CASCADE testing — a
+separate temporary non-superuser account (`cascade_test_user`) was created
+and deleted instead, per the assignment's instruction.
+
+**Screenshots** (`lin_admin_screenshots/`):
+| File | Shows |
+|---|---|
+| `01_admin_homepage.png` | Admin homepage, all 5 Planner models registered |
+| `05_categories_model_list.png` | Category model list view |
+| `06_plan_item_create_edit_form.png` | Add/Edit form for PlanItem (all fields) |
+| `02_plan_items_model_list_after_create.png` | Confirms Create |
+| `03_plan_items_model_list_after_edit.png` | Confirms Update |
+| `04_plan_items_model_list_after_delete.png` | Confirms Delete |
+| `09_SET_NULL_Before.png` | PlanItem with Category assigned, before deleting the category |
+| `10_SET_NULL_After.png` | Same PlanItem survives with empty Category, after deletion |
+| `08_CASCADE_Before.png` | Both test PlanItems visible, before deleting the test user |
+| `07_CASCADE_After.png` | CASCADE-owned PlanItem removed, after deleting its owning user |
 
 ### 8.2 Test Data & Uniqueness Constraints (Rishabh — branch `rishabh-data-testing`)
-- [ ] Confirmed seed data: ~5 Categories, 8–10 PlanItems (covering
-  Task/Event, all 4 timing choices, completed/incomplete, with/without
-  category), 5+ DailyCheckIns, 5+ LifeEntries, 3+ WeeklyReflections
-- [ ] `unique_category_per_user` — duplicate attempt rejected: **[result]**
-- [ ] `unique_daily_check_in_per_user` — duplicate attempt rejected: **[result]**
-- [ ] `unique_weekly_reflection_per_user` — duplicate attempt rejected: **[result]**
 
-*(Update this section with actual outcomes/screenshots once Lin and
-Rishabh's PRs are merged into `main`.)*
+Seeded via a custom management command (`python manage.py seed_rishabh_data`)
+against a dedicated demo user (`rishabh_demo`), rather than manual Admin
+entry — repeatable and independently re-verified in a separate
+`python manage.py shell` session.
+
+**Seed data:**
+
+| Model | Records | Notes |
+|---|---|---|
+| Category | 5 | School, Personal, Wellness, Social, Errands |
+| PlanItem | 10 | Mix of Task/Event; all 4 timing values represented |
+| DailyCheckIn | 7 | One per day over the past week; mood/energy varied |
+| LifeEntry | 6 | Mix of Note/Idea and Little Moment types |
+| WeeklyReflection | 3 | Current week plus two prior weeks |
+
+**Uniqueness constraint tests** (each in its own `transaction.atomic()`
+block so a caught failure doesn't block the remaining tests):
+
+| Constraint | Fields | Expected | Observed |
+|---|---|---|---|
+| `unique_category_per_user` | `(user, name)` | `IntegrityError` on duplicate | `IntegrityError` raised — **PASS** |
+| `unique_daily_check_in_per_user` | `(user, date)` | `IntegrityError` on duplicate | `IntegrityError` raised — **PASS** |
+| `unique_weekly_reflection_per_user` | `(user, week_start)` | `IntegrityError` on duplicate | `IntegrityError` raised — **PASS** |
+
+`PlanItem` and `LifeEntry` have no uniqueness constraints defined in the
+model, so none were tested for those two.
+
+Code committed and pushed to `rishabh-data-testing`; PR into `main` pending
+team review as of this writing.
+
+*(Screenshot: full terminal session — seed command output followed by
+independent row-count verification via `python manage.py shell`, returning
+`(5, 10, 7, 6, 3)`, exactly matching the seeded counts — see
+`docs/rishabh_seed_and_verification.png`.)*
 
 ---
 
@@ -227,7 +290,7 @@ assignment's main instructions and the account Ashley already created.
 | **Ashley** | Project set-up and integration: environment/Django setup, model design, relationships, deletion rules, ordering, unique constraints, initial migration, Admin account, Git/GitHub setup, PR review and merging, final integration checks, final ZIP packaging. |
 | **Lin** | Django Admin configuration, CRUD demonstration, and deletion-behavior tests (`SET_NULL` and `CASCADE`) with screenshot evidence. Branch: `lin-admin`. |
 | **Rishabh** | Realistic test data seeding across all 5 models and uniqueness-constraint testing, doubling as data prep for upcoming Personalized Daily Cheer / weekly stats work. Branch: `rishabh-data-testing`. |
-| **Shivani** | ER diagram creation and Part 4 documentation (this file) — consolidating model purposes, relationships, deletion rationale, constraints, ordering, migration steps, CRUD/test evidence, and setup instructions. Branch: `shivani-documentation`. |
+| **Shivani** | ER diagram creation and Part 4 documentation (this file) — consolidating model purposes, relationships, deletion rationale, constraints, ordering, migration steps, CRUD/test evidence, and setup instructions. Branch: `shivani-technical-documentation`. |
 
 ---
 
