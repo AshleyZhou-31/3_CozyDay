@@ -69,7 +69,7 @@ fields or models. These features are not implemented in Part 4.
   `on_delete=SET_NULL` — deleting a category should not delete the tasks
   attached to it.
 
-See the [ER diagram](planner/docs/er_diagram.png) for the full visual model. It shows the
+See the [ER diagram](/planner/docs/er-diagram.jpg) for the full visual model. It shows the
 corrected zero-or-one / zero-or-many cardinality on the Category–PlanItem
 relationship, inline unique-constraint annotations on each table, CASCADE
 labels on all User ownership relationships, and a note identifying `USER`
@@ -183,10 +183,12 @@ and deleted instead, per the assignment's instruction.
 | [`02_plan_items_model_list_after_create.png`](lin_admin_screenshots/02_plan_items_model_list_after_create.png) | Confirms Create |
 | [`03_plan_items_model_list_after_edit.png`](lin_admin_screenshots/03_plan_items_model_list_after_edit.png) | Confirms Update |
 | [`04_plan_items_model_list_after_delete.png`](lin_admin_screenshots/04_plan_items_model_list_after_delete.png) | Confirms Delete |
-| [`10_SET_NULL_Before.png`](lin_admin_screenshots/10_SET_NULL_Before.png) | PlanItem with Category assigned, before deleting the category |
-| [`09_SET_NULL_After.png`](lin_admin_screenshots/09_SET_NULL_After.png) | Same PlanItem survives with empty Category, after deletion |
-| [`08_CASCADE_Before.png`](lin_admin_screenshots/08_CASCADE_Before.png) | Both test PlanItems visible, before deleting the test user |
 | [`07_CASCADE_After.png`](lin_admin_screenshots/07_CASCADE_After.png) | CASCADE-owned PlanItem removed, after deleting its owning user |
+| [`08_CASCADE_Before.png`](lin_admin_screenshots/08_CASCADE_Before.png) | Both test PlanItems visible, before deleting the test user |
+| [`09_SET_NULL_After.png`](lin_admin_screenshots/09_SET_NULL_After.png) | Same PlanItem survives with empty Category, after deletion |
+| [`10_SET_NULL_Before.png`](lin_admin_screenshots/10_SET_NULL_Before.png) | PlanItem with Category assigned, before deleting the category |
+
+
 
 ### 8.2 Test Data & Uniqueness Constraints (Rishabh — branch `rishabh-data-testing`)
 
