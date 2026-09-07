@@ -69,7 +69,7 @@ fields or models. These features are not implemented in Part 4.
   `on_delete=SET_NULL` — deleting a category should not delete the tasks
   attached to it.
 
-See the [ER diagram](er_diagram.png) for the full visual model. It shows the
+See the [ER diagram](planner/docs/er_diagram.png) for the full visual model. It shows the
 corrected zero-or-one / zero-or-many cardinality on the Category–PlanItem
 relationship, inline unique-constraint annotations on each table, CASCADE
 labels on all User ownership relationships, and a note identifying `USER`
