@@ -192,10 +192,7 @@ and deleted instead, per the assignment's instruction.
 
 ### 8.2 Test Data & Uniqueness Constraints (Rishabh — branch `rishabh-data-testing`)
 
-Seeded via a custom management command (`python manage.py seed_rishabh_data`)
-against a dedicated demo user (`rishabh_demo`), rather than manual Admin
-entry — repeatable and independently re-verified in a separate
-`python manage.py shell` session.
+Demo data was created for `rishabh_demo` using the custom management command `python manage.py seed_rishabh_data`. The updated command reports actual database counts and verifies all three composite uniqueness constraints.
 
 **Seed data:**
 
@@ -203,9 +200,9 @@ entry — repeatable and independently re-verified in a separate
 |---|---|---|
 | Category | 5 | School, Personal, Wellness, Social, Errands |
 | PlanItem | 10 | Mix of Task/Event; all 4 timing values represented |
-| DailyCheckIn | 8 | One per day over the past week; mood/energy varied |
+| DailyCheckIn | 8 | Eight records in the latest verification. |
 | LifeEntry | 6 | Mix of Note/Idea and Little Moment types |
-| WeeklyReflection | 4 | Current week plus two prior weeks |
+| WeeklyReflection | 4 | four records in the latest verification. |
 
 **Uniqueness constraint tests** (each in its own `transaction.atomic()`
 block so a caught failure doesn't block the remaining tests):
@@ -219,11 +216,11 @@ block so a caught failure doesn't block the remaining tests):
 `PlanItem` and `LifeEntry` have no uniqueness constraints defined in the
 model, so none were tested for those two.
 
-Code committed and pushed to `rishabh-data-testing`; The updated seed commandwas reviewed and merged into main through PR #3
+Code committed and pushed to `rishabh-data-testing`; The updated seed command was reviewed and merged into main through PR #3
 
 Screenshot: full terminal session — seed command output followed by
 independent row-count verification via `python manage.py shell`, returning
-`(5, 10, 7, 6, 3)`, exactly matching the seeded counts — see
+`(5, 10, 8, 6, 4)`, exactly matching the seeded counts — see
 [Rishabh seed and verification evidence](rishabh_seed_and_verification.png).
 
 ---
