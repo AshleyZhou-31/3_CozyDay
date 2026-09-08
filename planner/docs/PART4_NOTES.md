@@ -218,10 +218,9 @@ model, so none were tested for those two.
 
 Code committed and pushed to `rishabh-data-testing`; The updated seed command was reviewed and merged into main through PR #3
 
-Screenshot: full terminal session — seed command output followed by
-independent row-count verification via `python manage.py shell`, returning
-`(5, 10, 8, 6, 4)`, exactly matching the seeded counts — see
-[Rishabh seed and verification evidence](rishabh_seed_and_verification.png).
+Screenshot: The latest seed command output reports the actual database counts for `rishabh_demo`: 5 Categories, 10 PlanItems, 8 DailyCheckIns, 6 LifeEntries, and 4 WeeklyReflections. All three composite uniqueness-constraint tests passed.
+
+[Rishabh seed and verification evidence](rishabh_seed_and_verification.png)
 
 ---
 
