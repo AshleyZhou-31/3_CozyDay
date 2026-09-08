@@ -69,7 +69,7 @@ fields or models. These features are not implemented in Part 4.
   `on_delete=SET_NULL` — deleting a category should not delete the tasks
   attached to it.
 
-See the [ER diagram](/planner/docs/er-diagram.jpg) for the full visual model. It shows the
+See the [ER diagram](er-diagram.jpg) for the full visual model. It shows the
 corrected zero-or-one / zero-or-many cardinality on the Category–PlanItem
 relationship, inline unique-constraint annotations on each table, CASCADE
 labels on all User ownership relationships, and a note identifying `USER`
@@ -203,9 +203,9 @@ entry — repeatable and independently re-verified in a separate
 |---|---|---|
 | Category | 5 | School, Personal, Wellness, Social, Errands |
 | PlanItem | 10 | Mix of Task/Event; all 4 timing values represented |
-| DailyCheckIn | 7 | One per day over the past week; mood/energy varied |
+| DailyCheckIn | 8 | One per day over the past week; mood/energy varied |
 | LifeEntry | 6 | Mix of Note/Idea and Little Moment types |
-| WeeklyReflection | 3 | Current week plus two prior weeks |
+| WeeklyReflection | 4 | Current week plus two prior weeks |
 
 **Uniqueness constraint tests** (each in its own `transaction.atomic()`
 block so a caught failure doesn't block the remaining tests):
@@ -219,13 +219,12 @@ block so a caught failure doesn't block the remaining tests):
 `PlanItem` and `LifeEntry` have no uniqueness constraints defined in the
 model, so none were tested for those two.
 
-Code committed and pushed to `rishabh-data-testing`; PR into `main` pending
-team review as of this writing.
+Code committed and pushed to `rishabh-data-testing`; The updated seed commandwas reviewed and merged into main through PR #3
 
 Screenshot: full terminal session — seed command output followed by
 independent row-count verification via `python manage.py shell`, returning
 `(5, 10, 7, 6, 3)`, exactly matching the seeded counts — see
-[planner/docs/rishabh_seed_and_verification.png].
+[Rishabh seed and verification evidence](rishabh_seed_and_verification.png).
 
 ---
 
