@@ -1,0 +1,9 @@
+Week of Sept 8, 2026 — Shivani
+
+- Split settings.py into cozyday/settings/ (base, development, production).
+- Moved SECRET_KEY into .env via python-dotenv; added .env.example for teammates.
+- Verified DEBUG/ALLOWED_HOSTS differ correctly between dev and prod.
+- Next: build out docs/ and README, then merge section1-settings-security into main.
+
+Note for team: after pulling this branch, you'll need to copy .env.example to .env
+and add a real DJANGO_SECRET_KEY, or manage.py will raise an error.
