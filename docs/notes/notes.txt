@@ -7,3 +7,14 @@ Week of Sept 8, 2026 — Shivani
 
 Note for team: after pulling this branch, you'll need to copy .env.example to .env
 and add a real DJANGO_SECRET_KEY, or manage.py will raise an error.
+
+Week of Sept 15, 2026 — Rishabh
+
+- Built the four required "Views" for the assignment — four different ways
+  to show a user's plan items on a page (fully manual, Django's normal
+  shortcut, a written-out class-based version, and Django's automatic
+  class-based version). Connected each to its own URL for testing.
+- The page they show is just a plain placeholder for now — Lin is building
+  the real, styled version next.
+- Learned: writing the manual version first made it clearer what Django's
+  shortcuts are actually doing behind the scenes.
