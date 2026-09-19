@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        CozyDay
+        {% endblock %}
+    </title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f5f2;
+            margin: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #fff7ed;
+            padding: 24px 40px;
+            border-bottom: 1px solid #e6e0d8;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        main h2 {
+            margin-top: 0;
+        }
+
+        ul {
+            padding-left: 24px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>CozyDay</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>CozyDay - Team 3</p>
+    </footer>
+
+</body>
+</html>
