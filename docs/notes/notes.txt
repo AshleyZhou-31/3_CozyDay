@@ -18,3 +18,12 @@ Week of Sept 15, 2026 — Rishabh
   the real, styled version next.
 - Learned: writing the manual version first made it clearer what Django's
   shortcuts are actually doing behind the scenes.
+
+Week of Sept 19, 2026 — Lin Gao
+- Built the reusable template structure for the PlanItem pages.
+- Created base.html with reusable title and content blocks, plus basic styling for a consistent CozyDay layout.
+- Updated planner/planitem_list.html to extend base.html and display PlanItem objects using a loop.
+- Added an empty-state message using {% empty %}: "No plan items available yet."
+- Reused the same planner/planitem_list.html template across all four views because they all use the same context variable, "items".
+- Tested both the normal list state and the empty state. After testing the empty state with an empty queryset, restored the view to PlanItem.objects.all().
+- Challenge/Note: The main thing I needed to confirm was that all four views passed the same context variable name, which made template reuse straightforward.

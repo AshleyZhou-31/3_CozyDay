@@ -1,6 +1,19 @@
-<h1>Plan Items</h1>
+{% extends "base.html" %}
+
+{% block title %}
+Plan Items - CozyDay
+{% endblock %}
+
+{% block content %}
+
+<h2>Plan Items</h2>
+
 <ul>
-{% for item in items %}
-  <li>{{ item.title }}</li>
-{% endfor %}
+    {% for item in items %}
+        <li>{{ item.title }}</li>
+    {% empty %}
+        <li>No plan items available yet.</li>
+    {% endfor %}
 </ul>
+
+{% endblock %}
