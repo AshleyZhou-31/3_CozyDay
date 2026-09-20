@@ -10,14 +10,20 @@ and add a real DJANGO_SECRET_KEY, or manage.py will raise an error.
 
 Week of Sept 15, 2026 — Rishabh
 
-- Built the four required "Views" for the assignment — four different ways
-  to show a user's plan items on a page (fully manual, Django's normal
-  shortcut, a written-out class-based version, and Django's automatic
-  class-based version). Connected each to its own URL for testing.
-- The page they show is just a plain placeholder for now — Lin is building
-  the real, styled version next.
-- Learned: writing the manual version first made it clearer what Django's
-  shortcuts are actually doing behind the scenes.
+- `planitem_list_manual` (HttpResponse FBV): `/planitems/manual/` manually
+  loads and renders the PlanItem list template, then wraps it in HttpResponse.
+- `planitem_list_render` (render shortcut FBV): `/planitems/render/` queries
+  PlanItem records and passes them to the same template with render().
+- `PlanItemListBaseView` (base View CBV): `/planitems/cbv-base/` implements
+  get(), queries PlanItem records, and renders the shared template.
+- `PlanItemListView` (generic ListView CBV): `/planitems/cbv-generic/` uses
+  Django's model-backed ListView and the shared template.
+- All four routes are named in planner/urls.py and show the same PlanItem
+  data. Browser evidence: ../screenshots/section2/.
+- Comparison: HttpResponse makes each rendering step explicit and is useful
+  for learning or unusual response handling; render() is shorter for a
+  standard template response. A base View gives control over request methods,
+  while ListView removes boilerplate for a conventional model list.
 
 Week of Sept 19, 2026 — Lin Gao
 - Built the reusable template structure for the PlanItem pages.
@@ -27,3 +33,4 @@ Week of Sept 19, 2026 — Lin Gao
 - Reused the same planner/planitem_list.html template across all four views because they all use the same context variable, "items".
 - Tested both the normal list state and the empty state. After testing the empty state with an empty queryset, restored the view to PlanItem.objects.all().
 - Challenge/Note: The main thing I needed to confirm was that all four views passed the same context variable name, which made template reuse straightforward.
+- Browser evidence for the normal and empty states: ../screenshots/section3/.

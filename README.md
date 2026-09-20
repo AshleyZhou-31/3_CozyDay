@@ -36,8 +36,8 @@ moments, and receive gentle personalized encouragement.
 
 1. Clone the repository and enter the project directory:
    ```bash
-   git clone <repo-url>
-   cd cozyday
+   git clone https://github.com/AshleyZhou-31/3_CozyDay.git
+   cd 3_CozyDay
    ```
 
 2. Create and activate a virtual environment:
@@ -71,8 +71,7 @@ moments, and receive gentle personalized encouragement.
    python manage.py migrate
    ```
 
-6. Create a superuser, or ask a teammate for the existing project
-   superuser's credentials:
+6. Create your own local superuser (do not share credentials):
    ```bash
    python manage.py createsuperuser
    ```
@@ -82,6 +81,13 @@ moments, and receive gentle personalized encouragement.
    python manage.py runserver
    ```
    Visit `http://127.0.0.1:8000/admin/` for Django Admin.
+
+8. Optional: seed demo PlanItems for the four view examples:
+   ```bash
+   python manage.py seed_rishabh_data
+   ```
+   Then visit `/planitems/manual/`, `/planitems/render/`,
+   `/planitems/cbv-base/`, and `/planitems/cbv-generic/`.
 
 ---
 
@@ -110,5 +116,7 @@ DJANGO_SETTINGS_MODULE=cozyday.settings.production DJANGO_ALLOWED_HOSTS=example.
 - `docs/branching-strategy/` — how the team uses branches and PRs
 - `docs/notes/notes.txt` — weekly progress notes, reminders, and
   challenges (updated weekly)
+- `docs/screenshots/section2/` — browser evidence for the four PlanItem views
+- `docs/screenshots/section3/` — normal and empty template states
 - `planner/docs/` — Part 4 technical documentation: data model notes, ER
   diagram, and CRUD/test evidence
