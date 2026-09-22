@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -85,6 +86,10 @@ class PlanItem(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        """Return the canonical detail URL for this planning item."""
+        return reverse("planner:planitem-detail", kwargs={"pk": self.pk})
 
 
 class DailyCheckIn(models.Model):
@@ -193,5 +198,4 @@ class WeeklyReflection(models.Model):
 
     def __str__(self):
         return f"{self.user} - week of {self.week_start}"
-
 

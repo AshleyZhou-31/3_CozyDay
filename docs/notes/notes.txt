@@ -34,3 +34,17 @@ Week of Sept 19, 2026 — Lin Gao
 - Tested both the normal list state and the empty state. After testing the empty state with an empty queryset, restored the view to PlanItem.objects.all().
 - Challenge/Note: The main thing I needed to confirm was that all four views passed the same context variable name, which made template reuse straightforward.
 - Browser evidence for the normal and empty states: ../screenshots/section3/.
+
+Week of Sept 22, 2026 — Ashley Zhou
+
+- Added a working home page at `/` and shared Home, Plan Items, and Admin
+  navigation links using Django's `{% url %}` tag.
+- Added a primary-key PlanItem detail route and linked every item in the
+  canonical PlanItem list to its detail page.
+- Implemented `PlanItem.get_absolute_url()` for the list-to-detail feature.
+  This keeps the canonical URL definition with the model, avoids duplicating
+  URL construction in templates, and makes later route changes easier.
+- Verified the end-to-end flow from the PlanItem model through URL routing and
+  the detail view to the shared templates.
+- Browser evidence for the home, navigation, and detail-page flow:
+  `../screenshots/section1/`.

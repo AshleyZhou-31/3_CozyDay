@@ -2,9 +2,14 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import DetailView, ListView
 
 from .models import PlanItem
+
+
+def home(request):
+    """Render the CozyDay landing page."""
+    return render(request, "planner/home.html")
 
 
 # View 1: FBV, manual HttpResponse
@@ -35,3 +40,9 @@ class PlanItemListView(ListView):
     model = PlanItem
     template_name = "planner/planitem_list.html"
     context_object_name = "items"
+
+
+class PlanItemDetailView(DetailView):
+    model = PlanItem
+    template_name = "planner/planitem_detail.html"
+    context_object_name = "item"
