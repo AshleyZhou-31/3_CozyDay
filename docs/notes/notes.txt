@@ -46,3 +46,5 @@ Week of Sept 22, 2026 — Ashley Zhou
   URL construction in templates, and makes later route changes easier.
 - Verified the end-to-end flow from the PlanItem model through URL routing and
   the detail view to the shared templates.
+- Browser evidence for the home, navigation, and detail-page flow:
+  `../screenshots/section1/`.
