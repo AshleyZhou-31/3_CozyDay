@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.title }} - CozyDay{% endblock %}
+
+{% block content %}
+<article>
+    <h2>{{ item.title }}</h2>
+    <dl>
+        <dt>Type</dt>
+        <dd>{{ item.get_item_type_display }}</dd>
+
+        <dt>Timing</dt>
+        <dd>{{ item.get_timing_display }}</dd>
+
+        <dt>Category</dt>
+        <dd>{{ item.category|default:"Uncategorized" }}</dd>
+
+        <dt>Scheduled date</dt>
+        <dd>{{ item.scheduled_date|default:"Not scheduled" }}</dd>
+
+        <dt>Status</dt>
+        <dd>{% if item.is_completed %}Completed{% else %}Open{% endif %}</dd>
+    </dl>
+
+    {% if item.notes %}
+        <h3>Notes</h3>
+        <p>{{ item.notes }}</p>
+    {% endif %}
+
+    <p><a href="{% url 'planner:planitem-list' %}">Back to Plan Items</a></p>
+</article>
+{% endblock %}

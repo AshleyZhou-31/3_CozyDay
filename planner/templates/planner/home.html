@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Home - CozyDay{% endblock %}
+
+{% block content %}
+<h2>Welcome to CozyDay</h2>
+<p>
+    Bring your plans, everyday responsibilities, and meaningful moments into
+    one calm and supportive space.
+</p>
+<p>
+    <a href="{% url 'planner:planitem-list' %}">View your plan items</a>
+</p>
+{% endblock %}

@@ -10,7 +10,7 @@ Plan Items - CozyDay
 
 <ul>
     {% for item in items %}
-        <li>{{ item.title }}</li>
+        <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
     {% empty %}
         <li>No plan items available yet.</li>
     {% endfor %}

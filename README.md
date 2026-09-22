@@ -7,6 +7,11 @@ into one supportive space — helping users identify what matters today,
 organize tasks and events, track mood and daily activities, record small
 moments, and receive gentle personalized encouragement.
 
+The root page provides shared navigation to the main CozyDay areas. The
+PlanItem list links each item to its primary-key detail page using the model's
+`get_absolute_url()` method, keeping model, URL, view, and template routing in
+one consistent end-to-end flow.
+
 **Team 3:** Ashley Zhou · Lin Gao · Rishabh Puri · Shivani Shivani
 
 ---
@@ -88,6 +93,9 @@ moments, and receive gentle personalized encouragement.
    ```
    Then visit `/planitems/manual/`, `/planitems/render/`,
    `/planitems/cbv-base/`, and `/planitems/cbv-generic/`.
+
+   The canonical PlanItem list is available at `/planitems/`; select any item
+   to open its detail page.
 
 ---
 
