@@ -48,3 +48,26 @@ Week of Sept 22, 2026 — Ashley Zhou
   the detail view to the shared templates.
 - Browser evidence for the home, navigation, and detail-page flow:
   `../screenshots/section1/`.
+
+Week of Sept 22, 2026 — Shivani
+
+Section 6 — JSON API (plan_items_api)
+
+- Added a public JSON endpoint at /planitems/api/plan-items/ using
+  JsonResponse, serving PlanItem data.
+- Fields served: id, title, item_type, timing, is_completed, and
+  category (the category's name, not its raw ID).
+- Deliberately excluded user_id and any account-identifying fields,
+  since this is a public endpoint and PlanItem data shouldn't reveal
+  who a given task belongs to.
+- Also excluded the raw category_id FK in favor of category.name —
+  a numeric ID is meaningless to an external API consumer without
+  a second lookup, whereas the name is immediately useful.
+- Supports optional query-parameter filtering:
+    ?category=<name>   — case-insensitive match on category name
+    ?completed=true|false — filters by completion status
+- Confirmed Content-Type differs between this endpoint
+  (application/json) and the app's regular pages like /planitems/
+  (text/html) — see docs/screenshots/section6/ for both.
+- Next: Section 4 (Matplotlib chart + PNG endpoint), once Section 2
+  merges.

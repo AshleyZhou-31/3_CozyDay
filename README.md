@@ -128,3 +128,41 @@ DJANGO_SETTINGS_MODULE=cozyday.settings.production DJANGO_ALLOWED_HOSTS=example.
 - `docs/screenshots/section3/` — normal and empty template states
 - `planner/docs/` — Part 4 technical documentation: data model notes, ER
   diagram, and CRUD/test evidence
+
+
+## API — Plan Items
+
+A public JSON endpoint exposes plan item data for external use.
+
+GET /planitems/api/plan-items/
+
+Returns all plan items as JSON, with only safe fields — no user IDs or
+account-identifying information:
+
+```json
+{
+  "results": [
+    {
+      "id": 7,
+      "title": "Pick up dry cleaning",
+      "item_type": "TASK",
+      "timing": "WHENEVER",
+      "is_completed": false,
+      "category": "Errands"
+    }
+  ]
+}
+```
+
+**Filtering** is supported via query parameters:
+
+- `?category=<name>` — filter by category name (case-insensitive), e.g.
+  `/planitems/api/plan-items/?category=School`
+- `?completed=true` or `?completed=false` — filter by completion status,
+  e.g. `/planitems/api/plan-items/?completed=true`
+
+**Response type:** this endpoint returns `Content-Type: application/json`
+via Django's `JsonResponse`, unlike the app's regular pages (e.g.
+`/planitems/`), which return `Content-Type: text/html` via a rendered
+template. Confirmed via browser dev tools — see
+`docs/screenshots/section6/`.
