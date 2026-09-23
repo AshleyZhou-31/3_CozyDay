@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.views import View
 from django.views.generic import DetailView, ListView
+from django.http import JsonResponse
 
 from .models import PlanItem
 
@@ -46,3 +47,28 @@ class PlanItemDetailView(DetailView):
     model = PlanItem
     template_name = "planner/planitem_detail.html"
     context_object_name = "item"
+
+def plan_items_api(request):
+    plan_items = PlanItem.objects.all()
+
+    category = request.GET.get('category')
+    if category:
+        plan_items = plan_items.filter(category__name__iexact=category)
+
+    completed = request.GET.get('completed')
+    if completed is not None:
+        is_completed = completed.lower() == 'true'
+        plan_items = plan_items.filter(is_completed=is_completed)
+
+    data = []
+    for item in plan_items:
+        data.append({
+            "id": item.id,
+            "title": item.title,
+            "item_type": item.item_type,
+            "timing": item.timing,
+            "is_completed": item.is_completed,
+            "category": item.category.name if item.category else None,
+        })
+
+    return JsonResponse({"results": data})
