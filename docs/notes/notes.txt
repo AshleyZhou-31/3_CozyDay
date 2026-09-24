@@ -48,3 +48,25 @@ Week of Sept 22, 2026 — Ashley Zhou
   the detail view to the shared templates.
 - Browser evidence for the home, navigation, and detail-page flow:
   `../screenshots/section1/`.
+
+Week of Sept 22, 2026 — Rishabh (Assignment 3, Section 2)
+
+- Built a search and summary page for PlanItems at /planitems/search/.
+- Added two ways to search by title: a GET form (search text shows in the
+  web address, e.g. ?title=call) and a POST form (search text stays out of
+  the address bar entirely). Both filter the same way, they just submit
+  differently.
+- Added a filter that searches through the linked Category name instead of
+  PlanItem's own fields, using Django's relationship lookup
+  (category__name__icontains) — this reaches across the foreign key from
+  PlanItem to Category.
+- Added a total PlanItem count using .count(), and a per-category breakdown
+  using annotate() and Count(), so the grouping happens at the database
+  level instead of being counted manually in Python.
+- Reused the seed_rishabh_data command from Part 4 to populate real demo
+  data (10 PlanItems across 5 categories) so the counts and filters had
+  something real to show.
+- Tested all five states: full list, GET title match, GET category match,
+  POST title match, and a no-results search to confirm the empty message
+  displays correctly.
+- Browser evidence: ../screenshots/section2/ (05 through 09).
