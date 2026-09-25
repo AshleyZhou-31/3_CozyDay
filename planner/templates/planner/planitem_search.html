@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Search Plan Items - CozyDay{% endblock %}
+
+{% block content %}
+
+<h2>Search & Summarize Plan Items</h2>
+
+<p>Total plan items in the system: <strong>{{ total_count }}</strong></p>
+
+<h3>Search by title (GET)</h3>
+<form method="get" action="{% url 'planner:planitem-search' %}">
+    <label for="get-title">Title contains:</label>
+    <input type="text" id="get-title" name="title" value="{{ get_title }}">
+    <label for="get-category">Category contains:</label>
+    <input type="text" id="get-category" name="category" value="{{ category_query }}">
+    <button type="submit">Search</button>
+</form>
+<p><small>This uses a GET request, so your search terms appear in the URL's query string.</small></p>
+
+<h3>Search by title (POST)</h3>
+<form method="post" action="{% url 'planner:planitem-search' %}">
+    {% csrf_token %}
+    <label for="post-title">Title contains:</label>
+    <input type="text" id="post-title" name="title" value="{{ post_title }}">
+    <button type="submit">Search</button>
+</form>
+<p><small>This uses a POST request, so your search term is never added to the URL.</small></p>
+
+<h3>Results</h3>
+<ul>
+    {% for item in items %}
+        <li>
+            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+            — {{ item.category.name|default:"No category" }}
+        </li>
+    {% empty %}
+        <li>No plan items match your search.</li>
+    {% endfor %}
+</ul>
+
+<h3>Plan items per category</h3>
+<ul>
+    {% for category in category_summary %}
+        <li>{{ category.name }}: {{ category.item_count }}</li>
+    {% empty %}
+        <li>No categories yet.</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

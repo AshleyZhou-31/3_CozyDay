@@ -95,7 +95,8 @@ one consistent end-to-end flow.
    `/planitems/cbv-base/`, and `/planitems/cbv-generic/`.
 
    The canonical PlanItem list is available at `/planitems/`; select any item
-   to open its detail page.
+   to open its detail page. Also visit `/planitems/search/` to try the title search (GET and POST),
+   the category filter, and the grouped item-per-category summary.
 
 ---
 
@@ -125,6 +126,7 @@ DJANGO_SETTINGS_MODULE=cozyday.settings.production DJANGO_ALLOWED_HOSTS=example.
 - `docs/notes/notes.txt` — weekly progress notes, reminders, and
   challenges (updated weekly)
 - `docs/screenshots/section2/` — browser evidence for the four PlanItem views
+  (Assignment 2) and the ORM search/aggregation page (Assignment 3)
 - `docs/screenshots/section3/` — normal and empty template states
 - `planner/docs/` — Part 4 technical documentation: data model notes, ER
   diagram, and CRUD/test evidence
