@@ -8,12 +8,15 @@ Plan Items - CozyDay
 
 <h2>Plan Items</h2>
 
-<ul>
+<div class="plan-list">
     {% for item in items %}
-        <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
+        <a class="plan-card" href="{{ item.get_absolute_url }}">
+            <span>{{ item.title }}</span>
+            <span class="plan-arrow">›</span>
+        </a>
     {% empty %}
-        <li>No plan items available yet.</li>
+        <p>No plan items available yet.</p>
     {% endfor %}
-</ul>
+</div>
 
 {% endblock %}
