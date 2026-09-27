@@ -5,22 +5,34 @@
 {% block content %}
 <article>
     <h2>{{ item.title }}</h2>
-    <dl>
-        <dt>Type</dt>
-        <dd>{{ item.get_item_type_display }}</dd>
+    <div class="detail-grid">
+    <div class="detail-item">
+        <span class="detail-label">Type</span>
+        <strong>{{ item.get_item_type_display }}</strong>
+    </div>
 
-        <dt>Timing</dt>
-        <dd>{{ item.get_timing_display }}</dd>
+    <div class="detail-item">
+        <span class="detail-label">Timing</span>
+        <strong>{{ item.get_timing_display }}</strong>
+    </div>
 
-        <dt>Category</dt>
-        <dd>{{ item.category|default:"Uncategorized" }}</dd>
+    <div class="detail-item">
+        <span class="detail-label">Category</span>
+        <strong>{{ item.category|default:"Uncategorized" }}</strong>
+    </div>
 
-        <dt>Scheduled date</dt>
-        <dd>{{ item.scheduled_date|default:"Not scheduled" }}</dd>
+    <div class="detail-item">
+        <span class="detail-label">Scheduled date</span>
+        <strong>{{ item.scheduled_date|default:"Not scheduled" }}</strong>
+    </div>
 
-        <dt>Status</dt>
-        <dd>{% if item.is_completed %}Completed{% else %}Open{% endif %}</dd>
-    </dl>
+    <div class="detail-item">
+        <span class="detail-label">Status</span>
+        <strong>
+            {% if item.is_completed %}Completed{% else %}Open{% endif %}
+        </strong>
+    </div>
+</div>
 
     {% if item.notes %}
         <h3>Notes</h3>

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template import loader
@@ -38,7 +39,7 @@ class PlanItemListBaseView(View):
 
 
 # View 4: CBV, generic ListView
-class PlanItemListView(ListView):
+class PlanItemListView(LoginRequiredMixin, ListView):
     model = PlanItem
     template_name = "planner/planitem_list.html"
     context_object_name = "items"

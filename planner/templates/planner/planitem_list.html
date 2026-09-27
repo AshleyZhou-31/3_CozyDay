@@ -24,7 +24,7 @@ Plan Items - CozyDay
 
 <h3>Add a Plan Item</h3>
 
-<form method="post">
+<form method="post" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Add Plan Item</button>
@@ -32,14 +32,15 @@ Plan Items - CozyDay
 
 <h3>Your Plan Items</h3>
 
-<ul>
+<div class="plan-list">
     {% for item in items %}
-        <li>
-            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
-        </li>
+        <a class="plan-card" href="{{ item.get_absolute_url }}">
+            <span>{{ item.title }}</span>
+            <span class="plan-arrow">›</span>
+        </a>
     {% empty %}
-        <li>No plan items available yet.</li>
+        <p>No plan items available yet.</p>
     {% endfor %}
-</ul>
+</div>
 
 {% endblock %}
