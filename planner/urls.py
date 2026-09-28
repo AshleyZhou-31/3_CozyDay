@@ -12,4 +12,5 @@ urlpatterns = [
     path("cbv-generic/", views.PlanItemListView.as_view(), name="planitem-cbv-generic"),
     path("<int:pk>/", views.PlanItemDetailView.as_view(), name="planitem-detail"),
     path('api/plan-items/', views.plan_items_api, name='plan-items-api')
+    path("search/", views.planitem_search, name="planitem-search"),
 ]

@@ -71,3 +71,45 @@ Section 6 — JSON API (plan_items_api)
   (text/html) — see docs/screenshots/section6/ for both.
 - Next: Section 4 (Matplotlib chart + PNG endpoint), once Section 2
   merges.
+
+Week of Sept 22, 2026 — Rishabh (Assignment 3, Section 2)
+
+- Built a search and summary page for PlanItems at /planitems/search/.
+- Added two ways to search by title: a GET form (search text shows in the
+  web address, e.g. ?title=call) and a POST form (search text stays out of
+  the address bar entirely). Both filter the same way, they just submit
+  differently.
+- Added a filter that searches through the linked Category name instead of
+  PlanItem's own fields, using Django's relationship lookup
+  (category__name__icontains) — this reaches across the foreign key from
+  PlanItem to Category.
+- Added a total PlanItem count using .count(), and a per-category breakdown
+  using annotate() and Count(), so the grouping happens at the database
+  level instead of being counted manually in Python.
+- Reused the seed_rishabh_data command from Part 4 to populate real demo
+  data (10 PlanItems across 5 categories) so the counts and filters had
+  something real to show.
+- Tested all five states: full list, GET title match, GET category match,
+  POST title match, and a no-results search to confirm the empty message
+  displays correctly.
+- Browser evidence: ../screenshots/section2/ (05 through 09).
+
+
+Week of Sept 27, 2026 — Lin (Assignment 3, Section 3)
+
+- Added Django static-file support for the CozyDay interface.
+- Created a shared stylesheet at planner/static/planner/style.css.
+- Loaded the stylesheet through the base template so styling is applied consistently across pages.
+- Added custom styling for the navigation, page layout, PlanItem list, PlanItem detail page, cards, links, and empty states.
+- Tested the PlanItem list in both normal and empty states.
+- Browser evidence: ../screenshots/section3/ (01 through 03).
+
+
+Week of Sept 27, 2026 — Lin (Assignment 3, Section 5)
+- Added user input handling to the PlanItem list using a Django ModelForm and class-based ListView.
+- Added a GET search form that filters PlanItems by title and displays the search term in the URL query parameters.
+- Added a POST form that allows users to create a new PlanItem.
+- Added CSRF protection to the POST form using Django's csrf_token.
+- Extended PlanItemListView to handle both GET filtering and POST form submission.
+- Tested GET filtering, successful POST creation, and invalid form validation.
+- Browser evidence: ../screenshots/section5/ (01 through 03).

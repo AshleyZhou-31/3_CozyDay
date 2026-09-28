@@ -8,12 +8,39 @@ Plan Items - CozyDay
 
 <h2>Plan Items</h2>
 
-<ul>
+<h3>Search Plan Items</h3>
+
+<form method="get">
+    <label for="search-title">Title:</label>
+    <input
+        type="search"
+        id="search-title"
+        name="title"
+        value="{{ search_title }}"
+        placeholder="Search by title"
+    >
+    <button type="submit">Search</button>
+</form>
+
+<h3>Add a Plan Item</h3>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Plan Item</button>
+</form>
+
+<h3>Your Plan Items</h3>
+
+<div class="plan-list">
     {% for item in items %}
-        <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
+        <a class="plan-card" href="{{ item.get_absolute_url }}">
+            <span>{{ item.title }}</span>
+            <span class="plan-arrow">›</span>
+        </a>
     {% empty %}
-        <li>No plan items available yet.</li>
+        <p>No plan items available yet.</p>
     {% endfor %}
-</ul>
+</div>
 
 {% endblock %}

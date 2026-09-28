@@ -1,0 +1,146 @@
+header {
+    background-color: #fffdf9;
+    padding: 26px 40px;
+    border-bottom: 1px solid #e3e8df;
+}
+
+header h1 {
+    margin: 0;
+    color: #17365d;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+nav {
+    display: flex;
+    gap: 28px;
+    margin-top: 16px;
+}
+
+nav a {
+    color: #35506f;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+nav a:hover,
+nav a:focus {
+    color: #789a74;
+    text-decoration: none;
+}
+
+
+main {
+    max-width: 900px;
+    margin: 36px auto;
+    background-color: #fffefa;
+    padding: 36px;
+    border: 1px solid #e6ebe3;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(45, 65, 50, 0.06);
+}
+
+main h2 {
+    margin-top: 0;
+}
+
+ul {
+    padding-left: 24px;
+}
+
+li {
+    margin: 10px 0;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+}
+
+.cozy-button {
+    display: inline-block;
+    background-color: #8fae8b;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.cozy-button:hover {
+    background-color: #789a74;
+    text-decoration: none;
+}
+
+main li a {
+    color: #704b2f;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.plan-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 16px 18px;
+
+    background-color: #fffdf9;
+    border: 1px solid #e3e8df;
+    border-radius: 10px;
+
+    color: #17365d;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+.plan-card:hover {
+    background-color: #f3f7f0;
+    border-color: #b9cdb5;
+    transform: translateY(-1px);
+}
+
+.plan-arrow {
+    font-size: 24px;
+    color: #86a982;
+}
+
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin: 24px 0;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    padding: 16px 18px;
+    background-color: #f7faf5;
+    border: 1px solid #e1e9de;
+    border-radius: 10px;
+}
+
+.detail-label {
+    color: #78907a;
+    font-size: 14px;
+}
+
+.detail-item strong {
+    color: #17365d;
+    font-size: 16px;
+}

@@ -1,11 +1,13 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.template import loader
 from django.views import View
 from django.views.generic import DetailView, ListView
 from django.http import JsonResponse
 
-from .models import PlanItem
+from django.db.models import Count
+from .models import Category, PlanItem
+from .forms import PlanItemForm
 
 
 def home(request):
@@ -42,11 +44,89 @@ class PlanItemListView(ListView):
     template_name = "planner/planitem_list.html"
     context_object_name = "items"
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            queryset = PlanItem.objects.filter(user=self.request.user)
+        else:
+            queryset = PlanItem.objects.all()
+
+        title = self.request.GET.get("title", "").strip()
+
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = PlanItemForm(
+            user=self.request.user if self.request.user.is_authenticated else None
+        )
+        context["search_title"] = self.request.GET.get("title", "")
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("admin:login")
+
+        form = PlanItemForm(request.POST, user=request.user)
+
+        if form.is_valid():
+            plan_item = form.save(commit=False)
+            plan_item.user = request.user
+            plan_item.save()
+            return redirect("planner:planitem-list")
+
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
+        context["form"] = form
+        return self.render_to_response(context)
+
+
+
 
 class PlanItemDetailView(DetailView):
     model = PlanItem
     template_name = "planner/planitem_detail.html"
     context_object_name = "item"
+
+def planitem_search(request):
+    """
+    Section 2: full list, GET search, POST search, a relationship-spanning
+    filter through Category, a total count, and a grouped summary.
+    """
+    items = PlanItem.objects.all()
+
+    get_title = request.GET.get("title", "").strip()
+    category_query = request.GET.get("category", "").strip()
+    post_title = ""
+
+    if request.method == "POST":
+        post_title = request.POST.get("title", "").strip()
+        if post_title:
+            items = items.filter(title__icontains=post_title)
+    elif get_title:
+        items = items.filter(title__icontains=get_title)
+
+    if category_query:
+        items = items.filter(category__name__icontains=category_query)
+
+    total_count = PlanItem.objects.count()
+
+    category_summary = (
+        Category.objects.annotate(item_count=Count("plan_items"))
+        .order_by("-item_count", "name")
+    )
+
+    context = {
+        "items": items,
+        "get_title": get_title,
+        "post_title": post_title,
+        "category_query": category_query,
+        "total_count": total_count,
+        "category_summary": category_summary,
+    }
+    return render(request, "planner/planitem_search.html", context)
 
 def plan_items_api(request):
     plan_items = PlanItem.objects.all()
