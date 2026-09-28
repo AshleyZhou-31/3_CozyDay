@@ -49,6 +49,28 @@ Week of Sept 22, 2026 — Ashley Zhou
 - Browser evidence for the home, navigation, and detail-page flow:
   `../screenshots/section1/`.
 
+Week of Sept 22, 2026 — Shivani (Assignment 3, Section 6 — JSON API)
+
+- Added a public JSON endpoint at /planitems/api/plan-items/ using
+  JsonResponse, serving PlanItem data.
+- Fields served: id, title, item_type, timing, is_completed, and
+  category (the category's name, not its raw ID).
+- Deliberately excluded user_id and any account-identifying fields,
+  since this is a public endpoint and PlanItem data shouldn't reveal
+  who a given task belongs to.
+- Also excluded the raw category_id FK in favor of category.name —
+  a numeric ID is meaningless to an external API consumer without
+  a second lookup, whereas the name is immediately useful.
+- Supports optional query-parameter filtering:
+    ?category=<name>   — case-insensitive match on category name
+    ?completed=true|false — filters by completion status
+- Confirmed Content-Type differs between this endpoint
+  (application/json) and the app's regular pages like /planitems/
+  (text/html) — see docs/screenshots/section6/ for both.
+- Built as a function-based view (plan_items_api): it queries PlanItem,
+  applies filters read from request.GET, builds a list of dicts by hand
+  with only the safe fields, and returns JsonResponse({"results": [...]}).
+
 Week of Sept 22, 2026 — Rishabh (Assignment 3, Section 2)
 
 - Built a search and summary page for PlanItems at /planitems/search/.
@@ -90,3 +112,33 @@ Week of Sept 27, 2026 — Lin (Assignment 3, Section 5)
 - Extended PlanItemListView to handle both GET filtering and POST form submission.
 - Tested GET filtering, successful POST creation, and invalid form validation.
 - Browser evidence: ../screenshots/section5/ (01 through 03).
+
+Week of Sept 28, 2026 — Shivani (Assignment 3, Section 4 — Matplotlib category chart)
+
+- Added /planitems/chart/category.png, which returns a bar chart of plan
+  item counts per category, and /planitems/analytics/, which embeds it
+  with a heading, caption, and alt text.
+- Data comes from the ORM: Category.objects.annotate(item_count=
+  Count("plan_items")). The chart is computed live on every request.
+- Set matplotlib.use("Agg") before importing pyplot. The server has no
+  display, and the default macOS GUI backend fails inside the server
+  thread.
+- Used BytesIO so the chart is rendered in RAM and never written to disk.
+  The buffer is discarded after the response, so no chart files pile up
+  in the repo or on the server.
+- Called plt.close(fig) after saving. pyplot keeps a reference to every
+  figure it creates, so without closing it each page load would leak a
+  figure and memory would grow over time.
+- Regenerating on every request is fine at this scale. With heavy traffic
+  the image could be cached.
+- Forced whole numbers on the y-axis (MaxNLocator(integer=True)) because
+  plan items are counted in integers.
+- Added an Analytics link to the shared nav in base.html using
+  {% url 'planner:analytics' %}. This touches a shared file, so I'm
+  flagging it for review.
+- Browser evidence: ../screenshots/section4/ (direct PNG URL and the
+  analytics page).
+
+Note for team: matplotlib is a new dependency. After pulling this branch,
+run `pip install -r requirements.txt` again, or the app will fail to start
+with "No module named 'matplotlib'".

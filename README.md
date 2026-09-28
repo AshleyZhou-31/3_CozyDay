@@ -21,6 +21,7 @@ one consistent end-to-end flow.
 - Python 3.12
 - Django 5.2.17
 - SQLite (default database)
+- Matplotlib (server-side charts)
 
 ---
 
@@ -145,5 +146,67 @@ DJANGO_SETTINGS_MODULE=cozyday.settings.production DJANGO_ALLOWED_HOSTS=example.
 - `docs/screenshots/section2/` — browser evidence for the four PlanItem views
   (Assignment 2) and the ORM search/aggregation page (Assignment 3)
 - `docs/screenshots/section3/` — normal and empty template states
+- `docs/screenshots/section4/` — chart image endpoint and analytics page
+- `docs/screenshots/section6/` — JSON API output and response header comparison
 - `planner/docs/` — Part 4 technical documentation: data model notes, ER
   diagram, and CRUD/test evidence
+
+---
+
+## Data Visualization — Plan Items by Category
+
+A server-side bar chart shows how many plan items belong to each category.
+
+- **Analytics page:** `/planitems/analytics/` (chart with heading, caption,
+  and alt text; also linked from the main navigation)
+- **Chart image endpoint:** `/planitems/chart/category.png` (returns the PNG
+  directly)
+
+The counts come from a Django ORM aggregation
+(`Category.objects.annotate(item_count=Count("plan_items"))`), so the chart
+always reflects the current database. Matplotlib renders the chart into an
+in-memory `BytesIO` buffer, and the view returns it as `image/png`, so no
+chart files are written to disk.
+
+Screenshots are available in `docs/screenshots/section4/`.
+
+---
+
+## API — Plan Items
+
+A public JSON endpoint exposes plan item data for external use.
+
+```
+GET /planitems/api/plan-items/
+```
+
+Returns all plan items as JSON, with only safe fields — no user IDs or
+account-identifying information:
+
+```json
+{
+  "results": [
+    {
+      "id": 7,
+      "title": "Pick up dry cleaning",
+      "item_type": "TASK",
+      "timing": "WHENEVER",
+      "is_completed": false,
+      "category": "Errands"
+    }
+  ]
+}
+```
+
+**Filtering** is supported via query parameters:
+
+- `?category=<name>` — filter by category name (case-insensitive), e.g.
+  `/planitems/api/plan-items/?category=School`
+- `?completed=true` or `?completed=false` — filter by completion status,
+  e.g. `/planitems/api/plan-items/?completed=true`
+
+**Response type:** this endpoint returns `Content-Type: application/json`
+via Django's `JsonResponse`, unlike the app's regular pages (e.g.
+`/planitems/`), which return `Content-Type: text/html` via a rendered
+template. Confirmed via browser dev tools — see
+`docs/screenshots/section6/`.

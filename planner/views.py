@@ -3,10 +3,18 @@ from django.shortcuts import redirect, render
 from django.template import loader
 from django.views import View
 from django.views.generic import DetailView, ListView
+from django.http import JsonResponse
 
 from django.db.models import Count
 from .models import Category, PlanItem
 from .forms import PlanItemForm
+
+from io import BytesIO
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 
 def home(request):
@@ -126,3 +134,55 @@ def planitem_search(request):
         "category_summary": category_summary,
     }
     return render(request, "planner/planitem_search.html", context)
+
+def plan_items_api(request):
+    plan_items = PlanItem.objects.all()
+
+    category = request.GET.get('category')
+    if category:
+        plan_items = plan_items.filter(category__name__iexact=category)
+
+    completed = request.GET.get('completed')
+    if completed is not None:
+        is_completed = completed.lower() == 'true'
+        plan_items = plan_items.filter(is_completed=is_completed)
+
+    data = []
+    for item in plan_items:
+        data.append({
+            "id": item.id,
+            "title": item.title,
+            "item_type": item.item_type,
+            "timing": item.timing,
+            "is_completed": item.is_completed,
+            "category": item.category.name if item.category else None,
+        })
+
+    return JsonResponse({"results": data})
+
+def category_chart_png(request):
+    """Return a bar chart of PlanItem counts per Category as a PNG image."""
+    rows = (
+        Category.objects.annotate(item_count=Count("plan_items"))
+        .order_by("-item_count", "name")
+    )
+    names = [row.name for row in rows]
+    counts = [row.item_count for row in rows]
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.bar(names, counts, label="Plan items")
+    ax.set_title("Plan Items per Category")
+    ax.set_xlabel("Category")
+    ax.set_ylabel("Number of plan items")
+    ax.legend()
+
+    buffer = BytesIO()
+    fig.savefig(buffer, format="png", bbox_inches="tight")
+    plt.close(fig)
+
+    return HttpResponse(buffer.getvalue(), content_type="image/png")
+
+def analytics(request):
+    """Page that embeds the category chart."""
+    return render(request, "planner/analytics.html")

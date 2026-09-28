@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - CozyDay{% endblock %}
+
+{% block content %}
+<h2>Plan Items by Category</h2>
+<figure>
+  <img src="{% url 'planner:category-chart-png' %}"
+       alt="Bar chart showing the number of plan items in each category">
+  <figcaption>Number of plan items per category, computed live from the database.</figcaption>
+</figure>
+{% endblock %}
