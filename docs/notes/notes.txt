@@ -70,3 +70,23 @@ Week of Sept 22, 2026 — Rishabh (Assignment 3, Section 2)
   POST title match, and a no-results search to confirm the empty message
   displays correctly.
 - Browser evidence: ../screenshots/section2/ (05 through 09).
+
+
+Week of Sept 27, 2026 — Lin (Assignment 3, Section 3)
+
+- Added Django static-file support for the CozyDay interface.
+- Created a shared stylesheet at planner/static/planner/style.css.
+- Loaded the stylesheet through the base template so styling is applied consistently across pages.
+- Added custom styling for the navigation, page layout, PlanItem list, PlanItem detail page, cards, links, and empty states.
+- Tested the PlanItem list in both normal and empty states.
+- Browser evidence: ../screenshots/section3/ (01 through 03).
+
+
+Week of Sept 27, 2026 — Lin (Assignment 3, Section 5)
+- Added user input handling to the PlanItem list using a Django ModelForm and class-based ListView.
+- Added a GET search form that filters PlanItems by title and displays the search term in the URL query parameters.
+- Added a POST form that allows users to create a new PlanItem.
+- Added CSRF protection to the POST form using Django's csrf_token.
+- Extended PlanItemListView to handle both GET filtering and POST form submission.
+- Tested GET filtering, successful POST creation, and invalid form validation.
+- Browser evidence: ../screenshots/section5/ (01 through 03).

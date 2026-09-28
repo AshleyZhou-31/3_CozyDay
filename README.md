@@ -95,10 +95,27 @@ one consistent end-to-end flow.
    `/planitems/cbv-base/`, and `/planitems/cbv-generic/`.
 
    The canonical PlanItem list is available at `/planitems/`; select any item
-   to open its detail page. Also visit `/planitems/search/` to try the title search (GET and POST),
-   the category filter, and the grouped item-per-category summary.
+to open its detail page. Also visit `/planitems/search/` to try the title search (GET and POST),
+the category filter, and the grouped item-per-category summary.
 
 ---
+
+## Static Files and CSS
+
+Section 3 adds Django static-file support and custom CSS styling for the CozyDay interface. The shared stylesheet is located at `planner/static/planner/style.css` and is loaded through the base template so that styling is applied consistently across pages.
+
+The PlanItem list was tested in both normal and empty states. Screenshots are available in `docs/screenshots/section3/`.
+
+---
+
+## Forms and User Input
+
+Section 5 adds user input handling to the PlanItem list using a Django ModelForm and class-based view. Users can filter PlanItems by title with a GET form and create new PlanItems with a POST form protected by CSRF.
+
+The forms were tested for GET filtering, successful POST creation, and invalid input validation. Screenshots are available in `docs/screenshots/section5/`.
+
+---
+
 
 ## Development vs. Production Settings
 

@@ -1,8 +1,12 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'planner/style.css' %}">
 
     <title>
         {% block title %}
@@ -10,68 +14,7 @@
         {% endblock %}
     </title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f5f2;
-            margin: 0;
-            color: #333;
-        }
 
-        header {
-            background-color: #fff7ed;
-            padding: 24px 40px;
-            border-bottom: 1px solid #e6e0d8;
-        }
-
-        header h1 {
-            margin: 0;
-        }
-
-        nav {
-            display: flex;
-            gap: 20px;
-            margin-top: 14px;
-        }
-
-        nav a {
-            color: #704b2f;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        nav a:hover,
-        nav a:focus {
-            text-decoration: underline;
-        }
-
-        main {
-            max-width: 800px;
-            margin: 40px auto;
-            background-color: white;
-            padding: 32px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        main h2 {
-            margin-top: 0;
-        }
-
-        ul {
-            padding-left: 24px;
-        }
-
-        li {
-            margin: 10px 0;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #777;
-        }
-    </style>
 </head>
 
 <body>

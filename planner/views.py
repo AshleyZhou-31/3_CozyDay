@@ -1,11 +1,12 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.template import loader
 from django.views import View
 from django.views.generic import DetailView, ListView
 
 from django.db.models import Count
 from .models import Category, PlanItem
+from .forms import PlanItemForm
 
 
 def home(request):
@@ -41,6 +42,46 @@ class PlanItemListView(ListView):
     model = PlanItem
     template_name = "planner/planitem_list.html"
     context_object_name = "items"
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            queryset = PlanItem.objects.filter(user=self.request.user)
+        else:
+            queryset = PlanItem.objects.all()
+
+        title = self.request.GET.get("title", "").strip()
+
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = PlanItemForm(
+            user=self.request.user if self.request.user.is_authenticated else None
+        )
+        context["search_title"] = self.request.GET.get("title", "")
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("admin:login")
+
+        form = PlanItemForm(request.POST, user=request.user)
+
+        if form.is_valid():
+            plan_item = form.save(commit=False)
+            plan_item.user = request.user
+            plan_item.save()
+            return redirect("planner:planitem-list")
+
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
+        context["form"] = form
+        return self.render_to_response(context)
+
+
 
 
 class PlanItemDetailView(DetailView):
