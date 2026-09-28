@@ -1,4 +1,3 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template import loader
@@ -39,13 +38,17 @@ class PlanItemListBaseView(View):
 
 
 # View 4: CBV, generic ListView
-class PlanItemListView(LoginRequiredMixin, ListView):
+class PlanItemListView(ListView):
     model = PlanItem
     template_name = "planner/planitem_list.html"
     context_object_name = "items"
 
     def get_queryset(self):
-        queryset = PlanItem.objects.all()
+        if self.request.user.is_authenticated:
+            queryset = PlanItem.objects.filter(user=self.request.user)
+        else:
+            queryset = PlanItem.objects.all()
+
         title = self.request.GET.get("title", "").strip()
 
         if title:
@@ -55,12 +58,17 @@ class PlanItemListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = PlanItemForm()
+        context["form"] = PlanItemForm(
+            user=self.request.user if self.request.user.is_authenticated else None
+        )
         context["search_title"] = self.request.GET.get("title", "")
         return context
 
     def post(self, request, *args, **kwargs):
-        form = PlanItemForm(request.POST)
+        if not request.user.is_authenticated:
+            return redirect("admin:login")
+
+        form = PlanItemForm(request.POST, user=request.user)
 
         if form.is_valid():
             plan_item = form.save(commit=False)
