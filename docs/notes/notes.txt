@@ -142,3 +142,27 @@ Week of Sept 28, 2026 — Shivani (Assignment 3, Section 4 — Matplotlib catego
 Note for team: matplotlib is a new dependency. After pulling this branch,
 run `pip install -r requirements.txt` again, or the app will fail to start
 with "No module named 'matplotlib'".
+
+Week of Sept 29, 2026 — Rishabh (Assignment 4, Part 1)
+
+- Built /api/summary/, a public GET-only endpoint returning chart-ready
+  JSON: item counts per category, and item counts grouped by scheduled
+  date. Both lists come straight from ORM aggregation (annotate + Count),
+  not manual Python counting.
+- Built two pages that embed live Vega-Lite charts: a bar chart at
+  /charts/category-summary/ and a line/point chart at
+  /charts/activity-over-time/. Both specs use data.url pointing at
+  /api/summary/ instead of hard-coded values, so the charts always show
+  the current database state, not a snapshot.
+- Saved both complete Vega-Lite spec files under docs/vega_lite/ so the
+  chart definitions are reviewable without digging through template code.
+- Added two dedicated PNG endpoints (/vega-lite/chart1.png and
+  chart2.png) using the same Matplotlib approach as Shivani's existing
+  category chart, so there's a direct image output alongside the
+  interactive charts.
+- Added links to both chart pages on the home page.
+- Wrote 7 new tests covering a populated database (correct counts,
+  undated items excluded from activity_over_time) and an empty database
+  (endpoints return empty lists/valid images instead of erroring). All
+  12 tests in the app pass.
+- Browser evidence: ../screenshots/part1/.

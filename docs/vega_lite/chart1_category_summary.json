@@ -1,0 +1,20 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Plan Items per Category",
+  "width": 500,
+  "height": 300,
+  "data": {
+    "url": "/api/summary/",
+    "format": {"type": "json", "property": "category_counts"}
+  },
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "name", "type": "nominal", "title": "Category", "sort": "-y"},
+    "y": {"field": "item_count", "type": "quantitative", "title": "Number of plan items"},
+    "color": {"field": "name", "type": "nominal", "legend": null},
+    "tooltip": [
+      {"field": "name", "type": "nominal", "title": "Category"},
+      {"field": "item_count", "type": "quantitative", "title": "Items"}
+    ]
+  }
+}
