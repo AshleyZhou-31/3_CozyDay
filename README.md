@@ -150,6 +150,9 @@ DJANGO_SETTINGS_MODULE=cozyday.settings.production DJANGO_ALLOWED_HOSTS=example.
 - `docs/screenshots/section6/` — JSON API output and response header comparison
 - `planner/docs/` — Part 4 technical documentation: data model notes, ER
   diagram, and CRUD/test evidence
+- `docs/screenshots/part1/` — Assignment 4 Part 1: raw API response and
+  both chart pages
+- `docs/vega_lite/` — committed Vega-Lite chart specifications
 
 ---
 
@@ -210,3 +213,59 @@ via Django's `JsonResponse`, unlike the app's regular pages (e.g.
 `/planitems/`), which return `Content-Type: text/html` via a rendered
 template. Confirmed via browser dev tools — see
 `docs/screenshots/section6/`.
+
+
+---
+
+## Internal Chart API and Vega-Lite Charts (Assignment 4, Part 1)
+
+A dedicated internal API returns chart-ready JSON, and two pages embed
+live Vega-Lite charts built from it.
+
+**Chart-ready API:**
+
+```
+GET /api/summary/
+```
+
+Returns two pre-aggregated lists — no raw per-record data, just what the
+charts need:
+
+```json
+{
+  "category_counts": [
+    {"name": "School", "item_count": 3}
+  ],
+  "activity_over_time": [
+    {"date": "2026-09-24", "count": 2}
+  ]
+}
+```
+
+`category_counts` comes from
+`Category.objects.annotate(item_count=Count("plan_items"))`.
+`activity_over_time` groups `PlanItem` by `scheduled_date` and counts items
+per date, excluding items with no scheduled date set.
+
+**Chart pages:**
+
+- `/charts/category-summary/` — Vega-Lite bar chart of plan items per
+  category
+- `/charts/activity-over-time/` — Vega-Lite line/point chart of plan items
+  by scheduled date
+
+Both pages load Vega, Vega-Lite, and Vega-Embed from a CDN and point their
+spec's `data.url` at `/api/summary/` (using `format.property` to pull out
+the relevant list). Neither spec hard-codes any values — every chart
+re-renders from the live database on each page load. The full spec files
+are committed at `docs/vega_lite/chart1_category_summary.json` and
+`docs/vega_lite/chart2_activity_over_time.json`.
+
+**Dedicated chart image outputs** (Matplotlib-rendered PNGs, matching the
+same data as the two charts above):
+
+- `/vega-lite/chart1.png`
+- `/vega-lite/chart2.png`
+
+Screenshots of the raw API response and both rendered charts are in
+`docs/screenshots/part1/`.

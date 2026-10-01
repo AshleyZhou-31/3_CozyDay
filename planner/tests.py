@@ -58,3 +58,105 @@ class NavigationAndPlanItemDetailTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 404)
+
+class ChartReadyAPITests(TestCase):
+    """A4 Part 1: /api/summary/ and the two chart pages/PNG outputs."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="part1_user",
+            password="test-password",
+        )
+        cls.school = Category.objects.create(user=cls.user, name="School")
+        cls.errands = Category.objects.create(user=cls.user, name="Errands")
+
+        PlanItem.objects.create(
+            user=cls.user,
+            category=cls.school,
+            title="Finish reading",
+            scheduled_date="2026-09-24",
+        )
+        PlanItem.objects.create(
+            user=cls.user,
+            category=cls.school,
+            title="Submit worksheet",
+            scheduled_date="2026-09-25",
+        )
+        PlanItem.objects.create(
+            user=cls.user,
+            category=cls.errands,
+            title="Buy groceries",
+            # no scheduled_date on purpose, to confirm it's excluded, not crashed on
+        )
+
+    def test_api_summary_returns_json_with_real_data(self):
+        response = self.client.get(reverse("api-summary"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+
+        payload = response.json()
+        category_names = {row["name"] for row in payload["category_counts"]}
+        self.assertIn("School", category_names)
+        self.assertIn("Errands", category_names)
+
+        school_row = next(
+            row for row in payload["category_counts"] if row["name"] == "School"
+        )
+        self.assertEqual(school_row["item_count"], 2)
+
+        # Only the two dated items should appear; the undated one is excluded.
+        self.assertEqual(len(payload["activity_over_time"]), 2)
+        for row in payload["activity_over_time"]:
+            self.assertIn("date", row)
+            self.assertIn("count", row)
+
+    def test_category_summary_chart_page_loads(self):
+        response = self.client.get(reverse("chart-category-summary"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "chart-category-summary")
+        self.assertContains(response, reverse("api-summary"))
+
+    def test_activity_over_time_chart_page_loads(self):
+        response = self.client.get(reverse("chart-activity-over-time"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "chart-activity-over-time")
+        self.assertContains(response, reverse("api-summary"))
+
+    def test_chart_png_outputs_return_png_content_type(self):
+        chart1 = self.client.get(reverse("vega-chart1-png"))
+        chart2 = self.client.get(reverse("vega-chart2-png"))
+
+        self.assertEqual(chart1.status_code, 200)
+        self.assertEqual(chart1["Content-Type"], "image/png")
+
+        self.assertEqual(chart2.status_code, 200)
+        self.assertEqual(chart2["Content-Type"], "image/png")
+
+
+class ChartReadyAPIEmptyDatabaseTests(TestCase):
+    """A4 Part 1: confirm /api/summary/ and chart routes handle an empty database."""
+
+    def test_api_summary_with_no_data_returns_empty_lists(self):
+        response = self.client.get(reverse("api-summary"))
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["category_counts"], [])
+        self.assertEqual(payload["activity_over_time"], [])
+
+    def test_chart_pages_still_load_with_no_data(self):
+        self.assertEqual(self.client.get(reverse("chart-category-summary")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("chart-activity-over-time")).status_code, 200)
+
+    def test_png_outputs_still_render_with_no_data(self):
+        chart1 = self.client.get(reverse("vega-chart1-png"))
+        chart2 = self.client.get(reverse("vega-chart2-png"))
+
+        self.assertEqual(chart1.status_code, 200)
+        self.assertEqual(chart1["Content-Type"], "image/png")
+        self.assertEqual(chart2.status_code, 200)
+        self.assertEqual(chart2["Content-Type"], "image/png")

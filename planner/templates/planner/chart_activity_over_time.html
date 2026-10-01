@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Activity Over Time Chart - CozyDay{% endblock %}
+
+{% block content %}
+
+<h2>Plan Items by Scheduled Date</h2>
+<p>This chart loads its data live from <code>/api/summary/</code> — it is not hard-coded into the page.</p>
+
+<div id="chart-activity-over-time"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+<script type="text/javascript">
+  const spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": "Plan Items by Scheduled Date",
+    "width": 500,
+    "height": 300,
+    "data": {
+      "url": "/api/summary/",
+      "format": {"type": "json", "property": "activity_over_time"}
+    },
+    "mark": {"type": "line", "point": true},
+    "encoding": {
+      "x": {"field": "date", "type": "temporal", "title": "Scheduled date"},
+      "y": {"field": "count", "type": "quantitative", "title": "Number of plan items"},
+      "tooltip": [
+        {"field": "date", "type": "temporal", "title": "Date"},
+        {"field": "count", "type": "quantitative", "title": "Items"}
+      ]
+    }
+  };
+  vegaEmbed("#chart-activity-over-time", spec);
+</script>
+
+{% endblock %}

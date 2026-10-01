@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Category Summary Chart - CozyDay{% endblock %}
+
+{% block content %}
+
+<h2>Plan Items per Category</h2>
+<p>This bar chart loads its data live from <code>/api/summary/</code> — it is not hard-coded into the page.</p>
+
+<div id="chart-category-summary"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+<script type="text/javascript">
+  const spec = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "title": "Plan Items per Category",
+    "width": 500,
+    "height": 300,
+    "data": {
+      "url": "/api/summary/",
+      "format": {"type": "json", "property": "category_counts"}
+    },
+    "mark": "bar",
+    "encoding": {
+      "x": {"field": "name", "type": "nominal", "title": "Category", "sort": "-y"},
+      "y": {"field": "item_count", "type": "quantitative", "title": "Number of plan items"},
+      "color": {"field": "name", "type": "nominal", "legend": null},
+      "tooltip": [
+        {"field": "name", "type": "nominal", "title": "Category"},
+        {"field": "item_count", "type": "quantitative", "title": "Items"}
+      ]
+    }
+  };
+  vegaEmbed("#chart-category-summary", spec);
+</script>
+
+{% endblock %}

@@ -186,3 +186,87 @@ def category_chart_png(request):
 def analytics(request):
     """Page that embeds the category chart."""
     return render(request, "planner/analytics.html")
+
+def api_summary(request):
+    """
+    A4 Part 1: public, GET-only, chart-ready JSON built from real PlanItem
+    and Category data. No writes, no auth required.
+    """
+    category_counts = list(
+        Category.objects.annotate(item_count=Count("plan_items"))
+        .order_by("-item_count", "name")
+        .values("name", "item_count")
+    )
+
+    activity_rows = (
+        PlanItem.objects.exclude(scheduled_date__isnull=True)
+        .values("scheduled_date")
+        .annotate(count=Count("id"))
+        .order_by("scheduled_date")
+    )
+    activity_over_time = [
+        {"date": row["scheduled_date"].isoformat(), "count": row["count"]}
+        for row in activity_rows
+    ]
+
+    return JsonResponse({
+        "category_counts": category_counts,
+        "activity_over_time": activity_over_time,
+    })
+
+
+def chart_category_summary(request):
+    """Page embedding the Vega-Lite bar chart of plan items per category."""
+    return render(request, "planner/chart_category_summary.html")
+
+
+def chart_activity_over_time(request):
+    """Page embedding the Vega-Lite line/scatter chart of plan items by date."""
+    return render(request, "planner/chart_activity_over_time.html")
+
+
+def vega_chart1_png(request):
+    """Dedicated PNG output matching the category-summary chart."""
+    rows = (
+        Category.objects.annotate(item_count=Count("plan_items"))
+        .order_by("-item_count", "name")
+    )
+    names = [row.name for row in rows]
+    counts = [row.item_count for row in rows]
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.bar(names, counts, color="#704b2f")
+    ax.set_title("Plan Items per Category")
+    ax.set_xlabel("Category")
+    ax.set_ylabel("Number of plan items")
+
+    buffer = BytesIO()
+    fig.savefig(buffer, format="png", bbox_inches="tight")
+    plt.close(fig)
+    return HttpResponse(buffer.getvalue(), content_type="image/png")
+
+
+def vega_chart2_png(request):
+    """Dedicated PNG output matching the activity-over-time chart."""
+    rows = (
+        PlanItem.objects.exclude(scheduled_date__isnull=True)
+        .values("scheduled_date")
+        .annotate(count=Count("id"))
+        .order_by("scheduled_date")
+    )
+    dates = [row["scheduled_date"] for row in rows]
+    counts = [row["count"] for row in rows]
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.plot(dates, counts, marker="o", color="#704b2f")
+    ax.set_title("Plan Items by Scheduled Date")
+    ax.set_xlabel("Scheduled date")
+    ax.set_ylabel("Number of plan items")
+    fig.autofmt_xdate()
+
+    buffer = BytesIO()
+    fig.savefig(buffer, format="png", bbox_inches="tight")
+    plt.close(fig)
+    return HttpResponse(buffer.getvalue(), content_type="image/png")

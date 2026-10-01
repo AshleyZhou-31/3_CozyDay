@@ -1,0 +1,19 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Plan Items by Scheduled Date",
+  "width": 500,
+  "height": 300,
+  "data": {
+    "url": "/api/summary/",
+    "format": {"type": "json", "property": "activity_over_time"}
+  },
+  "mark": {"type": "line", "point": true},
+  "encoding": {
+    "x": {"field": "date", "type": "temporal", "title": "Scheduled date"},
+    "y": {"field": "count", "type": "quantitative", "title": "Number of plan items"},
+    "tooltip": [
+      {"field": "date", "type": "temporal", "title": "Date"},
+      {"field": "count", "type": "quantitative", "title": "Items"}
+    ]
+  }
+}
