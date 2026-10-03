@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - CozyDay{% endblock %}
+
+{% block content %}
+<h2>Plan Item Reports</h2>
+
+<p>
+    Total plan items: <strong>{{ total_items }}</strong> &middot;
+    Completed: <strong>{{ total_completed }}</strong>
+</p>
+
+<p>
+    <a class="cozy-button" href="{% url 'planner:planitem-export-csv' %}">Download CSV</a>
+    <a class="cozy-button" href="{% url 'planner:planitem-export-json' %}">Download JSON</a>
+</p>
+
+<h3>Plan Items per Category</h3>
+<table>
+    <thead>
+        <tr><th>Category</th><th>Plan Items</th></tr>
+    </thead>
+    <tbody>
+        {% for row in category_summary %}
+        <tr><td>{{ row.name }}</td><td>{{ row.item_count }}</td></tr>
+        {% empty %}
+        <tr><td colspan="2">No categories yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Completed vs. Open by Item Type</h3>
+<table>
+    <thead>
+        <tr><th>Item Type</th><th>Status</th><th>Count</th></tr>
+    </thead>
+    <tbody>
+        {% for row in status_summary %}
+        <tr>
+            <td>{{ row.item_type }}</td>
+            <td>{% if row.is_completed %}Completed{% else %}Open{% endif %}</td>
+            <td>{{ row.item_count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No plan items yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

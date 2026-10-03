@@ -16,6 +16,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
+from django.utils import timezone
+import csv
 
 def home(request):
     """Render the CozyDay landing page."""
@@ -270,3 +272,96 @@ def vega_chart2_png(request):
     fig.savefig(buffer, format="png", bbox_inches="tight")
     plt.close(fig)
     return HttpResponse(buffer.getvalue(), content_type="image/png")
+
+def export_plan_items_csv(request):
+    """A4 Part 3: downloadable CSV of all PlanItems, ordered consistently."""
+    items = PlanItem.objects.select_related("category").order_by(
+        "is_completed", "scheduled_date", "scheduled_time", "title"
+    )
+
+    timestamp = timezone.now().strftime("%Y-%m-%d_%H-%M")
+    filename = f"planitems_{timestamp}.csv"
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow([
+        "id", "title", "item_type", "timing", "scheduled_date",
+        "scheduled_time", "is_completed", "category", "notes",
+        "created_at", "updated_at",
+    ])
+    for item in items:
+        writer.writerow([
+            item.id,
+            item.title,
+            item.item_type,
+            item.timing,
+            item.scheduled_date.isoformat() if item.scheduled_date else "",
+            item.scheduled_time.isoformat() if item.scheduled_time else "",
+            item.is_completed,
+            item.category.name if item.category else "",
+            item.notes,
+            item.created_at.isoformat(),
+            item.updated_at.isoformat(),
+        ])
+    return response
+
+
+def export_plan_items_json(request):
+    """A4 Part 3: downloadable pretty-printed JSON of all PlanItems."""
+    items = PlanItem.objects.select_related("category").order_by(
+        "is_completed", "scheduled_date", "scheduled_time", "title"
+    )
+
+    plan_items = [
+        {
+            "id": item.id,
+            "title": item.title,
+            "item_type": item.item_type,
+            "timing": item.timing,
+            "scheduled_date": item.scheduled_date.isoformat() if item.scheduled_date else None,
+            "scheduled_time": item.scheduled_time.isoformat() if item.scheduled_time else None,
+            "is_completed": item.is_completed,
+            "category": item.category.name if item.category else None,
+            "notes": item.notes,
+            "created_at": item.created_at.isoformat(),
+            "updated_at": item.updated_at.isoformat(),
+        }
+        for item in items
+    ]
+
+    payload = {
+        "generated_at": timezone.now().isoformat(),
+        "record_count": len(plan_items),
+        "plan_items": plan_items,
+    }
+
+    timestamp = timezone.now().strftime("%Y-%m-%d_%H-%M")
+    filename = f"planitems_{timestamp}.json"
+
+    response = JsonResponse(payload, json_dumps_params={"indent": 2})
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
+
+
+def reports(request):
+    """A4 Part 3: grouped summaries, totals, and download links."""
+    category_summary = (
+        Category.objects.annotate(item_count=Count("plan_items"))
+        .order_by("-item_count", "name")
+    )
+
+    status_summary = (
+        PlanItem.objects.values("item_type", "is_completed")
+        .annotate(item_count=Count("id"))
+        .order_by("item_type", "is_completed")
+    )
+
+    context = {
+        "category_summary": category_summary,
+        "status_summary": status_summary,
+        "total_items": PlanItem.objects.count(),
+        "total_completed": PlanItem.objects.filter(is_completed=True).count(),
+    }
+    return render(request, "planner/reports.html", context)

@@ -166,3 +166,37 @@ Week of Sept 29, 2026 — Rishabh (Assignment 4, Part 1)
   (endpoints return empty lists/valid images instead of erroring). All
   12 tests in the app pass.
 - Browser evidence: ../screenshots/part1/.
+
+Week of Oct 3, 2026 — Shivani (Assignment 4, Part 3 — Exports, Reports, Demo Database)
+
+- Added two downloadable exports of PlanItem data: /planitems/api/export/csv/
+  and /planitems/api/export/json/. Both use the same field order and the
+  same queryset ordering (is_completed, scheduled_date, scheduled_time,
+  title), so the two files describe the same data two ways.
+- CSV uses Python's csv module and sets Content-Type: text/csv with a
+  timestamped Content-Disposition attachment filename. Verified a record
+  with punctuation in its title and a record with notes containing
+  multiple words download and open correctly.
+- JSON uses JsonResponse with json_dumps_params={"indent": 2}, adds
+  generated_at (ISO timestamp) and record_count alongside the plan_items
+  list, and sets the same kind of timestamped attachment filename.
+- Deliberately excluded user_id from both exports — it's not needed for
+  grading and this is a public endpoint.
+- Added /planitems/reports/, which extends base.html and shows: a totals
+  line (total plan items, completed count), a Plan Items per Category
+  table, and a Completed vs. Open by Item Type table, each built with
+  {% for %}/{% empty %} so an empty database shows a clear message
+  instead of a blank table. Visible Download CSV / Download JSON buttons
+  sit above the tables.
+- Added a Reports link to the shared nav in base.html. This touches a
+  shared file, so I'm flagging it for review.
+- Removed db.sqlite3 from .gitignore and committed it, seeded with
+  Rishabh's existing safe demo data (5 categories, 10 plan items, no real
+  personal information) via seed_rishabh_data, so the reports, exports,
+  charts, and APIs all have meaningful data out of the box.
+- Added 6 new tests: normal-data coverage for both exports and the
+  reports page, and an empty-database class confirming the CSV export
+  returns header-only output, the JSON export returns record_count: 0
+  and an empty list, and the reports page renders its empty-state
+  messages instead of erroring. All 18 tests in the app pass.
+- Browser evidence: ../screenshots/part3/.
