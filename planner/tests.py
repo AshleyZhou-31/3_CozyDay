@@ -160,3 +160,77 @@ class ChartReadyAPIEmptyDatabaseTests(TestCase):
         self.assertEqual(chart1["Content-Type"], "image/png")
         self.assertEqual(chart2.status_code, 200)
         self.assertEqual(chart2["Content-Type"], "image/png")
+
+class PlanItemExportAndReportsTests(TestCase):
+    """A4 Part 3: CSV export, JSON export, and the reports page."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = get_user_model().objects.create_user(
+            username="part3_user", password="test-password",
+        )
+        cls.school = Category.objects.create(user=cls.user, name="School")
+        cls.errands = Category.objects.create(user=cls.user, name="Errands")
+
+        PlanItem.objects.create(
+            user=cls.user, category=cls.school, title="Finish reading",
+            item_type=PlanItem.ItemType.TASK, is_completed=True,
+        )
+        PlanItem.objects.create(
+            user=cls.user, category=cls.errands, title="Buy groceries",
+            item_type=PlanItem.ItemType.TASK, is_completed=False,
+        )
+
+    def test_csv_export_has_correct_headers_and_rows(self):
+        response = self.client.get(reverse("planner:planitem-export-csv"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "text/csv")
+        self.assertTrue(
+            response["Content-Disposition"].startswith('attachment; filename="planitems_')
+        )
+        content = response.content.decode()
+        self.assertIn("id,title,item_type,timing", content)
+        self.assertIn("Finish reading", content)
+        self.assertIn("Buy groceries", content)
+
+    def test_json_export_has_metadata_and_records(self):
+        response = self.client.get(reverse("planner:planitem-export-json"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+        self.assertTrue(
+            response["Content-Disposition"].startswith('attachment; filename="planitems_')
+        )
+        payload = response.json()
+        self.assertIn("generated_at", payload)
+        self.assertEqual(payload["record_count"], 2)
+        titles = {item["title"] for item in payload["plan_items"]}
+        self.assertIn("Finish reading", titles)
+        self.assertIn("Buy groceries", titles)
+
+    def test_reports_page_shows_summaries_and_totals(self):
+        response = self.client.get(reverse("planner:planitem-reports"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "School")
+        self.assertContains(response, "Errands")
+        self.assertContains(response, reverse("planner:planitem-export-csv"))
+        self.assertContains(response, reverse("planner:planitem-export-json"))
+
+
+class PlanItemExportAndReportsEmptyDatabaseTests(TestCase):
+    """A4 Part 3: confirm exports and the reports page handle an empty database."""
+
+    def test_csv_export_with_no_data_returns_header_only(self):
+        response = self.client.get(reverse("planner:planitem-export-csv"))
+        content = response.content.decode()
+        self.assertEqual(len(content.strip().splitlines()), 1)
+
+    def test_json_export_with_no_data_returns_empty_list(self):
+        response = self.client.get(reverse("planner:planitem-export-json"))
+        payload = response.json()
+        self.assertEqual(payload["record_count"], 0)
+        self.assertEqual(payload["plan_items"], [])
+
+    def test_reports_page_with_no_data_shows_empty_state(self):
+        response = self.client.get(reverse("planner:planitem-reports"))
+        self.assertContains(response, "No categories yet.")
+        self.assertContains(response, "No plan items yet.")

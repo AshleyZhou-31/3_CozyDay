@@ -269,3 +269,35 @@ same data as the two charts above):
 
 Screenshots of the raw API response and both rendered charts are in
 `docs/screenshots/part1/`.
+
+---
+
+## Exports and Reports
+
+Section 3 (A4 Part 3) adds downloadable PlanItem exports and a reports page summarizing the data.
+
+**Reports page:** `/planitems/reports/` — shows a total plan item count, a
+completed count, a breakdown of plan items per category, and a breakdown
+of completed vs. open items by item type. Visible Download CSV and
+Download JSON buttons link to the two export endpoints below.
+
+**CSV export:** `/planitems/api/export/csv/` — returns `text/csv` as a
+timestamped attachment (`planitems_YYYY-MM-DD_HH-MM.csv`). All PlanItems
+are included, in a consistent field order, written with Python's `csv`
+module so commas, quotes, and special characters in fields like `notes`
+are escaped correctly.
+
+**JSON export:** `/planitems/api/export/json/` — returns a pretty-printed
+(`indent=2`) JSON file as a timestamped attachment
+(`planitems_YYYY-MM-DD_HH-MM.json`), with `generated_at`, `record_count`,
+and the full `plan_items` list in the same order as the CSV. `user_id` is
+excluded from both exports since it isn't needed for grading and
+shouldn't be exposed in a public download.
+
+Both exports and the reports page were tested against the seeded
+database and against an empty database (no categories, no plan items),
+confirming the reports page shows its empty-state messages and both
+exports still return a valid, header-only / empty-list file rather than
+erroring.
+
+Screenshots are available in `docs/screenshots/part3/`.
