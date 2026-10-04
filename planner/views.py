@@ -18,6 +18,7 @@ from matplotlib.ticker import MaxNLocator
 
 from django.utils import timezone
 import csv
+import requests
 
 def home(request):
     """Render the CozyDay landing page."""
@@ -365,3 +366,98 @@ def reports(request):
         "total_completed": PlanItem.objects.filter(is_completed=True).count(),
     }
     return render(request, "planner/reports.html", context)
+
+
+
+def external_book_search_api(request):
+    """
+    A4 Part 2:
+    Query Open Library, process the response,
+    and compare it with CozyDay PlanItem data.
+    """
+    query = request.GET.get("q", "").strip()
+
+    # Handle a missing query
+    if not query:
+        return JsonResponse(
+            {
+                "error": "Missing query parameter.",
+                "example": "?q=study",
+            },
+            status=400,
+        )
+
+    try:
+        response = requests.get(
+            "https://openlibrary.org/search.json",
+            params={"q": query},
+            timeout=5,
+        )
+
+        response.raise_for_status()
+        data = response.json()
+
+    except requests.exceptions.Timeout:
+        return JsonResponse(
+            {"error": "The external API request timed out."},
+            status=504,
+        )
+
+    except requests.exceptions.ConnectionError:
+        return JsonResponse(
+            {"error": "Could not connect to the external API."},
+            status=502,
+        )
+
+    except requests.exceptions.HTTPError:
+        return JsonResponse(
+            {"error": "The external API returned an HTTP error."},
+            status=502,
+        )
+
+    except ValueError:
+        return JsonResponse(
+            {"error": "The external API returned invalid JSON."},
+            status=502,
+        )
+
+    docs = data.get("docs", [])
+
+    cozyday_match_count = PlanItem.objects.filter(
+        title__icontains=query
+    ).count()
+
+    # Handle no external results
+    if not docs:
+        return JsonResponse(
+            {
+                "query": query,
+                "external_results": [],
+                "cozyday_match_count": cozyday_match_count,
+                "message": "No external results found.",
+            }
+        )
+
+    # Keep only a small, consistent set of useful fields
+    external_results = []
+
+    for book in docs[:5]:
+        external_results.append(
+            {
+                "title": book.get("title"),
+                "author": (
+                    book.get("author_name", [None])[0]
+                    if book.get("author_name")
+                    else None
+                ),
+                "first_publish_year": book.get("first_publish_year"),
+            }
+        )
+
+    return JsonResponse(
+        {
+            "query": query,
+            "external_results": external_results,
+            "cozyday_match_count": cozyday_match_count,
+        }
+    )
