@@ -363,3 +363,38 @@ The project dependencies in `requirements.txt` include `requests` for the Open L
 
 Production settings and `collectstatic` were tested locally before deployment.
 Screenshots for A4 Part 2 are available in `docs/screenshots/part2/`.
+
+
+
+## A4 Part 4: PythonAnywhere Deployment and Online Verification
+
+The integrated CozyDay `main` branch was deployed successfully to PythonAnywhere.
+
+Deployed site:
+
+https://lingao5.pythonanywhere.com/
+
+Production deployment configuration:
+
+- Python 3.12
+- Dedicated virtual environment: `/home/lingao5/.virtualenvs/cozyday`
+- Source code and working directory: `/home/lingao5/3_CozyDay`
+- Production settings module: `cozyday.settings.production`
+- Environment variables are loaded from a local `.env` file that is not committed to the repository.
+- The committed `requirements.txt` was installed successfully on PythonAnywhere.
+- `collectstatic` completed successfully, collecting 128 static files.
+- `/static/` is mapped to `/home/lingao5/3_CozyDay/staticfiles`.
+- The committed SQLite database was available on PythonAnywhere, and the Django production system check completed without issues.
+
+The following deployed features were verified successfully:
+
+- Home page with production styling
+- Internal API: `/api/summary/`
+- Category summary chart: `/charts/category-summary/`
+- Activity-over-time chart: `/charts/activity-over-time/`
+- External Open Library API integration: `/planitems/api/external/books/?q=study`
+- Reports page: `/planitems/reports/`
+- CSV export
+- JSON export
+
+Deployment evidence is available in `docs/screenshots/part4/`.

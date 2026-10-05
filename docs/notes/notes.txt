@@ -216,3 +216,25 @@ A4 Part 2 - External API Integration (Lin)
 - Added mocked tests for successful responses, missing queries, no results, timeouts, connection errors, HTTP errors, and invalid JSON.
 - The tests also verify the params dictionary, timeout=5, and raise_for_status() behavior. The full planner test suite passes.
 - Screenshots for A4 Part 2 are available in `docs/screenshots/part2/`.
+
+
+A4 Part 4 - PythonAnywhere Deployment and Online Verification (Lin)
+
+- Deployed the integrated CozyDay `main` branch to PythonAnywhere.
+- Deployed site: https://lingao5.pythonanywhere.com/
+- Created and configured a Python 3.12 virtual environment for CozyDay.
+- Installed the committed `requirements.txt` successfully on PythonAnywhere.
+- Ran `collectstatic` using `cozyday.settings.production`; 128 static files were collected successfully.
+- Configured the PythonAnywhere source code path and working directory as `/home/lingao5/3_CozyDay`.
+- Configured the virtual environment as `/home/lingao5/.virtualenvs/cozyday`.
+- Configured the WSGI file to load the project `.env` file and use `cozyday.settings.production`.
+- Configured the `/static/` URL mapping to `/home/lingao5/3_CozyDay/staticfiles`.
+- Verified the deployed home page loads successfully with production styling.
+- Verified the internal API endpoint `/api/summary/` returns valid JSON data.
+- Verified both deployed chart pages:
+  - `/charts/category-summary/`
+  - `/charts/activity-over-time/`
+- Verified the deployed external API endpoint `/planitems/api/external/books/?q=study` returns processed Open Library results together with `cozyday_match_count`.
+- Verified the deployed reports page at `/planitems/reports/`.
+- Verified both CSV and JSON exports download successfully in production.
+- Deployment evidence screenshots are available in `docs/screenshots/part4/`.
