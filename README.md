@@ -301,3 +301,65 @@ exports still return a valid, header-only / empty-list file rather than
 erroring.
 
 Screenshots are available in `docs/screenshots/part3/`.
+
+
+
+
+## A4 Part 2: External API Integration
+
+CozyDay integrates with the Open Library Search API, a public API that does not require an API key.
+
+### External API
+
+Endpoint:
+https://openlibrary.org/search.json
+
+CozyDay sends the user's search term using the `q` query parameter.
+
+Example CozyDay endpoint:
+
+`/planitems/api/external/books/?q=study`
+
+The external request uses:
+
+- `params={"q": query}`
+- `timeout=5`
+- `raise_for_status()`
+
+Open Library currently documents a default rate limit of 1 request per second for non-identified requests and 3 requests per second for identified requests that include appropriate application/contact information. The API is intended for low-volume, real-time lookup rather than bulk data harvesting.
+
+### Response Processing
+
+CozyDay does not forward the full Open Library response. It returns up to five results and keeps only:
+
+- title
+- author
+- first_publish_year
+
+The processed external results are combined with a CozyDay database value, `cozyday_match_count`, which counts PlanItems whose titles contain the same search query. External API data is not saved to the CozyDay database.
+
+The endpoint handles:
+
+- missing queries
+- request timeouts
+- connection errors
+- non-success HTTP responses
+- invalid JSON
+- no-results responses
+
+### Static Files and Dependencies
+
+Source static files are stored under `planner/static/`.
+
+`STATIC_URL` is defined in the base settings, while production settings define:
+
+`STATIC_ROOT = BASE_DIR / "staticfiles"`
+
+The generated `staticfiles/` directory is ignored by Git and is created with `collectstatic` for deployment.
+
+`base.html` loads Django static files and links to `planner/style.css` using the `{% static %}` template tag.
+
+The project dependencies in `requirements.txt` include `requests` for the Open Library integration and `matplotlib` for chart generation.
+
+Production settings and `collectstatic` were tested locally before deployment.
+Screenshots for A4 Part 2 are available in `docs/screenshots/part2/`.

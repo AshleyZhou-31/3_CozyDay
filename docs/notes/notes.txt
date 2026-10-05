@@ -200,3 +200,19 @@ Week of Oct 3, 2026 — Shivani (Assignment 4, Part 3 — Exports, Reports, Demo
   and an empty list, and the reports page renders its empty-state
   messages instead of erroring. All 18 tests in the app pass.
 - Browser evidence: ../screenshots/part3/.
+
+
+A4 Part 2 - External API Integration (Lin)
+
+- Integrated the Open Library Search API, which is public and does not require an API key.
+- External endpoint used: https://openlibrary.org/search.json
+- CozyDay query format: /planitems/api/external/books/?q=study
+- The external request uses requests.get with a params dictionary, timeout=5, and raise_for_status().
+- Added handling for missing queries, request timeouts, connection errors, non-success HTTP responses, invalid JSON, and no-results responses so users do not receive an unhandled Django error page.
+- The Open Library response is processed into a small, consistent structure rather than forwarding the full third-party payload. Up to five results are returned with only title, author, and first_publish_year.
+- The processed external results are compared with CozyDay database data using cozyday_match_count, which counts PlanItems whose titles contain the same query term.
+- External API data is not stored in the CozyDay database.
+- Added a new JSON endpoint at /planitems/api/external/books/.
+- Added mocked tests for successful responses, missing queries, no results, timeouts, connection errors, HTTP errors, and invalid JSON.
+- The tests also verify the params dictionary, timeout=5, and raise_for_status() behavior. The full planner test suite passes.
+- Screenshots for A4 Part 2 are available in `docs/screenshots/part2/`.

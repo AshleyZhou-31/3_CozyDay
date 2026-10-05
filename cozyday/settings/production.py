@@ -14,3 +14,4 @@ if not ALLOWED_HOSTS:
         "DJANGO_ALLOWED_HOSTS must be set (comma-separated) when running "
         "with cozyday.settings.production."
     )
+STATIC_ROOT = BASE_DIR / "staticfiles"

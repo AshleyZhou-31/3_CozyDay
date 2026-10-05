@@ -18,4 +18,9 @@ urlpatterns = [
     path("reports/", views.reports, name="planitem-reports"),
     path("api/export/csv/", views.export_plan_items_csv, name="planitem-export-csv"),
     path("api/export/json/", views.export_plan_items_json, name="planitem-export-json"),
+    path(
+        "api/external/books/",
+        views.external_book_search_api,
+        name="external-book-search-api",
+    ),
 ]
