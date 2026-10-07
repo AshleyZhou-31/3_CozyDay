@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}
+Sign Up - CozyDay
+{% endblock %}
+
+{% block content %}
+<h2>Sign Up</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Sign Up</button>
+</form>
+
+<p>
+    Already have an account?
+    <a href="{% url 'login' %}">Log in</a>
+</p>
+{% endblock %}

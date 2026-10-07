@@ -117,6 +117,93 @@ The forms were tested for GET filtering, successful POST creation, and invalid i
 
 ---
 
+## A5.1 Part 1: Internal Django Authentication
+
+CozyDay now includes internal Django username/password authentication with custom login and signup pages.
+
+### Authentication Routes
+
+- `/login/` — custom username/password login page
+- `/signup/` — custom account registration page
+- `/logout/` — POST-only logout route
+
+Authentication redirect settings are configured in `cozyday/settings/base.py`:
+
+- `LOGIN_URL = "login"`
+- `LOGIN_REDIRECT_URL = "planner:planitem-list"`
+- `LOGOUT_REDIRECT_URL = "home"`
+
+### Navigation Behavior
+
+Anonymous users see:
+
+- Home
+- Login
+- Sign Up
+
+Authenticated users see:
+
+- Home
+- Plan Items
+- Analytics
+- Reports
+- Logout
+
+Staff users additionally see:
+
+- Admin
+
+Protected navigation links are hidden from anonymous users.
+
+### Protected Pages
+
+Authentication is required for the private CozyDay pages, including:
+
+- `/planitems/`
+- `/planitems/manual/`
+- `/planitems/render/`
+- `/planitems/cbv-base/`
+- `/planitems/cbv-generic/`
+- `/planitems/<pk>/`
+- `/planitems/search/`
+- `/planitems/analytics/`
+- `/planitems/reports/`
+- `/charts/category-summary/`
+- `/charts/activity-over-time/`
+
+### Protected APIs and Data Endpoints
+
+The following endpoints currently require authentication:
+
+- `/api/summary/`
+- `/planitems/api/plan-items/`
+- `/planitems/api/export/csv/`
+- `/planitems/api/export/json/`
+- `/planitems/api/external/books/`
+- `/planitems/chart/category.png`
+- `/vega-lite/chart1.png`
+- `/vega-lite/chart2.png`
+
+A later A5.1 stage will select exactly one database-backed API for anonymous public access.
+
+### Manual Verification
+
+The authentication flow was manually verified for:
+
+- successful username/password login
+- invalid login handling
+- successful signup
+- duplicate username handling
+- logout and session termination
+- anonymous private-page redirect to login
+- authenticated private-page access
+- anonymous protected-API redirect
+- authenticated protected-API access
+- anonymous and authenticated navigation states
+
+The complete Django test suite contains 44 passing tests, including focused authentication tests.
+
+---
 
 ## Development vs. Production Settings
 
@@ -153,7 +240,7 @@ DJANGO_SETTINGS_MODULE=cozyday.settings.production DJANGO_ALLOWED_HOSTS=example.
 - `docs/screenshots/part1/` — Assignment 4 Part 1: raw API response and
   both chart pages
 - `docs/vega_lite/` — committed Vega-Lite chart specifications
-
+- `docs/screenshots/a5/lin_part1/` — A5.1 Part 1 authentication evidence, including anonymous/authenticated navigation, login/signup behavior, protected redirects, API access, and passing tests
 ---
 
 ## Data Visualization — Plan Items by Category
@@ -176,8 +263,7 @@ Screenshots are available in `docs/screenshots/section4/`.
 ---
 
 ## API — Plan Items
-
-A public JSON endpoint exposes plan item data for external use.
+A protected JSON endpoint exposes plan item data to authenticated CozyDay users.
 
 ```
 GET /planitems/api/plan-items/
@@ -226,10 +312,12 @@ live Vega-Lite charts built from it.
 
 ```
 GET /api/summary/
+
 ```
 
-Returns two pre-aggregated lists — no raw per-record data, just what the
-charts need:
+As of A5.1 Part 1, this endpoint requires authentication. A later A5.1 stage will select one database-backed API for public anonymous access.
+
+Returns two pre-aggregated lists — no raw per-record data, just what the charts need:
 
 ```json
 {
@@ -283,16 +371,14 @@ Download JSON buttons link to the two export endpoints below.
 
 **CSV export:** `/planitems/api/export/csv/` — returns `text/csv` as a
 timestamped attachment (`planitems_YYYY-MM-DD_HH-MM.csv`). All PlanItems
-are included, in a consistent field order, written with Python's `csv`
-module so commas, quotes, and special characters in fields like `notes`
-are escaped correctly.
+belonging to the authenticated user are included, in a consistent field
+order, written with Python's `csv` module so commas, quotes, and special
+characters in fields like `notes` are escaped correctly.
 
 **JSON export:** `/planitems/api/export/json/` — returns a pretty-printed
 (`indent=2`) JSON file as a timestamped attachment
 (`planitems_YYYY-MM-DD_HH-MM.json`), with `generated_at`, `record_count`,
-and the full `plan_items` list in the same order as the CSV. `user_id` is
-excluded from both exports since it isn't needed for grading and
-shouldn't be exposed in a public download.
+and the full `plan_items` list in the same order as the CSV. `user_id` is excluded from both exports since it isn't needed for grading and should not be exposed in downloaded data.
 
 Both exports and the reports page were tested against the seeded
 database and against an empty database (no categories, no plan items),
@@ -319,6 +405,8 @@ CozyDay sends the user's search term using the `q` query parameter.
 Example CozyDay endpoint:
 
 `/planitems/api/external/books/?q=study`
+
+As of A5.1 Part 1, the CozyDay endpoint requires authentication because its response also includes database-backed CozyDay information.
 
 The external request uses:
 
