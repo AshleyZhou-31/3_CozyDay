@@ -9,6 +9,12 @@ from django.db.models import Count
 from .models import Category, PlanItem
 from .forms import PlanItemForm
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+
 from io import BytesIO
 
 import matplotlib
@@ -24,8 +30,26 @@ def home(request):
     """Render the CozyDay landing page."""
     return render(request, "planner/home.html")
 
+def signup(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("planner:planitem-list")
+    else:
+        form = UserCreationForm()
+
+    return render(
+        request,
+        "planner/signup.html",
+        {"form": form},
+    )
+
 
 # View 1: FBV, manual HttpResponse
+@login_required
 def planitem_list_manual(request):
     template = loader.get_template("planner/planitem_list.html")
     items = PlanItem.objects.all()
@@ -34,6 +58,7 @@ def planitem_list_manual(request):
 
 
 # View 2: FBV, render() shortcut
+@login_required
 def planitem_list_render(request):
     items = PlanItem.objects.all()
     context = {"items": items}
@@ -41,7 +66,7 @@ def planitem_list_render(request):
 
 
 # View 3: CBV, base View
-class PlanItemListBaseView(View):
+class PlanItemListBaseView(LoginRequiredMixin, View):
     def get(self, request):
         items = PlanItem.objects.all()
         context = {"items": items}
@@ -49,7 +74,7 @@ class PlanItemListBaseView(View):
 
 
 # View 4: CBV, generic ListView
-class PlanItemListView(ListView):
+class PlanItemListView(LoginRequiredMixin, ListView):
     model = PlanItem
     template_name = "planner/planitem_list.html"
     context_object_name = "items"
@@ -95,11 +120,12 @@ class PlanItemListView(ListView):
 
 
 
-class PlanItemDetailView(DetailView):
+class PlanItemDetailView(LoginRequiredMixin, DetailView):
     model = PlanItem
     template_name = "planner/planitem_detail.html"
     context_object_name = "item"
 
+@login_required
 def planitem_search(request):
     """
     Section 2: full list, GET search, POST search, a relationship-spanning
@@ -138,6 +164,7 @@ def planitem_search(request):
     }
     return render(request, "planner/planitem_search.html", context)
 
+@login_required
 def plan_items_api(request):
     plan_items = PlanItem.objects.all()
 
@@ -163,6 +190,7 @@ def plan_items_api(request):
 
     return JsonResponse({"results": data})
 
+@login_required
 def category_chart_png(request):
     """Return a bar chart of PlanItem counts per Category as a PNG image."""
     rows = (
@@ -186,14 +214,17 @@ def category_chart_png(request):
 
     return HttpResponse(buffer.getvalue(), content_type="image/png")
 
+@login_required
 def analytics(request):
     """Page that embeds the category chart."""
     return render(request, "planner/analytics.html")
 
+
+@login_required
 def api_summary(request):
     """
-    A4 Part 1: public, GET-only, chart-ready JSON built from real PlanItem
-    and Category data. No writes, no auth required.
+    A5 Part 1: protected, GET-only, chart-ready JSON built from real
+    PlanItem and Category data.
     """
     category_counts = list(
         Category.objects.annotate(item_count=Count("plan_items"))
@@ -217,17 +248,17 @@ def api_summary(request):
         "activity_over_time": activity_over_time,
     })
 
-
+@login_required
 def chart_category_summary(request):
     """Page embedding the Vega-Lite bar chart of plan items per category."""
     return render(request, "planner/chart_category_summary.html")
 
-
+@login_required
 def chart_activity_over_time(request):
     """Page embedding the Vega-Lite line/scatter chart of plan items by date."""
     return render(request, "planner/chart_activity_over_time.html")
 
-
+@login_required
 def vega_chart1_png(request):
     """Dedicated PNG output matching the category-summary chart."""
     rows = (
@@ -249,7 +280,7 @@ def vega_chart1_png(request):
     plt.close(fig)
     return HttpResponse(buffer.getvalue(), content_type="image/png")
 
-
+@login_required
 def vega_chart2_png(request):
     """Dedicated PNG output matching the activity-over-time chart."""
     rows = (
@@ -274,6 +305,8 @@ def vega_chart2_png(request):
     plt.close(fig)
     return HttpResponse(buffer.getvalue(), content_type="image/png")
 
+
+@login_required
 def export_plan_items_csv(request):
     """A4 Part 3: downloadable CSV of all PlanItems, ordered consistently."""
     items = PlanItem.objects.select_related("category").order_by(
@@ -309,6 +342,8 @@ def export_plan_items_csv(request):
     return response
 
 
+
+@login_required
 def export_plan_items_json(request):
     """A4 Part 3: downloadable pretty-printed JSON of all PlanItems."""
     items = PlanItem.objects.select_related("category").order_by(
@@ -346,6 +381,7 @@ def export_plan_items_json(request):
     return response
 
 
+@login_required
 def reports(request):
     """A4 Part 3: grouped summaries, totals, and download links."""
     category_summary = (
@@ -368,7 +404,7 @@ def reports(request):
     return render(request, "planner/reports.html", context)
 
 
-
+@login_required
 def external_book_search_api(request):
     """
     A4 Part 2:

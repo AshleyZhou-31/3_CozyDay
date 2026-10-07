@@ -30,8 +30,19 @@ class NavigationAndPlanItemDetailTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, reverse("home"))
-        self.assertContains(response, reverse("planner:planitem-list"))
-        self.assertContains(response, reverse("admin:index"))
+        self.assertContains(response, reverse("login"))
+        self.assertContains(response, reverse("signup"))
+
+        self.assertNotContains(
+            response,
+            f'<a href="{reverse("planner:planitem-list")}">Plan Items</a>',
+            html=True,
+        )
+        self.assertNotContains(
+            response,
+            f'<a href="{reverse("admin:index")}">Admin</a>',
+            html=True,
+        )
 
     def test_get_absolute_url_targets_detail_route(self):
         self.assertEqual(
@@ -39,7 +50,9 @@ class NavigationAndPlanItemDetailTests(TestCase):
             reverse("planner:planitem-detail", kwargs={"pk": self.item.pk}),
         )
 
+
     def test_list_links_to_model_driven_detail_url(self):
+        self.client.force_login(self.user)
         response = self.client.get(reverse("planner:planitem-list"))
 
         self.assertEqual(response.status_code, 200)
@@ -47,6 +60,7 @@ class NavigationAndPlanItemDetailTests(TestCase):
         self.assertContains(response, self.item.get_absolute_url())
 
     def test_detail_page_displays_selected_item(self):
+        self.client.force_login(self.user)
         response = self.client.get(self.item.get_absolute_url())
 
         self.assertEqual(response.status_code, 200)
@@ -55,6 +69,7 @@ class NavigationAndPlanItemDetailTests(TestCase):
         self.assertContains(response, self.item.notes)
 
     def test_missing_detail_returns_404(self):
+        self.client.force_login(self.user)
         response = self.client.get(
             reverse("planner:planitem-detail", kwargs={"pk": 999999})
         )
@@ -91,6 +106,9 @@ class ChartReadyAPITests(TestCase):
             title="Buy groceries",
             # no scheduled_date on purpose, to confirm it's excluded, not crashed on
         )
+
+    def setUp(self):
+        self.client.force_login(self.user)
 
     def test_api_summary_returns_json_with_real_data(self):
         response = self.client.get(reverse("api-summary"))
@@ -142,6 +160,13 @@ class ChartReadyAPITests(TestCase):
 class ChartReadyAPIEmptyDatabaseTests(TestCase):
     """A4 Part 1: confirm /api/summary/ and chart routes handle an empty database."""
 
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="empty_chart_user",
+            password="test-password",
+        )
+        self.client.force_login(self.user)
+
     def test_api_summary_with_no_data_returns_empty_lists(self):
         response = self.client.get(reverse("api-summary"))
 
@@ -183,6 +208,9 @@ class PlanItemExportAndReportsTests(TestCase):
             item_type=PlanItem.ItemType.TASK, is_completed=False,
         )
 
+    def setUp(self):
+        self.client.force_login(self.user)
+
     def test_csv_export_has_correct_headers_and_rows(self):
         response = self.client.get(reverse("planner:planitem-export-csv"))
         self.assertEqual(response.status_code, 200)
@@ -221,6 +249,13 @@ class PlanItemExportAndReportsTests(TestCase):
 class PlanItemExportAndReportsEmptyDatabaseTests(TestCase):
     """A4 Part 3: confirm exports and the reports page handle an empty database."""
 
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="empty_reports_user",
+            password="test-password",
+        )
+        self.client.force_login(self.user)
+
     def test_csv_export_with_no_data_returns_header_only(self):
         response = self.client.get(reverse("planner:planitem-export-csv"))
         content = response.content.decode()
@@ -250,6 +285,9 @@ class ExternalBookSearchAPITests(TestCase):
             user=cls.user,
             title="Study for INFO 490",
         )
+
+    def setUp(self):
+        self.client.force_login(self.user)
 
     @patch("planner.views.requests.get")
     def test_successful_external_query(self, mock_get):
@@ -386,3 +424,123 @@ class ExternalBookSearchAPITests(TestCase):
             response.json()["error"],
             "The external API returned invalid JSON.",
         )
+
+
+class AuthenticationTests(TestCase):
+
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="auth_user",
+            password="test-password",
+        )
+
+    def test_signup_creates_user_and_logs_in(self):
+        response = self.client.post(
+            reverse("signup"),
+            {
+                "username": "new_user",
+                "password1": "StrongPass123!",
+                "password2": "StrongPass123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            get_user_model().objects.filter(username="new_user").exists()
+        )
+        self.assertIn("_auth_user_id", self.client.session)
+
+    def test_duplicate_signup_shows_error(self):
+        response = self.client.post(
+            reverse("signup"),
+            {
+                "username": "auth_user",
+                "password1": "StrongPass123!",
+                "password2": "StrongPass123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "A user with that username already exists.",
+        )
+
+    def test_valid_login_succeeds(self):
+        response = self.client.post(
+            reverse("login"),
+            {
+                "username": "auth_user",
+                "password": "test-password",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("_auth_user_id", self.client.session)
+
+    def test_invalid_login_stays_on_login_page(self):
+        response = self.client.post(
+            reverse("login"),
+            {
+                "username": "auth_user",
+                "password": "wrong-password",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "Please enter a correct username and password",
+        )
+
+    def test_logout_ends_session(self):
+        self.client.force_login(self.user)
+
+        response = self.client.post(reverse("logout"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_anonymous_user_cannot_open_private_page(self):
+        response = self.client.get(reverse("planner:planitem-list"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("login"), response.url)
+
+    def test_authenticated_user_can_open_private_page(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("planner:planitem-list"))
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_anonymous_user_cannot_open_protected_api(self):
+        response = self.client.get(reverse("api-summary"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("login"), response.url)
+
+    def test_authenticated_user_can_open_protected_api(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get(reverse("api-summary"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+
+    def test_navigation_changes_after_login(self):
+        anonymous_response = self.client.get(reverse("home"))
+
+        self.assertContains(anonymous_response, reverse("login"))
+        self.assertContains(anonymous_response, reverse("signup"))
+
+        self.client.force_login(self.user)
+
+        authenticated_response = self.client.get(reverse("home"))
+
+        self.assertContains(
+            authenticated_response,
+            reverse("planner:planitem-list"),
+        )
+        self.assertContains(authenticated_response, reverse("admin:index"))
+        self.assertContains(authenticated_response, reverse("logout"))

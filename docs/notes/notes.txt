@@ -238,3 +238,44 @@ A4 Part 4 - PythonAnywhere Deployment and Online Verification (Lin)
 - Verified the deployed reports page at `/planitems/reports/`.
 - Verified both CSV and JSON exports download successfully in production.
 - Deployment evidence screenshots are available in `docs/screenshots/part4/`.
+
+Week of Oct 6, 2026 — Lin (A5.1 Part 1 — Internal Django Authentication)
+
+- Added internal Django username/password authentication for CozyDay.
+- Added custom login and signup routes/pages at `/login/` and `/signup/`.
+- Added POST logout at `/logout/`.
+- Configured authentication redirects in `cozyday/settings/base.py`:
+  - `LOGIN_URL = "login"`
+  - `LOGIN_REDIRECT_URL = "planner:planitem-list"`
+  - `LOGOUT_REDIRECT_URL = "home"`
+- Updated the shared navigation in `base.html` so anonymous users see Home, Login, and Sign Up, while authenticated users see Home, Plan Items, Admin, Analytics, Reports, and Logout.
+- Protected private class-based views with `LoginRequiredMixin`.
+- Protected private function-based pages, APIs, exports, reports, chart pages, and data/image endpoints with `login_required`.
+- Protected endpoints currently include:
+  - `/api/summary/`
+  - `/planitems/api/plan-items/`
+  - `/planitems/api/export/csv/`
+  - `/planitems/api/export/json/`
+  - `/planitems/api/external/books/`
+  - `/planitems/chart/category.png`
+  - `/vega-lite/chart1.png`
+  - `/vega-lite/chart2.png`
+- A later A5.1 stage will select exactly one database-backed API for anonymous public access.
+- Verified manually:
+  - successful username/password login
+  - invalid login remains on the custom login page with an error
+  - successful signup creates a user and logs the user in
+  - duplicate username is rejected safely
+  - logout ends the session
+  - anonymous users are redirected away from private pages
+  - authenticated users can access private pages
+  - anonymous users are redirected away from protected APIs
+  - authenticated users can access protected APIs
+  - navigation changes correctly between anonymous and authenticated sessions
+- Updated the existing test suite for authenticated access where required and added focused A5.1 authentication tests.
+- Full Django test suite result: 35 tests passed.
+- `python manage.py check` completed with no issues.
+- Authentication evidence is stored in `docs/screenshots/a5/lin_part1/`.
+- Handoff: after this Part 1 PR is merged, Shivani owns the later public API/Vega-Lite stage and Rishabh owns Google OAuth, final production deployment, and the demonstration video.
+
+
