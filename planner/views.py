@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import DetailView, ListView
 from django.http import JsonResponse
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from .models import Category, PlanItem
 from .forms import PlanItemForm
 
@@ -52,7 +52,7 @@ def signup(request):
 @login_required
 def planitem_list_manual(request):
     template = loader.get_template("planner/planitem_list.html")
-    items = PlanItem.objects.all()
+    items = PlanItem.objects.filter(user=request.user)
     context = {"items": items}
     return HttpResponse(template.render(context, request))
 
@@ -60,7 +60,7 @@ def planitem_list_manual(request):
 # View 2: FBV, render() shortcut
 @login_required
 def planitem_list_render(request):
-    items = PlanItem.objects.all()
+    items = PlanItem.objects.filter(user=request.user)
     context = {"items": items}
     return render(request, "planner/planitem_list.html", context)
 
@@ -68,7 +68,7 @@ def planitem_list_render(request):
 # View 3: CBV, base View
 class PlanItemListBaseView(LoginRequiredMixin, View):
     def get(self, request):
-        items = PlanItem.objects.all()
+        items = PlanItem.objects.filter(user=request.user)
         context = {"items": items}
         return render(request, "planner/planitem_list.html", context)
 
@@ -80,10 +80,7 @@ class PlanItemListView(LoginRequiredMixin, ListView):
     context_object_name = "items"
 
     def get_queryset(self):
-        if self.request.user.is_authenticated:
-            queryset = PlanItem.objects.filter(user=self.request.user)
-        else:
-            queryset = PlanItem.objects.all()
+        queryset = PlanItem.objects.filter(user=self.request.user)
 
         title = self.request.GET.get("title", "").strip()
 
@@ -125,13 +122,16 @@ class PlanItemDetailView(LoginRequiredMixin, DetailView):
     template_name = "planner/planitem_detail.html"
     context_object_name = "item"
 
+    def get_queryset(self):
+        return PlanItem.objects.filter(user=self.request.user)
+
 @login_required
 def planitem_search(request):
     """
     Section 2: full list, GET search, POST search, a relationship-spanning
     filter through Category, a total count, and a grouped summary.
     """
-    items = PlanItem.objects.all()
+    items = PlanItem.objects.filter(user=request.user)
 
     get_title = request.GET.get("title", "").strip()
     category_query = request.GET.get("category", "").strip()
@@ -147,10 +147,16 @@ def planitem_search(request):
     if category_query:
         items = items.filter(category__name__icontains=category_query)
 
-    total_count = PlanItem.objects.count()
+    total_count = PlanItem.objects.filter(user=request.user).count()
 
     category_summary = (
-        Category.objects.annotate(item_count=Count("plan_items"))
+        Category.objects.filter(user=request.user)
+        .annotate(
+            item_count=Count(
+                "plan_items",
+                filter=Q(plan_items__user=request.user),
+            )
+        )
         .order_by("-item_count", "name")
     )
 
@@ -166,7 +172,7 @@ def planitem_search(request):
 
 @login_required
 def plan_items_api(request):
-    plan_items = PlanItem.objects.all()
+    plan_items = PlanItem.objects.filter(user=request.user)
 
     category = request.GET.get('category')
     if category:
@@ -194,7 +200,13 @@ def plan_items_api(request):
 def category_chart_png(request):
     """Return a bar chart of PlanItem counts per Category as a PNG image."""
     rows = (
-        Category.objects.annotate(item_count=Count("plan_items"))
+        Category.objects.filter(user=request.user)
+        .annotate(
+            item_count=Count(
+                "plan_items",
+                filter=Q(plan_items__user=request.user),
+            )
+        )
         .order_by("-item_count", "name")
     )
     names = [row.name for row in rows]
@@ -227,17 +239,25 @@ def api_summary(request):
     PlanItem and Category data.
     """
     category_counts = list(
-        Category.objects.annotate(item_count=Count("plan_items"))
+        Category.objects.filter(user=request.user)
+        .annotate(
+            item_count=Count(
+                "plan_items",
+                filter=Q(plan_items__user=request.user),
+            )
+        )
         .order_by("-item_count", "name")
         .values("name", "item_count")
     )
 
     activity_rows = (
-        PlanItem.objects.exclude(scheduled_date__isnull=True)
+        PlanItem.objects.filter(user=request.user)
+        .exclude(scheduled_date__isnull=True)
         .values("scheduled_date")
         .annotate(count=Count("id"))
         .order_by("scheduled_date")
     )
+
     activity_over_time = [
         {"date": row["scheduled_date"].isoformat(), "count": row["count"]}
         for row in activity_rows
@@ -262,9 +282,16 @@ def chart_activity_over_time(request):
 def vega_chart1_png(request):
     """Dedicated PNG output matching the category-summary chart."""
     rows = (
-        Category.objects.annotate(item_count=Count("plan_items"))
+        Category.objects.filter(user=request.user)
+        .annotate(
+            item_count=Count(
+                "plan_items",
+                filter=Q(plan_items__user=request.user),
+            )
+        )
         .order_by("-item_count", "name")
     )
+
     names = [row.name for row in rows]
     counts = [row.item_count for row in rows]
 
@@ -284,11 +311,13 @@ def vega_chart1_png(request):
 def vega_chart2_png(request):
     """Dedicated PNG output matching the activity-over-time chart."""
     rows = (
-        PlanItem.objects.exclude(scheduled_date__isnull=True)
+        PlanItem.objects.filter(user=request.user)
+        .exclude(scheduled_date__isnull=True)
         .values("scheduled_date")
         .annotate(count=Count("id"))
         .order_by("scheduled_date")
     )
+
     dates = [row["scheduled_date"] for row in rows]
     counts = [row["count"] for row in rows]
 
@@ -309,8 +338,12 @@ def vega_chart2_png(request):
 @login_required
 def export_plan_items_csv(request):
     """A4 Part 3: downloadable CSV of all PlanItems, ordered consistently."""
-    items = PlanItem.objects.select_related("category").order_by(
-        "is_completed", "scheduled_date", "scheduled_time", "title"
+    items = (
+        PlanItem.objects.filter(user=request.user)
+        .select_related("category")
+        .order_by(
+            "is_completed", "scheduled_date", "scheduled_time", "title"
+        )
     )
 
     timestamp = timezone.now().strftime("%Y-%m-%d_%H-%M")
@@ -346,8 +379,12 @@ def export_plan_items_csv(request):
 @login_required
 def export_plan_items_json(request):
     """A4 Part 3: downloadable pretty-printed JSON of all PlanItems."""
-    items = PlanItem.objects.select_related("category").order_by(
-        "is_completed", "scheduled_date", "scheduled_time", "title"
+    items = (
+        PlanItem.objects.filter(user=request.user)
+        .select_related("category")
+        .order_by(
+            "is_completed", "scheduled_date", "scheduled_time", "title"
+        )
     )
 
     plan_items = [
@@ -385,12 +422,20 @@ def export_plan_items_json(request):
 def reports(request):
     """A4 Part 3: grouped summaries, totals, and download links."""
     category_summary = (
-        Category.objects.annotate(item_count=Count("plan_items"))
+        Category.objects.filter(user=request.user)
+        .annotate(
+            item_count=Count(
+                "plan_items",
+                filter=Q(plan_items__user=request.user),
+            )
+        )
         .order_by("-item_count", "name")
     )
 
+    user_items = PlanItem.objects.filter(user=request.user)
+
     status_summary = (
-        PlanItem.objects.values("item_type", "is_completed")
+        user_items.values("item_type", "is_completed")
         .annotate(item_count=Count("id"))
         .order_by("item_type", "is_completed")
     )
@@ -398,8 +443,8 @@ def reports(request):
     context = {
         "category_summary": category_summary,
         "status_summary": status_summary,
-        "total_items": PlanItem.objects.count(),
-        "total_completed": PlanItem.objects.filter(is_completed=True).count(),
+        "total_items": user_items.count(),
+        "total_completed": user_items.filter(is_completed=True).count(),
     }
     return render(request, "planner/reports.html", context)
 
@@ -460,7 +505,8 @@ def external_book_search_api(request):
     docs = data.get("docs", [])
 
     cozyday_match_count = PlanItem.objects.filter(
-        title__icontains=query
+        user=request.user,
+        title__icontains=query,
     ).count()
 
     # Handle no external results

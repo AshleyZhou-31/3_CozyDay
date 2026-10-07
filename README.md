@@ -198,7 +198,7 @@ The authentication flow was manually verified for:
 - authenticated protected-API access
 - anonymous and authenticated navigation states
 
-The complete Django test suite contains 35 passing tests, including focused authentication tests.
+The complete Django test suite contains 44 passing tests, including focused authentication tests.
 
 ---
 

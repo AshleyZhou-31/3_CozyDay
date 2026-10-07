@@ -273,7 +273,7 @@ Week of Oct 6, 2026 — Lin (A5.1 Part 1 — Internal Django Authentication)
   - authenticated users can access protected APIs
   - navigation changes correctly between anonymous and authenticated sessions
 - Updated the existing test suite for authenticated access where required and added focused A5.1 authentication tests.
-- Full Django test suite result: 35 tests passed.
+- Full Django test suite result: 44 tests passed.
 - `python manage.py check` completed with no issues.
 - Authentication evidence is stored in `docs/screenshots/a5/lin_part1/`.
 - Handoff: after this Part 1 PR is merged, Shivani owns the later public API/Vega-Lite stage and Rishabh owns Google OAuth, final production deployment, and the demonstration video.

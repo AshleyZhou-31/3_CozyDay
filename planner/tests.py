@@ -542,5 +542,175 @@ class AuthenticationTests(TestCase):
             authenticated_response,
             reverse("planner:planitem-list"),
         )
-        self.assertContains(authenticated_response, reverse("admin:index"))
+        self.assertNotContains(authenticated_response, reverse("admin:index"))
         self.assertContains(authenticated_response, reverse("logout"))
+
+class UserDataIsolationTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user_a = get_user_model().objects.create_user(
+            username="user_a",
+            password="test-password",
+        )
+        cls.user_b = get_user_model().objects.create_user(
+            username="user_b",
+            password="test-password",
+        )
+
+        cls.category_a = Category.objects.create(
+            user=cls.user_a,
+            name="User A Category",
+        )
+        cls.category_b = Category.objects.create(
+            user=cls.user_b,
+            name="User B Category",
+        )
+
+        cls.item_a = PlanItem.objects.create(
+            user=cls.user_a,
+            category=cls.category_a,
+            title="User A Private Item",
+            notes="Only user A should see this.",
+            is_completed=True,
+        )
+
+        cls.item_b = PlanItem.objects.create(
+            user=cls.user_b,
+            category=cls.category_b,
+            title="User B Secret Item",
+            notes="Only user B should see this.",
+            is_completed=False,
+        )
+
+    def setUp(self):
+        self.client.force_login(self.user_a)
+
+    def test_user_cannot_view_other_users_detail_page(self):
+        response = self.client.get(self.item_b.get_absolute_url())
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_search_only_returns_logged_in_users_items(self):
+        response = self.client.get(
+            reverse("planner:planitem-search"),
+            {"title": "User"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.item_a.title)
+        self.assertNotContains(response, self.item_b.title)
+
+    def test_plan_items_api_only_returns_logged_in_users_items(self):
+        response = self.client.get(
+            reverse("planner:plan-items-api")
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        titles = {
+            item["title"]
+            for item in response.json()["results"]
+        }
+
+        self.assertIn(self.item_a.title, titles)
+        self.assertNotIn(self.item_b.title, titles)
+
+    def test_reports_only_include_logged_in_users_data(self):
+        response = self.client.get(
+            reverse("planner:planitem-reports")
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.category_a.name)
+        self.assertNotContains(response, self.category_b.name)
+
+        self.assertEqual(response.context["total_items"], 1)
+        self.assertEqual(response.context["total_completed"], 1)
+
+    def test_csv_export_only_contains_logged_in_users_items(self):
+        response = self.client.get(
+            reverse("planner:planitem-export-csv")
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        content = response.content.decode("utf-8")
+
+        self.assertIn(self.item_a.title, content)
+        self.assertNotIn(self.item_b.title, content)
+
+    def test_json_export_only_contains_logged_in_users_items(self):
+        response = self.client.get(
+            reverse("planner:planitem-export-json")
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        payload = response.json()
+        titles = {
+            item["title"]
+            for item in payload["plan_items"]
+        }
+
+        self.assertEqual(payload["record_count"], 1)
+        self.assertIn(self.item_a.title, titles)
+        self.assertNotIn(self.item_b.title, titles)
+
+    def test_api_summary_only_uses_logged_in_users_data(self):
+        response = self.client.get(reverse("api-summary"))
+
+        self.assertEqual(response.status_code, 200)
+
+        category_names = {
+            row["name"]
+            for row in response.json()["category_counts"]
+        }
+
+        self.assertIn(self.category_a.name, category_names)
+        self.assertNotIn(self.category_b.name, category_names)
+
+    def test_regular_user_does_not_see_admin_link(self):
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(
+            response,
+            reverse("admin:index"),
+        )
+
+    def test_staff_user_can_see_admin_link(self):
+        staff_user = get_user_model().objects.create_user(
+            username="staff_user",
+            password="test-password",
+            is_staff=True,
+        )
+
+        self.client.force_login(staff_user)
+
+        response = self.client.get(reverse("home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            reverse("admin:index"),
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
