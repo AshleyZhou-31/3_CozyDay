@@ -145,10 +145,13 @@ Authenticated users see:
 
 - Home
 - Plan Items
-- Admin
 - Analytics
 - Reports
 - Logout
+
+Staff users additionally see:
+
+- Admin
 
 Protected navigation links are hidden from anonymous users.
 
@@ -368,9 +371,9 @@ Download JSON buttons link to the two export endpoints below.
 
 **CSV export:** `/planitems/api/export/csv/` — returns `text/csv` as a
 timestamped attachment (`planitems_YYYY-MM-DD_HH-MM.csv`). All PlanItems
-are included, in a consistent field order, written with Python's `csv`
-module so commas, quotes, and special characters in fields like `notes`
-are escaped correctly.
+belonging to the authenticated user are included, in a consistent field
+order, written with Python's `csv` module so commas, quotes, and special
+characters in fields like `notes` are escaped correctly.
 
 **JSON export:** `/planitems/api/export/json/` — returns a pretty-printed
 (`indent=2`) JSON file as a timestamped attachment

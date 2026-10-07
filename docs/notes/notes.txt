@@ -248,7 +248,7 @@ Week of Oct 6, 2026 — Lin (A5.1 Part 1 — Internal Django Authentication)
   - `LOGIN_URL = "login"`
   - `LOGIN_REDIRECT_URL = "planner:planitem-list"`
   - `LOGOUT_REDIRECT_URL = "home"`
-- Updated the shared navigation in `base.html` so anonymous users see Home, Login, and Sign Up, while authenticated users see Home, Plan Items, Admin, Analytics, Reports, and Logout.
+- Updated the shared navigation in `base.html` so anonymous users see Home, Login, and Sign Up; authenticated users see Home, Plan Items, Analytics, Reports, and Logout; and the Admin link is shown only to staff users.
 - Protected private class-based views with `LoginRequiredMixin`.
 - Protected private function-based pages, APIs, exports, reports, chart pages, and data/image endpoints with `login_required`.
 - Protected endpoints currently include:
