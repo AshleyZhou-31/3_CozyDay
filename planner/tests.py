@@ -5,6 +5,7 @@ from django.urls import reverse
 from .models import Category, PlanItem
 from unittest.mock import Mock, patch
 import requests
+from django.utils import timezone
 
 
 class NavigationAndPlanItemDetailTests(TestCase):
@@ -109,28 +110,6 @@ class ChartReadyAPITests(TestCase):
 
     def setUp(self):
         self.client.force_login(self.user)
-
-    def test_api_summary_returns_json_with_real_data(self):
-        response = self.client.get(reverse("api-summary"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response["Content-Type"], "application/json")
-
-        payload = response.json()
-        category_names = {row["name"] for row in payload["category_counts"]}
-        self.assertIn("School", category_names)
-        self.assertIn("Errands", category_names)
-
-        school_row = next(
-            row for row in payload["category_counts"] if row["name"] == "School"
-        )
-        self.assertEqual(school_row["item_count"], 2)
-
-        # Only the two dated items should appear; the undated one is excluded.
-        self.assertEqual(len(payload["activity_over_time"]), 2)
-        for row in payload["activity_over_time"]:
-            self.assertIn("date", row)
-            self.assertIn("count", row)
 
     def test_category_summary_chart_page_loads(self):
         response = self.client.get(reverse("chart-category-summary"))
@@ -514,12 +493,6 @@ class AuthenticationTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-    def test_anonymous_user_cannot_open_protected_api(self):
-        response = self.client.get(reverse("api-summary"))
-
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse("login"), response.url)
-
     def test_authenticated_user_can_open_protected_api(self):
         self.client.force_login(self.user)
 
@@ -657,19 +630,6 @@ class UserDataIsolationTests(TestCase):
         self.assertIn(self.item_a.title, titles)
         self.assertNotIn(self.item_b.title, titles)
 
-    def test_api_summary_only_uses_logged_in_users_data(self):
-        response = self.client.get(reverse("api-summary"))
-
-        self.assertEqual(response.status_code, 200)
-
-        category_names = {
-            row["name"]
-            for row in response.json()["category_counts"]
-        }
-
-        self.assertIn(self.category_a.name, category_names)
-        self.assertNotIn(self.category_b.name, category_names)
-
     def test_regular_user_does_not_see_admin_link(self):
         response = self.client.get(reverse("home"))
 
@@ -697,7 +657,70 @@ class UserDataIsolationTests(TestCase):
         )
 
 
+class PublicApiSummaryTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.demo_user = User.objects.create_user(
+            username="rishabh_demo", password="demopassword123"
+        )
+        cls.category = Category.objects.create(
+            user=cls.demo_user, name="School", color="#4A90D9"
+        )
+        PlanItem.objects.create(
+            user=cls.demo_user,
+            title="Demo task",
+            category=cls.category,
+            item_type=PlanItem.ItemType.TASK,
+            timing=PlanItem.Timing.TODAY,
+            scheduled_date=timezone.localdate(),
+        )
 
+    def test_anonymous_get_succeeds(self):
+        response = self.client.get(reverse("api-summary"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
+
+    def test_response_structure_uses_real_demo_data(self):
+        response = self.client.get(reverse("api-summary"))
+        payload = response.json()
+        self.assertIn("category_counts", payload)
+        self.assertIn("activity_over_time", payload)
+        self.assertEqual(payload["category_counts"][0]["name"], "School")
+        self.assertEqual(payload["category_counts"][0]["item_count"], 1)
+
+    def test_no_account_identifying_fields_leak(self):
+        response = self.client.get(reverse("api-summary"))
+        body = response.content.decode()
+        self.assertNotIn("user_id", body)
+        self.assertNotIn("rishabh_demo", body)
+
+    def test_post_is_rejected(self):
+        response = self.client.post(reverse("api-summary"))
+        self.assertIn(response.status_code, (403, 405))
+
+
+class PublicApiSummaryMissingDemoAccountTests(TestCase):
+    def test_missing_demo_user_returns_empty_lists_not_an_error(self):
+        # No rishabh_demo user exists in this test's isolated database.
+        response = self.client.get(reverse("api-summary"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {"category_counts": [], "activity_over_time": []},
+        )
+
+
+class ProtectedApisStillRequireLoginTests(TestCase):
+    def test_plan_items_api_redirects_anonymous_user_to_login(self):
+        response = self.client.get(reverse("planner:plan-items-api"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
+    def test_reports_page_redirects_anonymous_user_to_login(self):
+        response = self.client.get(reverse("planner:planitem-reports"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
 
 
 
