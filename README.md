@@ -486,3 +486,31 @@ The following deployed features were verified successfully:
 - JSON export
 
 Deployment evidence is available in `docs/screenshots/part4/`.
+
+## A5 Part 3 — Public API, Vega-Lite Chart, and Alternative API Uses (Shivani)
+
+### Public API
+- Endpoint: `GET /api/summary/` (named URL: `api-summary`)
+- Access: public — the only CozyDay API endpoint open without login
+- Response shape:
+```json
+  {
+    "category_counts": [{"name": "...", "item_count": 0}],
+    "activity_over_time": [{"date": "YYYY-MM-DD", "count": 0}]
+  }
+```
+- Data source: a fixed, shared demo account (`rishabh_demo`, created by `python manage.py seed_rishabh_data`) — real database rows, not per-visitor data, so anonymous access never exposes any other user's private PlanItems or Categories. No `user_id` or other account-identifying field is included in the response.
+- Only `GET` is allowed; other methods are rejected.
+- `Access-Control-Allow-Origin: *` is set on this endpoint only, so it can be called from pages outside the CozyDay site (used by the JavaScript client demo below).
+- All other APIs (`/planitems/api/plan-items/`, CSV/JSON exports, reports) remain `@login_required`.
+
+### Vega-Lite Chart
+- File: `docs/vega_lite/group-3-vega-lite-API-demo.txt`
+- A bar chart of plan items per category, pulling live from the public `/api/summary/` endpoint via `data.url` and `format.property: "category_counts"`.
+- To view: paste the file's contents into https://vega.github.io/editor/
+
+### Three Alternative Uses of the Public API
+All in `docs/api_use_cases/`:
+1. **`python_client.py`** — plain Python script using `requests` to fetch the summary and print category/activity stats. Run: `python docs/api_use_cases/python_client.py`
+2. **`pandas_analysis.py`** — loads the same response into pandas DataFrames and prints grouped statistics (average items per category, busiest scheduled day). Run: `python docs/api_use_cases/pandas_analysis.py`
+3. **`javascript_client.html`** — a standalone HTML page, outside the Django app, that uses `fetch()` to pull the public API and render a category list and totals directly in the browser.
