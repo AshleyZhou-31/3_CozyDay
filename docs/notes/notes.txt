@@ -295,9 +295,9 @@ Week of Oct 6, 2026 — Lin (A5.1 Part 1 — Internal Django Authentication)
   a Python requests client, a pandas analysis script, and a JS fetch client.
 - Built docs/vega_lite/group-3-vega-lite-API-demo.txt: bar chart of plan
   items per category, sourced live from the public API.
-- Found db.sqlite3 was tracked in git with no .gitignore entry (pre-existing
-  repo issue, not introduced by this branch) — added it to .gitignore and
-  untracked it. Flagging to the team since this affects everyone's checkouts.
+- db.sqlite3 intentionally stays tracked: production deploys from the repo
+  checkout, and the reviewer flagged that untracking it could disrupt the
+  production database. Restored it and .gitignore to match main.
 - Still to do: swap the Vega-Lite file's placeholder URL for the real
   PythonAnywhere URL and grab final production screenshots, once this PR
   is merged and the site is redeployed.

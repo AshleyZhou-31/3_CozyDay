@@ -3,7 +3,7 @@
   "title": "CozyDay — Plan Items by Category (Public API)",
   "description": "Group 3 — CozyDay public API demo. Data pulled live from the deployed /api/summary/ endpoint.",
   "data": {
-    "url": "https://REPLACE-WITH-YOUR-PYTHONANYWHERE-DOMAIN/api/summary/",
+    "url": "https://lingao5.pythonanywhere.com/api/summary/",
     "format": {
       "type": "json",
       "property": "category_counts"

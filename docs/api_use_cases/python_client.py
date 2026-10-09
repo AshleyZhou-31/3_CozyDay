@@ -12,7 +12,7 @@ short, human-readable digest of category counts and scheduled activity.
 import sys
 import requests
 
-API_URL = "http://127.0.0.1:8000/api/summary/"  # swap for the production URL before the final screenshot
+API_URL = "https://lingao5.pythonanywhere.com/api/summary/"
 
 
 def main():
