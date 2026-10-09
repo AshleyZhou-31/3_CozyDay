@@ -4,4 +4,4 @@ __pycache__/
 .DS_Store
 .idea/
 .env
-staticfiles/db.sqlite3
+staticfiles/
