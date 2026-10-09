@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load allauth socialaccount %}
 
 {% block title %}
 Sign Up - CozyDay
@@ -18,4 +19,15 @@ Sign Up - CozyDay
     Already have an account?
     <a href="{% url 'login' %}">Log in</a>
 </p>
+
+{% get_providers as socialaccount_providers %}
+{% if socialaccount_providers %}
+<hr>
+<h3>Or use a third-party</h3>
+<ul>
+    {% for provider in socialaccount_providers %}
+    <li><a href="{% provider_login_url provider.id process='signup' %}">{{ provider.name }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
 {% endblock %}
