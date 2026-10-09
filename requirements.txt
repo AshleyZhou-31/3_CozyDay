@@ -19,3 +19,4 @@ requests==2.34.2
 six==1.17.0
 sqlparse==0.6.0
 urllib3==2.8.0
+PyJWT==2.15.1
