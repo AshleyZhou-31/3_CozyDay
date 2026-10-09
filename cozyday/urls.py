@@ -1,5 +1,6 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path,
+from django.urls import include
 
 from planner import views as planner_views
 from django.contrib.auth import views as auth_views
@@ -7,9 +8,11 @@ from django.contrib.auth import views as auth_views
 
 
 
+
 urlpatterns = [
     path('', planner_views.home, name='home'),
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
     path('planitems/', include('planner.urls')),
 
     path('api/summary/', planner_views.api_summary, name='api-summary'),

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load allauth socialaccount %}
+
+{% block title %}
+Login - CozyDay
+{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Login</button>
+</form>
+
+<p>
+    Don't have an account?
+    <a href="{% url 'signup' %}">Sign up</a>
+</p>
+
+{% get_providers as socialaccount_providers %}
+{% if socialaccount_providers %}
+<hr>
+<h3>Or use a third-party</h3>
+<ul>
+    {% for provider in socialaccount_providers %}
+    <li><a href="{% provider_login_url provider.id process='login' %}">{{ provider.name }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
