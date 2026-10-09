@@ -278,4 +278,27 @@ Week of Oct 6, 2026 — Lin (A5.1 Part 1 — Internal Django Authentication)
 - Authentication evidence is stored in `docs/screenshots/a5/lin_part1/`.
 - Handoff: after this Part 1 PR is merged, Shivani owns the later public API/Vega-Lite stage and Rishabh owns Google OAuth, final production deployment, and the demonstration video.
 
+--- Oct 8, 2026 — Shivani — A5 Part 3 ---
+- Made /api/summary/ the one public CozyDay API: removed @login_required,
+  added @require_GET, switched it to always serve the shared rishabh_demo
+  account's real data (anonymous requests have no logged-in user to scope
+  by). Added Access-Control-Allow-Origin: * on this endpoint only, so it's
+  fetchable from outside the Django app.
+- Verified: anonymous GET works (200, JSON); POST rejected; all other
+  protected APIs still redirect anonymous users to /login/; no user_id or
+  username leaks in the public response.
+- Added 6 tests (PublicApiSummaryTests, PublicApiSummaryMissingDemoAccountTests,
+  ProtectedApisStillRequireLoginTests); removed 3 pre-existing tests whose
+  assumptions no longer held now that this endpoint is public/demo-scoped
+  instead of login-scoped.
+- Built the three required alternative API uses in docs/api_use_cases/:
+  a Python requests client, a pandas analysis script, and a JS fetch client.
+- Built docs/vega_lite/group-3-vega-lite-API-demo.txt: bar chart of plan
+  items per category, sourced live from the public API.
+- db.sqlite3 intentionally stays tracked: production deploys from the repo
+  checkout, and the reviewer flagged that untracking it could disrupt the
+  production database. Restored it and .gitignore to match main.
+- Still to do: swap the Vega-Lite file's placeholder URL for the real
+  PythonAnywhere URL and grab final production screenshots, once this PR
+  is merged and the site is redeployed.
 
