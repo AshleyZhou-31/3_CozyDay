@@ -236,7 +236,7 @@ Google OAuth is configured in `cozyday/settings/base.py`:
 
 The production redirect URI must also be registered in Google Cloud Console:
 
-- `https://<your-pythonanywhere-domain>/accounts/google/login/callback/`
+- `https://lingao5.pythonanywhere.com/accounts/google/login/callback/`
 
 The Sites framework record (`django.contrib.sites`) must be updated to match the production domain so allauth generates the correct callback URL.
 

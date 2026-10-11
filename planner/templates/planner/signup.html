@@ -26,7 +26,7 @@ Sign Up - CozyDay
 <h3>Or use a third-party</h3>
 <ul>
     {% for provider in socialaccount_providers %}
-    <li><a href="{% provider_login_url provider.id process='signup' %}">{{ provider.name }}</a></li>
+    <li><a href="{% provider_login_url provider.id process='signup' %}">Continue with {{ provider.name }}</a></li>
     {% endfor %}
 </ul>
 {% endif %}
