@@ -298,7 +298,14 @@ Week of Oct 6, 2026 — Lin (A5.1 Part 1 — Internal Django Authentication)
 - db.sqlite3 intentionally stays tracked: production deploys from the repo
   checkout, and the reviewer flagged that untracking it could disrupt the
   production database. Restored it and .gitignore to match main.
-- Still to do: swap the Vega-Lite file's placeholder URL for the real
-  PythonAnywhere URL and grab final production screenshots, once this PR
-  is merged and the site is redeployed.
-
+Production verification (https://lingao5.pythonanywhere.com), done Oct 11:
+- GET /api/summary/ without login returns 200, Content-Type application/json,
+  Access-Control-Allow-Origin: *, with the real demo data (School 3, Errands 2,
+  Personal 2, Wellness 2, Social 1; 8 scheduled items over 7 days).
+- Anonymous requests to 13 other pages and APIs (/planitems/, plan-items API,
+  CSV and JSON exports, external books API, reports, analytics, search,
+  category chart PNG, both /charts/ endpoints, both /vega-lite/ PNGs) each
+  returned 302 to /login/.
+- python_client.py, pandas_analysis.py, javascript_client.html and the
+  Vega-Lite spec all ran against the production URL.
+- Screenshots in docs/screenshots/a5/shivani_part3/ were retaken from production.
