@@ -205,6 +205,54 @@ The complete Django test suite contains 48 passing tests, including focused auth
 
 ---
 
+## A5.1 Part 2: Google OAuth
+
+CozyDay now supports signing in with Google in addition to the existing username/password authentication, using `django-allauth`.
+
+### OAuth Routes
+
+- `/login/` and `/signup/` — existing custom pages, each with a "Continue with Google" link
+- `/accounts/google/login/` — Google OAuth entry point (allauth)
+- `/accounts/google/login/callback/` — OAuth callback handled by allauth
+
+### Configuration
+
+Google OAuth is configured in `cozyday/settings/base.py`:
+
+- `INSTALLED_APPS` includes `django.contrib.sites`, `allauth`, `allauth.account`, `allauth.socialaccount`, and `allauth.socialaccount.providers.google`
+- `AUTHENTICATION_BACKENDS` includes both Django's `ModelBackend` and allauth's `AuthenticationBackend`, so username/password login continues to work alongside Google
+- `SITE_ID = 1`
+- `SOCIALACCOUNT_PROVIDERS["google"]` reads the client ID and secret from the `GOOGLE_OAUTH_CLIENT_ID` and `GOOGLE_OAUTH_CLIENT_SECRET` environment variables (see `.env.example`) — these are never committed
+
+### Local Setup
+
+1. Create OAuth credentials in Google Cloud Console for the CozyDay project.
+2. Set the authorized redirect URI to `http://127.0.0.1:8000/accounts/google/login/callback/` for local development.
+3. Copy `.env.example` to `.env` and fill in `GOOGLE_OAUTH_CLIENT_ID` and `GOOGLE_OAUTH_CLIENT_SECRET`.
+4. Run `python manage.py migrate` to create the sites/allauth tables.
+5. Run `python manage.py runserver` and visit `/login/` or `/signup/`.
+
+### Production Setup (PythonAnywhere)
+
+The production redirect URI must also be registered in Google Cloud Console:
+
+- `https://lingao5.pythonanywhere.com/accounts/google/login/callback/`
+
+The Sites framework record (`django.contrib.sites`) must be updated to match the production domain so allauth generates the correct callback URL.
+
+### Manual Verification
+
+The Google OAuth flow was manually verified for:
+
+- successful Google login from `/login/`
+- successful Google sign-up from `/signup/`
+- the full OAuth round trip (authorization code exchange and callback) completing without error
+- existing username/password login, signup, and logout continuing to work unchanged
+
+The complete Django test suite contains 49 passing tests, including focused Google OAuth configuration tests.
+
+---
+
 ## Development vs. Production Settings
 
 Settings are split into a package at `cozyday/settings/`:

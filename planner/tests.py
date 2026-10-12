@@ -656,6 +656,35 @@ class UserDataIsolationTests(TestCase):
             reverse("admin:index"),
         )
 
+class GoogleOAuthTests(TestCase):
+
+    def test_login_page_shows_google_link(self):
+        response = self.client.get(reverse("login"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Google")
+
+    def test_signup_page_shows_google_link(self):
+        response = self.client.get(reverse("signup"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Google")
+
+    def test_google_app_is_installed(self):
+        from django.apps import apps
+
+        self.assertTrue(apps.is_installed("allauth.socialaccount.providers.google"))
+
+    def test_site_id_configured(self):
+        from django.conf import settings
+
+        self.assertEqual(settings.SITE_ID, 1)
+
+    def test_accounts_urls_are_wired(self):
+        response = self.client.get("/accounts/login/")
+
+        self.assertEqual(response.status_code, 200)
+
 
 class PublicApiSummaryTests(TestCase):
     @classmethod

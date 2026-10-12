@@ -309,3 +309,17 @@ Production verification (https://lingao5.pythonanywhere.com), done Oct 11:
 - python_client.py, pandas_analysis.py, javascript_client.html and the
   Vega-Lite spec all ran against the production URL.
 - Screenshots in docs/screenshots/a5/shivani_part3/ were retaken from production.
+
+
+
+- A5.1 Part 2: Added Google OAuth via django-allauth, with a "Continue with Google" link on both the custom `/login/` and `/signup/` pages.
+- Preserved the existing internal username/password authentication; AUTHENTICATION_BACKENDS lists both ModelBackend and allauth's backend.
+- Fixed a bug where the internal signup flow's login() call did not specify a backend, which failed once multiple authentication backends were configured.
+- Google OAuth client ID and secret are read from environment variables (GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET) and are never committed.
+- Verified manually:
+  - successful Google login and signup
+  - full OAuth round trip (authorization code exchange, callback, login) completing without error
+  - existing username/password login, signup, and logout still work
+- Full Django test suite result: 53 tests passed (post-merge with main, including Shivani's Part 3 additions).
+- Restored db.sqlite3 tracking after review feedback; the production deployment pulls this file directly, so it must remain tracked until a safe external database location is set up.
+- Handoff: Shivani's Part 3 PR (#10) has merged into main. This branch was rebased onto the latest main, conflicts in requirements.txt and docs/notes/notes.txt resolved, and the full test suite rerun (53 tests passed) before final production deployment and the demonstration video.
