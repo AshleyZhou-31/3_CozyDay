@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CozyDay Public API — JavaScript Client Demo</title>
+</head>
+<body>
+  <h1>CozyDay Public API — JavaScript Client Demo</h1>
+  <p>
+    Who would use this: a third-party page or widget outside the CozyDay
+    Django site — e.g. embedding a small "categories at a glance" widget
+    on a personal portfolio page.
+  </p>
+  <div id="output">Loading...</div>
+
+  <script>
+    const API_URL = "https://lingao5.pythonanywhere.com/api/summary/";
+
+    fetch(API_URL)
+      .then((response) => response.json())
+      .then((data) => {
+        const output = document.getElementById("output");
+        output.innerHTML = "";
+
+        const heading = document.createElement("h2");
+        heading.textContent = "Plan items by category";
+        output.appendChild(heading);
+
+        const list = document.createElement("ul");
+        data.category_counts.forEach((row) => {
+          const item = document.createElement("li");
+          item.textContent = `${row.name}: ${row.item_count} item(s)`;
+          list.appendChild(item);
+        });
+        output.appendChild(list);
+
+        const totalScheduled = data.activity_over_time.reduce(
+          (sum, row) => sum + row.count,
+          0
+        );
+        const summary = document.createElement("p");
+        summary.textContent = `Total scheduled items: ${totalScheduled} across ${data.activity_over_time.length} day(s).`;
+        output.appendChild(summary);
+      })
+      .catch((error) => {
+        document.getElementById("output").textContent =
+          "Failed to load CozyDay public API: " + error;
+      });
+  </script>
+</body>
+</html>

@@ -96,8 +96,9 @@ one consistent end-to-end flow.
    `/planitems/cbv-base/`, and `/planitems/cbv-generic/`.
 
    The canonical PlanItem list is available at `/planitems/`; select any item
-to open its detail page. Also visit `/planitems/search/` to try the title search (GET and POST),
-the category filter, and the grouped item-per-category summary.
+   to open its detail page. Also visit `/planitems/search/` to try the title
+   search (GET and POST), the category filter, and the grouped
+   item-per-category summary.
 
 ---
 
@@ -173,9 +174,8 @@ Authentication is required for the private CozyDay pages, including:
 
 ### Protected APIs and Data Endpoints
 
-The following endpoints currently require authentication:
+The following endpoints require authentication:
 
-- `/api/summary/`
 - `/planitems/api/plan-items/`
 - `/planitems/api/export/csv/`
 - `/planitems/api/export/json/`
@@ -184,7 +184,7 @@ The following endpoints currently require authentication:
 - `/vega-lite/chart1.png`
 - `/vega-lite/chart2.png`
 
-A later A5.1 stage will select exactly one database-backed API for anonymous public access.
+`/api/summary/` is the one public API as of A5.1 Part 3 (see the A5 Part 3 section below). Every endpoint in the list above remains protected.
 
 ### Manual Verification
 
@@ -201,7 +201,7 @@ The authentication flow was manually verified for:
 - authenticated protected-API access
 - anonymous and authenticated navigation states
 
-The complete Django test suite contains 44 passing tests, including focused authentication tests.
+The complete Django test suite contains 48 passing tests, including focused authentication tests and the A5.1 Part 3 public-API tests.
 
 ---
 
@@ -241,6 +241,9 @@ DJANGO_SETTINGS_MODULE=cozyday.settings.production DJANGO_ALLOWED_HOSTS=example.
   both chart pages
 - `docs/vega_lite/` — committed Vega-Lite chart specifications
 - `docs/screenshots/a5/lin_part1/` — A5.1 Part 1 authentication evidence, including anonymous/authenticated navigation, login/signup behavior, protected redirects, API access, and passing tests
+- `docs/screenshots/a5/shivani_part3/` — A5.1 Part 3 evidence: public API JSON, Vega-Lite editor, and the three alternative-use screenshots
+- `docs/api_use_cases/` — A5.1 Part 3 alternative uses of the public API (Python, pandas, JavaScript)
+
 ---
 
 ## Data Visualization — Plan Items by Category
@@ -263,6 +266,7 @@ Screenshots are available in `docs/screenshots/section4/`.
 ---
 
 ## API — Plan Items
+
 A protected JSON endpoint exposes plan item data to authenticated CozyDay users.
 
 ```
@@ -300,22 +304,20 @@ via Django's `JsonResponse`, unlike the app's regular pages (e.g.
 template. Confirmed via browser dev tools — see
 `docs/screenshots/section6/`.
 
-
 ---
 
 ## Internal Chart API and Vega-Lite Charts (Assignment 4, Part 1)
 
-A dedicated internal API returns chart-ready JSON, and two pages embed
-live Vega-Lite charts built from it.
+A dedicated API returns chart-ready JSON, and two pages embed live
+Vega-Lite charts built from it.
 
 **Chart-ready API:**
 
 ```
 GET /api/summary/
-
 ```
 
-As of A5.1 Part 1, this endpoint requires authentication. A later A5.1 stage will select one database-backed API for public anonymous access.
+As of A5.1 Part 3, this endpoint is the one public API (no login required); see the A5 Part 3 section below.
 
 Returns two pre-aggregated lists — no raw per-record data, just what the charts need:
 
@@ -388,8 +390,7 @@ erroring.
 
 Screenshots are available in `docs/screenshots/part3/`.
 
-
-
+---
 
 ## A4 Part 2: External API Integration
 
@@ -452,7 +453,7 @@ The project dependencies in `requirements.txt` include `requests` for the Open L
 Production settings and `collectstatic` were tested locally before deployment.
 Screenshots for A4 Part 2 are available in `docs/screenshots/part2/`.
 
-
+---
 
 ## A4 Part 4: PythonAnywhere Deployment and Online Verification
 
@@ -486,3 +487,40 @@ The following deployed features were verified successfully:
 - JSON export
 
 Deployment evidence is available in `docs/screenshots/part4/`.
+
+---
+
+## A5 Part 3 — Public API, Vega-Lite Chart, and Alternative API Uses (Shivani)
+
+### Public API
+
+- Endpoint: `GET /api/summary/` (named URL: `api-summary`)
+- Production URL: https://lingao5.pythonanywhere.com/api/summary/
+- Access: public — the only CozyDay API endpoint open without login
+- Response shape:
+  ```json
+  {
+    "category_counts": [{"name": "...", "item_count": 0}],
+    "activity_over_time": [{"date": "YYYY-MM-DD", "count": 0}]
+  }
+  ```
+- Data source: a fixed, shared demo account (`rishabh_demo`, created by `python manage.py seed_rishabh_data`) — real database rows, not per-visitor data, so anonymous access never exposes any other user's private PlanItems or Categories. No `user_id` or other account-identifying field is included in the response.
+- Only `GET` is allowed; other methods are rejected.
+- `Access-Control-Allow-Origin: *` is set on this endpoint only, so it can be called from pages outside the CozyDay site (used by the JavaScript client demo below).
+- All other APIs (`/planitems/api/plan-items/`, CSV/JSON exports, external books API, reports) remain login-protected.
+
+### Vega-Lite Chart
+
+- File: `docs/vega_lite/group-3-vega-lite-API-demo.txt`
+- A bar chart of plan items per category, pulling live from the public production API (`https://lingao5.pythonanywhere.com/api/summary/`) via `data.url` and `format.property: "category_counts"`. No inline data values are used.
+- To view: paste the file's contents into https://vega.github.io/editor/
+
+### Three Alternative Uses of the Public API
+
+All in `docs/api_use_cases/`, each pointed at the production API:
+
+1. **`python_client.py`** — plain Python script using `requests` to fetch the summary and print category/activity stats. Run: `python docs/api_use_cases/python_client.py`
+2. **`pandas_analysis.py`** — loads the same response into pandas DataFrames and prints grouped statistics (average items per category, busiest scheduled day). Requires pandas (pinned in `requirements.txt`). Run: `python docs/api_use_cases/pandas_analysis.py`
+3. **`javascript_client.html`** — a standalone HTML page, outside the Django app, that uses `fetch()` to pull the public API and render a category list and totals directly in the browser.
+
+Evidence screenshots are in `docs/screenshots/a5/shivani_part3/`.

@@ -26,6 +26,9 @@ from django.utils import timezone
 import csv
 import requests
 
+from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_GET
+
 def home(request):
     """Render the CozyDay landing page."""
     return render(request, "planner/home.html")
@@ -232,18 +235,31 @@ def analytics(request):
     return render(request, "planner/analytics.html")
 
 
-@login_required
+PUBLIC_API_DEMO_USERNAME = "rishabh_demo"
+
+@require_GET
 def api_summary(request):
     """
-    A5 Part 1: protected, GET-only, chart-ready JSON built from real
-    PlanItem and Category data.
+    A5 Part 3: the one CozyDay API exposed publicly, without login.
+    Returns clean, chart-ready JSON built from real CozyDay database rows
+    (the shared demo account's data) for the Vega-Lite chart and the three
+    alternative API use cases. No user_id or other account-identifying
+    fields are included.
     """
+    User = get_user_model()
+    try:
+        demo_user = User.objects.get(username=PUBLIC_API_DEMO_USERNAME)
+    except User.DoesNotExist:
+        response = JsonResponse({"category_counts": [], "activity_over_time": []})
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+
     category_counts = list(
-        Category.objects.filter(user=request.user)
+        Category.objects.filter(user=demo_user)
         .annotate(
             item_count=Count(
                 "plan_items",
-                filter=Q(plan_items__user=request.user),
+                filter=Q(plan_items__user=demo_user),
             )
         )
         .order_by("-item_count", "name")
@@ -251,7 +267,7 @@ def api_summary(request):
     )
 
     activity_rows = (
-        PlanItem.objects.filter(user=request.user)
+        PlanItem.objects.filter(user=demo_user)
         .exclude(scheduled_date__isnull=True)
         .values("scheduled_date")
         .annotate(count=Count("id"))
@@ -263,10 +279,12 @@ def api_summary(request):
         for row in activity_rows
     ]
 
-    return JsonResponse({
+    response = JsonResponse({
         "category_counts": category_counts,
         "activity_over_time": activity_over_time,
     })
+    response["Access-Control-Allow-Origin"] = "*"
+    return response
 
 @login_required
 def chart_category_summary(request):
