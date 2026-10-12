@@ -320,6 +320,6 @@ Production verification (https://lingao5.pythonanywhere.com), done Oct 11:
   - successful Google login and signup
   - full OAuth round trip (authorization code exchange, callback, login) completing without error
   - existing username/password login, signup, and logout still work
-- Full Django test suite result: 49 tests passed (44 existing + 5 new Google OAuth configuration tests).
+- Full Django test suite result: 53 tests passed (post-merge with main, including Shivani's Part 3 additions).
 - Restored db.sqlite3 tracking after review feedback; the production deployment pulls this file directly, so it must remain tracked until a safe external database location is set up.
-- Handoff: after Shivani's Part 3 PR merges, this branch will be rebased onto the latest main, conflicts resolved, and the full test suite rerun before final production deployment and the demonstration video.
+- Handoff: Shivani's Part 3 PR (#10) has merged into main. This branch was rebased onto the latest main, conflicts in requirements.txt and docs/notes/notes.txt resolved, and the full test suite rerun (53 tests passed) before final production deployment and the demonstration video.
