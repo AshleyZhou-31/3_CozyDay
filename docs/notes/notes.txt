@@ -323,3 +323,37 @@ Production verification (https://lingao5.pythonanywhere.com), done Oct 11:
 - Full Django test suite result: 53 tests passed (post-merge with main, including Shivani's Part 3 additions).
 - Restored db.sqlite3 tracking after review feedback; the production deployment pulls this file directly, so it must remain tracked until a safe external database location is set up.
 - Handoff: Shivani's Part 3 PR (#10) has merged into main. This branch was rebased onto the latest main, conflicts in requirements.txt and docs/notes/notes.txt resolved, and the full test suite rerun (53 tests passed) before final production deployment and the demonstration video.
+
+
+Week of Oct 12, 2026 — Rishabh (A5.1 Part 2 — Final Production Deployment)
+
+- Deployed merged main (PR #10 + PR #11) to the existing PythonAnywhere site
+  (lingao5.pythonanywhere.com); no new repo or web app created.
+- Installed django-allauth==65.19.7 into the production virtualenv via
+  requirements.txt; ran migrations for account, sites, and socialaccount apps.
+- Updated the production Sites framework record (SITE_ID=1) from the Django
+  default "example.com" to "lingao5.pythonanywhere.com", required for
+  allauth's callback and email flows to reference the correct domain.
+- Registered the production Google OAuth redirect URI
+  (https://lingao5.pythonanywhere.com/accounts/google/login/callback/)
+  alongside the existing localhost URI on the same Google Cloud OAuth
+  client; added GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET to
+  the production .env (values only, never committed).
+- Ran collectstatic under production settings; reloaded the web app.
+- Verified in production:
+  - Successful Google OAuth login and signup round trip.
+  - Cancelled Google login handled gracefully via allauth's default
+    cancellation page (no server error).
+  - Traditional username/password signup, login, and logout still work
+    after the allauth integration.
+  - Anonymous navigation (Home/Login/Sign Up) vs authenticated navigation
+    (Plan Items/Analytics/Reports/Logout) both render correctly.
+  - Anonymous requests to a private page (/planitems/) and a protected
+    API (/planitems/api/plan-items/) both return 302 to /login/.
+  - The public API (/api/summary/) remains publicly accessible (200,
+    JSON, no login) after all the above changes.
+  - Both Vega-Lite chart pages (/charts/category-summary/,
+    /charts/activity-over-time/) render with live production data.
+- Screenshots: docs/screenshots/a5/rishabh_part2/.
+- Handoff: production deployment and OAuth verification complete.
+  Remaining: team demonstration video.
