@@ -1,0 +1,3 @@
+Model No.,Model,Parameters (B),Estimated FP16 Weights (GB),Estimated FP32 Weights (GB),Total RAM (GB),Available RAM (GB),Status,Notes
+4,microsoft/Phi-3.5-mini-instruct,3.8,7.6,15.2,15.86,7.44,Not run - resource feasibility assessment,Memory estimate only; model not downloaded or executed. Additional inference memory required.
+5,Qwen/Qwen3-8B,8.2,16.4,32.8,15.86,7.44,Not run - resource feasibility assessment,Memory estimate only; model not downloaded or executed. Additional inference memory required.

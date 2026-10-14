@@ -1,0 +1,149 @@
+Model,Test ID,Status,Response,Response Time (s),Quantization,Backend,Prompt Mode,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Evaluation Notes
+Qwen/Qwen3-8B,T1,Success,"Loading model... 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b11580-4413a1924
+model      : D:\HuggingFace\gguf\Qwen3-8B-Q4_K_M.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> You are CozyDay, a helpful daily planning assistant. Use only the information provided by the user. Give realistic, concise, actionable planning advice. Do not invent deadlines or appointments. Use exactly these three headings:
+Priority:
+Schedule:
+Reason:
+
+/no_think
+User request:
+I need to finish a report due tomorrow, buy groceries, and clean my room. Which task should I prioritize and why?
+
+Assistant response:
+
+Priority: Finish the report due tomorrow  
+Schedule: Work on the report first in the morning, then go grocery shopping in the afternoon, and clean your room in the evening  
+Reason: The report has a strict deadline, so it should be addressed first to avoid last-minute stress. Grocery shopping and cleaning can be done after the report is completed, as they are less time-sensitive.
+
+[ Prompt: 266.8 t/s | Generation: 29.1 t/s ]
+
+
+Exiting...",10.79,GGUF Q4_K_M,llama.cpp CPU,/no_think requested,,5.0,4.0,5.0,14.0,"Correct priority, clear plan and explanation."
+Qwen/Qwen3-8B,T2,Success,"Loading model... 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b11580-4413a1924
+model      : D:\HuggingFace\gguf\Qwen3-8B-Q4_K_M.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> You are CozyDay, a helpful daily planning assistant. Use only the information provided by the user. Give realistic, concise, actionable planning advice. Do not invent deadlines or appointments. Use exactly these three headings:
+Priority:
+Schedule:
+Reason:
+
+/no_think
+User request:
+I have a meeting from 2 PM to 3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. Suggest a realistic schedule starting at 12 PM.
+
+Assistant response:
+
+Priority:  
+Complete the assignment before the meeting to avoid time conflicts.
+
+Schedule:  
+12:00 PM - 1:00 PM: Free time (rest or light tasks)  
+1:00 PM - 2:00 PM: Workout  
+2:00 PM - 3:00 PM: Meeting  
+3:00 PM - 5:00 PM: Work on assignment  
+5:00 PM: Assignment due
+
+Reason:  
+This schedule ensures the assignment is completed before the meeting, the workout is scheduled during a less busy time, and all tasks are completed within the available time frame without overlap or rush.
+
+[ Prompt: 351.6 t/s | Generation: 29.1 t/s ]
+
+
+Exiting...",13.02,GGUF Q4_K_M,llama.cpp CPU,/no_think requested,,3.0,2.0,5.0,10.0,Workout duration incorrect; explanation contradicts schedule.
+Qwen/Qwen3-8B,T3,Success,"Loading model... 
+
+▄▄ ▄▄
+██ ██
+██ ██  ▀▀█▄ ███▄███▄  ▀▀█▄    ▄████ ████▄ ████▄
+██ ██ ▄█▀██ ██ ██ ██ ▄█▀██    ██    ██ ██ ██ ██
+██ ██ ▀█▄██ ██ ██ ██ ▀█▄██ ██ ▀████ ████▀ ████▀
+                                    ██    ██
+                                    ▀▀    ▀▀
+
+build      : b11580-4413a1924
+model      : D:\HuggingFace\gguf\Qwen3-8B-Q4_K_M.gguf
+ftype      : Q4_K - Medium
+modalities : text
+
+available commands:
+  /exit or Ctrl+C     stop or exit
+  /regen              regenerate the last response
+  /clear              clear the chat history
+  /read <file>        add a text file
+  /glob <pattern>     add text files using globbing pattern
+
+
+
+> You are CozyDay, a helpful daily planning assistant. Use only the information provided by the user. Give realistic, concise, actionable planning advice. Do not invent deadlines or appointments. Use exactly these three headings:
+Priority:
+Schedule:
+Reason:
+
+/no_think
+User request:
+Today I need to study for 3 hours, prepare a presentation for 2 hours, reply to emails for 30 minutes, and attend class from 1 PM to 3 PM. I am available from 9 AM to 6 PM. Help me plan my day with short breaks.
+
+Assist ... (truncated)
+Priority:  
+Study for 3 hours and prepare presentation for 2 hours are your top priorities due to their time commitment and importance.
+
+Schedule:  
+9:00 AM - 11:00 AM: Study  
+11:00 AM - 11:30 AM: Short break  
+11:30 AM - 1:00 PM: Prepare presentation  
+1:00 PM - 3:00 PM: Attend class  
+3:00 PM - 3:30 PM: Short break  
+3:30 PM - 5:30 PM: Study or presentation (flexible time)  
+5:30 PM - 6:00 PM: Reply to emails  
+
+Reason:  
+This schedule balances focused work with short breaks to maintain productivity and avoid burnout. Class time is scheduled first to avoid conflicts, and flexible time is provided for tasks that can be adjusted. Emails are handled at the end to minimize distractions.
+
+[ Prompt: 352.9 t/s | Generation: 29.0 t/s ]
+
+
+Exiting...",14.94,GGUF Q4_K_M,llama.cpp CPU,/no_think requested,,3.0,2.0,5.0,10.0,"All tasks identified, but study/presentation allocation ambiguous."

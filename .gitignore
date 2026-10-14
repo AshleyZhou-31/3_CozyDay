@@ -5,3 +5,22 @@ __pycache__/
 .idea/
 .env
 staticfiles/
+
+# Hugging Face model weights and secrets
+*.bin
+*.safetensors
+*.pt
+.ipynb_checkpoints/
+*.pyc
+
+# Local AI research drafts and backups
+/llm-test/ai_prototype_clean.ipynb
+/llm-test/ai_prototype_final_review.ipynb
+/llm-test/ai_prototype_ready.ipynb
+/llm-test/ai_prototype_team.ipynb
+/llm-test/notebook_backups/
+
+# Additional model weights and local caches
+*.gguf
+*.ggml
+/llm-test/.cache/
