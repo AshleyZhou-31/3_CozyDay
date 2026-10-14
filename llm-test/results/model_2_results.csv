@@ -1,10 +1,10 @@
-Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
 Qwen/Qwen2.5-0.5B-Instruct,T1,Success,"To prioritize your tasks effectively, start with the most urgent one first. Since you have several important tasks (report completion, buying groceries, and cleaning), prioritizing would be:
 
 1. **Buy Groceries**: This is the next step as it's crucial for maintaining your health and financial stability.
 2. **Report Completion**: Once you've bought groceries, focus on finishing your report. This will ensure that all critical work gets done before moving on to other tasks.
 
-By starting with the grocery shopping, you can then move on to completing your report without feeling overwhelmed. This approach ensures that both immediate needs and long-term goals are met efficiently.",6.97,129,False,,2.0,2.0,0.0,4.0
+By starting with the grocery shopping, you can then move on to completing your report without feeling overwhelmed. This approach ensures that both immediate needs and long-term goals are met efficiently.",6.97,129,False,,2.0,2.0,0.0,4.0,Not reported,Transformers,Baseline (see notebook),
 Qwen/Qwen2.5-0.5B-Instruct,T2,Success,"**Priority:** Prioritize tasks based on urgency and importance.
 
 **Reason:** To ensure efficient use of time while maintaining a balanced workload across all activities.
@@ -22,7 +22,7 @@ Qwen/Qwen2.5-0.5B-Instruct,T2,Success,"**Priority:** Prioritize tasks based on u
 - **9 PM - 10 PM**: Late-night work or personal time.
 - **10 PM - 11 PM**: Bedtime.
 
-This schedule balances meetings, assignments, workouts, and personal time effectively, ensuring a productive day without overwhelming any aspect of your life.",12.07,230,False,,1.0,0.0,3.0,4.0
+This schedule balances meetings, assignments, workouts, and personal time effectively, ensuring a productive day without overwhelming any aspect of your life.",12.07,230,False,,1.0,0.0,3.0,4.0,Not reported,Transformers,Baseline (see notebook),
 Qwen/Qwen2.5-0.5B-Instruct,T3,Success,"**Priority:** Schedule
 
 **Reason:** To ensure that you have enough time to manage all your tasks effectively without feeling overwhelmed.
@@ -43,4 +43,4 @@ Qwen/Qwen2.5-0.5B-Instruct,T3,Success,"**Priority:** Schedule
 
 **Total Time Spent on Short Breaks:** 75 minutes (5+10+15+15+30 = 85 minutes)
 
-This schedule allows you to manage your workload efficiently while maintaining a healthy balance between studying, preparing presentations, responding to emails, and attending classes.",10.64,191,False,,2.0,1.0,2.0,5.0
+This schedule allows you to manage your workload efficiently while maintaining a healthy balance between studying, preparing presentations, responding to emails, and attending classes.",10.64,191,False,,2.0,1.0,2.0,5.0,Not reported,Transformers,Baseline (see notebook),

@@ -21,3 +21,7 @@ six==1.17.0
 sqlparse==0.6.0
 urllib3==2.8.0
 PyJWT==2.15.1
+
+# AI notebook baseline dependencies
+torch>=2.3,<3
+transformers>=4.46,<6

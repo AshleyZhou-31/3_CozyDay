@@ -1,4 +1,4 @@
-Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
 HuggingFaceTB/SmolLM2-135M-Instruct,T1,Success,"To prioritize your tasks, let's break down the tasks into categories:
 
 1. **Cleaning**: This is the most important task, as it directly impacts your overall progress and satisfaction with your report. It's essential to complete this task as soon as possible to ensure a smooth and efficient completion.
@@ -11,7 +11,7 @@ Now, let's prioritize these tasks:
 
 - **Cleaning**: Focus on completing this task as soon as possible, as it's the most critical step in the process.
 - **Research**: Focus on reviewing and refining your report, as this task is essential for ensuring that your report meets the required standards.
-- **Reviewing and editing**: Focus on reviewing and refining your report, as this task is crucial for ensuring that it",7.37,256,True,,1.0,1.0,0.0,2.0
+- **Reviewing and editing**: Focus on reviewing and refining your report, as this task is crucial for ensuring that it",7.37,256,True,,1.0,1.0,0.0,2.0,Not reported,Transformers,Baseline (see notebook),
 HuggingFaceTB/SmolLM2-135M-Instruct,T2,Success,"To create a realistic schedule, let's break down the meeting, assignment, and workout into manageable chunks.
 
 **Meeting:**
@@ -26,7 +26,7 @@ HuggingFaceTB/SmolLM2-135M-Instruct,T2,Success,"To create a realistic schedule, 
 - 7:00 PM: Review the assignment details, including any specific requirements, and any deadlines.
 - 8:00 PM: Schedule the assignment for 7 PM, ensuring the assignment is completed on time.
 - 9:00 PM: Review the assignment details, including any specific requirements, and any deadlines.
-- 10:00 PM:",7.54,256,True,,1.0,0.0,0.0,1.0
+- 10:00 PM:",7.54,256,True,,1.0,0.0,0.0,1.0,Not reported,Transformers,Baseline (see notebook),
 HuggingFaceTB/SmolLM2-135M-Instruct,T3,Success,"To plan your day efficiently, let's break it down into manageable chunks. First, allocate 3 hours for studying, preparing a presentation, and responding to emails. This will give you a good balance between studying, preparing, and responding.
 
 Next, allocate 2 hours for attending class from 1 PM to 3 PM. This will give you a chance to review your notes, practice your presentation, and get a feel for the class.
@@ -43,4 +43,4 @@ To make the most of your breaks, consider the following:
 
 - Take 10-15 minutes to review your notes and practice your presentation.
 - Take 10-15 minutes to practice your email response.
-- Take 10-15 minutes to review your class",7.71,256,True,,2.0,1.0,0.0,3.0
+- Take 10-15 minutes to review your class",7.71,256,True,,2.0,1.0,0.0,3.0,Not reported,Transformers,Baseline (see notebook),
