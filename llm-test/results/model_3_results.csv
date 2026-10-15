@@ -1,0 +1,31 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+Qwen/Qwen3-1.7B,T1,Success,"<think>
+Okay, the user needs to finish a report due tomorrow, buy groceries, and clean their room. Let me break this down.
+
+First, the report is due tomorrow, so that's a deadline. The groceries are a regular task, maybe not urgent. Cleaning the room is also a regular task, but maybe not as urgent as the report. 
+
+Priority usually depends on urgency and importance. The report is urgent because it's due the next day. The other tasks are less urgent. But maybe the user has to do all three. 
+
+I should prioritize the report first because it's the most critical. Then, after that, handle the cleaning and groceries. The reason would be the deadline for the report. 
+
+Wait, but the user might not have time to do all three. So the priority is the report, then the cleaning, then groceries. The schedule would be morning for the report, then cleaning, then groceries. The reason is the deadline and the need to focus on the report first.
+</think>
+
+Priority: Report  
+Reason: The report is due tomorrow, making it the most urgent task.  
+
+Schedule:  
+- 8:00 AM: Start drafting the report (focus on key sections).  
+- 10:00 AM:",39.43,256,True,,3.0,3.0,2.0,8.0,Not reported,Transformers,Baseline (see notebook),
+Qwen/Qwen3-1.7B,T2,Success,"<think>
+Okay, let's see. The user has a meeting from 2 PM to 3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. They want a realistic schedule starting at 12 PM.
+
+First, I need to break down each task. The meeting is from 2 to 3 PM, so that's a 1-hour slot. The assignment is due at 5 PM and needs 2 hours, so that's from 3 PM to 5 PM. The workout is 30 minutes, so maybe around 1 PM or 2 PM. Wait, the meeting is at 2 PM, so the workout could be in the morning. But the user wants the schedule starting at 12 PM. Let me map this out.
+
+Starting at 12 PM, the first thing is probably the workout. But the user might need to prioritize. The assignment is due at 5 PM, so they need to finish it by 5 PM. The meeting is at 2 PM, so they need to be there. The workout is 30 minutes, so maybe 12:30 PM? But the meeting is at 2 PM, so maybe the",40.38,256,True,,1.0,1.0,0.0,2.0,Not reported,Transformers,Baseline (see notebook),
+Qwen/Qwen3-1.7B,T3,Success,"<think>
+Okay, let's see. The user wants to plan their day from 9 AM to 6 PM with specific tasks. They need to study for 3 hours, prepare a presentation for 2 hours, reply to emails for 30 minutes, and attend class from 1 PM to 3 PM. They also mentioned short breaks.
+
+First, I need to prioritize the tasks. Study and presentation are probably the most important. Then emails, and then class. Wait, the class is from 1 PM to 3 PM, so that's a block of 2 hours. The user needs to attend class, so that's a must. But they also have to study and prepare a presentation. Let me map out the time.
+
+Starting at 9 AM. Study for 3 hours. Let's say 9-12 PM. Then prepare the presentation for 2 hours, so 12-2 PM. Then emails for 30 minutes, maybe 2-2:30 PM. Then class from 1 PM to 3 PM. Wait, but the class is from 1 PM to 3 PM, which is 2 hours. So if the user is studying until 12 PM, then preparing the presentation",39.88,256,True,,1.0,1.0,0.0,2.0,Not reported,Transformers,Baseline (see notebook),

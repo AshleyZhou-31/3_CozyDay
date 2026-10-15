@@ -1,0 +1,32 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+Qwen/Qwen3-8B,T1,Success,"Priority: Finish the report  
+Schedule: Work on the report first this morning, then go grocery shopping in the afternoon, and clean your room in the evening.  
+Reason: The report is due tomorrow, so it has the most urgent deadline. Completing it first ensures you meet the deadline and frees up time for other tasks later.",87.79,68,False,,5.0,5.0,5.0,15.0,None (FP16),Transformers 4.57.6 / Colab Tesla T4 GPU + CPU offload,Baseline (SYSTEM_INSTRUCTION; thinking disabled),Instruction 5: tasks and due date respected. Quality 5: sensible priority and actionable sequence; loose time-of-day labels are illustrative. Format 5: three clear headings. 68 tokens.
+Qwen/Qwen3-8B,T2,Success,"Priority:  
+- Complete the 2-hour assignment  
+- Attend the 2 PM meeting  
+- Fit in the 30-minute workout  
+
+Schedule:  
+- 12:00 PM – 1:00 PM: Free time (rest or light task)  
+- 1:00 PM – 2:00 PM: Prepare for and attend the meeting  
+- 2:00 PM – 3:00 PM: Meeting  
+- 3:00 PM – 4:00 PM: Work on the assignment  
+- 4:00 PM – 4:30 PM: Workout  
+- 4:30 PM – 5:00 PM: Finalize assignment  
+
+Reason:  
+This schedule allows for a smooth transition between tasks, ensures the meeting is attended, and provides enough time to complete the assignment before its deadline. The workout is scheduled after the meeting to avoid fatigue during focused work.",252.65,198,False,,2.0,2.0,5.0,9.0,None (FP16),Transformers 4.57.6 / Colab Tesla T4 GPU + CPU offload,Baseline (SYSTEM_INSTRUCTION; thinking disabled),Instruction 2: assignment requiring 2h receives only 1h work + 30m finalization; redundant 1-2 PM meeting preparation. Quality 2: unworkable time allocation despite meeting/workout slots. Format 5: three clear headings. 198 tokens.
+Qwen/Qwen3-8B,T3,Success,"Priority:  
+Study for 3 hours, prepare presentation for 2 hours, reply to emails, and attend class from 1 PM to 3 PM.
+
+Schedule:  
+9:00 AM – 11:00 AM: Study  
+11:00 AM – 11:15 AM: Break  
+11:15 AM – 1:00 PM: Prepare presentation  
+1:00 PM – 3:00 PM: Attend class  
+3:00 PM – 3:30 PM: Reply to emails  
+3:30 PM – 6:00 PM: Free time or additional study
+
+Reason:  
+This schedule balances focused work with short breaks to maintain productivity. The class is scheduled during the afternoon when energy may be lower, and the email task is kept brief to avoid burnout. Free time allows for rest or flexibility.",236.79,186,False,,3.0,2.0,5.0,10.0,None (FP16),Transformers 4.57.6 / Colab Tesla T4 GPU + CPU offload,Baseline (SYSTEM_INSTRUCTION; thinking disabled),"Instruction 3: study only 2h specified vs 3h required, presentation 1h45m vs 2h; optional extra study does not guarantee completion. Quality 2: time plan incomplete. Format 5: three clear headings. 186 tokens."

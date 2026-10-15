@@ -1,0 +1,45 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+microsoft/Phi-3.5-mini-instruct,T1,Success,"Priority: Finish the report due tomorrow
+
+Schedule:
+1. Dedicate the first 2-3 hours of your day to work on the report. Break it down into smaller tasks if necessary, such as research, writing, and reviewing.
+2. Take a short break (15-30 minutes) to refresh your mind.
+3. After completing the report, allocate time for grocery shopping. Aim to shop during off-peak hours to avoid crowds and save time.
+4. Once groceries are done, spend the remaining time of your day cleaning your room.
+
+Reason:
+The report is due tomorrow, which makes it the most time-sensitive task. Prioritizing it ensures that you meet the deadline and avoid any potential penalties or negative impacts on your work. Completing the report first will also provide a sense of accomplishment and reduce stress, allowing you to focus better on the subsequent tasks. After the report, grocery shopping can be done relatively quickly, and cleaning your room can be a more relaxing activity to conclude your day.",10.21,245,False,,4.0,4.0,5.0,13.0,None (FP16),Transformers 4.57.6 / Colab Tesla T4 GPU,Baseline (SYSTEM_INSTRUCTION),"Instruction 4: all tasks addressed, but report duration estimated without evidence. Quality 4: sensible order; unsupported 2-3h estimate. Format 5: all three headings complete. Generated 245/256 tokens."
+microsoft/Phi-3.5-mini-instruct,T2,Success,"Priority:
+1. Assignment due at 5 PM
+2. 30-minute workout
+3. Meeting from 2 PM to 3 PM
+
+Schedule:
+- 12:00 PM - 2:00 PM: Work on the assignment (2 hours needed)
+- 2:00 PM - 2:30 PM: Prepare for the meeting (e.g., review notes, gather materials)
+- 2:30 PM - 3:00 PM: Attend the meeting
+- 3:00 PM - 3:30 PM: Short break and transition time
+- 3:30 PM - 4:00 PM: Continue working on the assignment
+- 4:00 PM - 4:30 PM: 30-minute workout
+- 4:30 PM - 5:00 PM: Finalize and submit the assignment
+
+Reason:
+This schedule prioritizes the assignment due at 5 PM, ensuring it receives the necessary 2 hours of focused work. The workout is scheduled after the meeting to provide a break and a",10.61,256,True,,2.0,2.0,4.0,8.0,None (FP16),Transformers 4.57.6 / Colab Tesla T4 GPU,Baseline (SYSTEM_INSTRUCTION),"Instruction 2: meeting specified 2-3 PM is wrongly shortened to 2:30-3 PM, with extra assignment time. Quality 2: schedule conflicts with fixed meeting. Format 4: all headings present but Reason truncated. Reached 256-token limit."
+microsoft/Phi-3.5-mini-instruct,T3,Success,"Priority:
+1. Attend class (1 PM - 3 PM)
+2. Study for 3 hours
+3. Prepare presentation for 2 hours
+4. Reply to emails for 30 minutes
+
+Schedule:
+- 9:00 AM - 11:00 AM: Study for 2 hours
+- 11:00 AM - 11:15 AM: Short break (30 minutes)
+- 11:15 AM - 1:00 PM: Study for 1 hour and 45 minutes
+- 1:00 PM - 3:00 PM: Attend class
+- 3:00 PM - 3:15 PM: Short break (15 minutes)
+- 3:15 PM - 5:15 PM: Prepare presentation for 2 hours
+- 5:15 PM - 5:45 PM: Reply to emails for 30 minutes
+- 5:45 PM - 6:00 PM: Short break (15 minutes)
+
+Reason:
+The schedule prioritizes attending class as",10.62,256,True,,2.0,2.0,4.0,8.0,None (FP16),Transformers 4.57.6 / Colab Tesla T4 GPU,Baseline (SYSTEM_INSTRUCTION),"Instruction 2: requested 3h study becomes 3h45m and break labeled 30m occupies 15m. Quality 2: inaccurate time allocation. Format 4: headings present, Reason truncated. Reached 256-token limit."
