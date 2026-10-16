@@ -1,0 +1,99 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+Qwen/Qwen3-4B,T1,Success,"<think>
+Okay, the user has three tasks: finish a report due tomorrow, buy groceries, and clean their room. They need help prioritizing. Let me think about each task's urgency and importance.
+
+First, the report is due tomorrow. That's a deadline, so it's definitely urgent. If they don't finish it, they might face consequences like a bad grade or missing the deadline. The report is important for their academic or professional standing. 
+
+Next, buying groceries is necessary for daily life. If they don't do it, they might not have food, but it's not an immediate crisis. However, if they skip it, they might have to go without, which could affect their well-being. But compared to the report, it's less urgent.
+
+Cleaning the room is a task that can be done at any time. It's important for hygiene and comfort, but not as urgent as the report. If they don't clean it, it's just a mess, but not a critical issue.
+
+So the priority should be the report. It's the most urgent and important task. Then, groceries next because they need to be done to avoid missing out on food. Cleaning the room can be done later, maybe after the report is done or when they have",17.71,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Zero-shot,Think block never closes within the 256-token budget; no Priority/Schedule/Reason output produced at all (enable_thinking not disabled)
+Qwen/Qwen3-4B,T2,Success,"<think>
+Okay, the user needs a realistic schedule starting at 12 PM. Let's break down their tasks. They have a meeting from 2 PM to 3 PM, an assignment due at 5 PM that takes 2 hours, and a 30-minute workout. 
+
+First, I should start by allocating time blocks. Starting at 12 PM, maybe they can do something before the meeting. The workout is 30 minutes, so maybe schedule that first thing. But wait, the user might need to get ready for the meeting. Let me check the timing.
+
+If the meeting is at 2 PM, they need to get ready by 1:30 PM. But the workout is 30 minutes. So maybe do the workout at 12 PM to 12:30 PM. Then, after that, they can have a break. Then from 12:30 PM to 2 PM, they can do something else. Wait, but the meeting is at 2 PM. So maybe after the workout, they can work on the assignment. But the assignment is due at 5 PM, which is 2 hours. So they need to allocate 2 hours before 5 PM. Let's",15.76,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Zero-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T3,Success,"<think>
+Okay, the user needs help planning their day. Let me start by understanding their requirements. They have specific tasks: study for 3 hours, prepare a presentation for 2 hours, reply to emails for 30 minutes, and attend class from 1 PM to 3 PM. Their available time is from 9 AM to 6 PM.
+
+First, I should list all the tasks and the time allocated. The total time needed is 3 + 2 + 0.5 + 2 = 7.5 hours. The available time is 9 hours (from 9 AM to 6 PM). That leaves 1.5 hours for breaks and other activities. 
+
+Next, I need to schedule the tasks in a logical order. The class is at 1 PM to 3 PM, so that's a fixed block. The user might want to do the most demanding tasks first. Study for 3 hours and presentation for 2 hours are the main ones. Maybe start with study in the morning, then presentation, then emails. But need to fit in the class in the middle.
+
+Wait, the class is from 1 PM to 3 PM. So the user needs to be free before that. Let me check the timing",15.73,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Zero-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T1,Success,"<think>
+Okay, the user has three tasks: finish a report due tomorrow, buy groceries, and clean their room. They need help prioritizing.
+
+First, the report is due tomorrow, so that's urgent. It's a deadline, so it should be the top priority. Then, groceries are necessary for daily life, so that's important but not as urgent. Cleaning the room is a personal task, maybe less urgent unless it's affecting their well-being.
+
+Wait, but the user might not have considered the dependencies. For example, if they need to clean the room before going out, but the report is the main task. Also, groceries are essential for the day, so maybe they should do that first to avoid missing meals. But the report is the most critical because it's a deadline. 
+
+I should structure the answer with Priority, Schedule, and Reason. The report is the priority because of the deadline. Then schedule groceries next, maybe in the morning, and cleaning after. The reason is that the report is time-sensitive, so it's first. But maybe the user needs to balance between the report and groceries. However, the user didn't mention any conflicts, so I'll stick to the given info.
+</think>
+
+Priority: Finish the report due tomorrow  
+",15.73,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,One-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T2,Success,"<think>
+Okay, the user has a meeting from 2 PM to 3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. They want a realistic schedule starting at 12 PM. Let me break this down.
+
+First, the meeting is at 2 PM, so I need to make sure they have time before that. The assignment is due at 5 PM, which is two hours long. The workout is 30 minutes. Let me see how to fit these in.
+
+Starting at 12 PM, maybe they can do the workout first. That's 12 PM to 12:30 PM. Then, after the workout, they can work on the assignment. But the assignment needs two hours. If they start at 12:30 PM, they'd finish at 2:30 PM, which is after the meeting. That might not work. Wait, the meeting is from 2 PM to 3 PM. So maybe they need to start the assignment earlier.
+
+Alternatively, maybe the workout can be after the meeting. But the user wants to start at 12 PM. Let me think again. If they start the assignment at 12",15.77,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,One-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T3,Success,"<think>
+Okay, the user has a lot to do today. Let me start by listing all the tasks they mentioned. They need to study for 3 hours, prepare a presentation for 2 hours, reply to emails for 30 minutes, and attend class from 1 PM to 3 PM. Their available time is from 9 AM to 6 PM.
+
+First, I should prioritize the tasks based on deadlines or importance. The class is from 1 PM to 3 PM, so that's a fixed time slot. The user probably needs to attend that first. Then, the other tasks can be scheduled around that.
+
+Let me check the time. From 9 AM to 6 PM is 9 hours. The class takes 2 hours, so that leaves 7 hours for the other tasks. The study and presentation are 5 hours total, plus 30 minutes for emails. That adds up to 5.5 hours. So there's enough time if scheduled properly.
+
+I need to make sure the class is scheduled first. Then, the other tasks can be split into blocks. Maybe start with study, then presentation, then emails, and then the class. But wait, the class is at 1 PM, so the study and presentation",15.66,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,One-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T1,Success,"<think>
+Okay, the user has three tasks: finish a report due tomorrow, buy groceries, and clean their room. They need help prioritizing. Let me break this down.
+
+First, the report is due tomorrow, so that's a deadline. It's probably the most urgent because missing it could have consequences. Then there's groceries, which is a daily necessity but not time-sensitive. Cleaning the room is a personal task, maybe less urgent unless it's affecting their well-being.
+
+The user might be trying to manage their time efficiently without overwhelming themselves. They might not have a clear order of tasks. The key is to prioritize based on urgency and impact. The report is the top priority because of the deadline. Then, groceries are necessary but can be done after the report. Cleaning the room is more flexible. 
+
+Wait, but maybe the user is worried about the report taking too much time, so they need to allocate time for it first. Also, groceries might be something they can do in the morning after the report. Cleaning the room could be done in the evening. 
+
+I should structure the answer with the three headings: Priority, Schedule, Reason. The priority is the report. Then schedule the report first, then groceries, then cleaning. The reason is the deadline",15.99,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Few-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T2,Success,"<think>
+Okay, the user has a meeting from 2 PM to 3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. They want a realistic schedule starting at 12 PM. Let me break this down.
+
+First, the meeting is at 2 PM, so that's a fixed time. The assignment is due at 5 PM, which is two hours long. The workout is 30 minutes. The user probably wants to maximize their time without overlapping tasks. 
+
+Starting at 12 PM, maybe they can do the workout first. That's 12 PM to 12:30 PM. Then, after the workout, they can work on the assignment. But the assignment needs two hours. If they start at 12:30 PM, they'd finish at 2:30 PM, which is after the meeting. That's a problem because the meeting is from 2 PM to 3 PM. So maybe they need to adjust.
+
+Alternatively, maybe the workout is after the meeting. Wait, the meeting is at 2 PM, so if they do the workout after the meeting, that would be 3 PM to 3:30 PM",15.84,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Few-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T3,Success,"<think>
+Okay, the user has a list of tasks and a time frame. Let me start by listing all the tasks: study for 3 hours, prepare a presentation for 2 hours, reply to emails for 30 minutes, and attend class from 1 PM to 3 PM. They're available from 9 AM to 6 PM.
+
+First, I need to prioritize these tasks. The class is from 1 PM to 3 PM, which is a fixed time slot. That should be a priority. Then, the study and presentation are both time-consuming, so maybe those should be scheduled first. The email reply is shorter, so it can be placed in between or at the end.
+
+Let me check the time. From 9 AM to 6 PM is 9 hours. The class takes 2 hours, so that leaves 7 hours for the other tasks. The study is 3 hours, presentation 2 hours, and emails 30 minutes. That adds up to 5.5 hours. So there's 1.5 hours left, which can be used for breaks or other tasks.
+
+Wait, the user mentioned short breaks. So I need to schedule breaks between tasks. Maybe after each major task, a 15",15.96,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Few-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T1,Success,"<think>
+Okay, the user has three tasks: finish a report due tomorrow, buy groceries, and clean their room. They need to prioritize which one. Let me break this down.
+
+First, the report is due tomorrow, so that's a deadline. It's probably the most urgent because missing it could have consequences. The user might be under pressure to meet that deadline. Then there's groceries, which is a daily necessity. If they don't buy groceries, they might not have food, which is important. Cleaning the room is more of a personal task, maybe less urgent unless it's affecting their daily life.
+
+But the user might not have a specific time frame mentioned. The previous examples had time constraints, like flights or appointments. Here, the user just says they need to do these three things. So, the priority should be based on urgency and impact. The report is due tomorrow, so that's the most urgent. Groceries are necessary for daily life, so that's important. Cleaning the room is more of a personal task, but maybe not as urgent unless it's a big mess.
+
+Wait, the user might be in a situation where they have limited time. If they have to do all three, which one is the most critical? The report is a",16.2,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Many-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T2,Success,"<think>
+Okay, the user has a meeting from 2 PM to 3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. They want a realistic schedule starting at 12 PM. Let me break this down.
+
+First, the meeting is at 2-3 PM, so that's a block of time. The assignment is due at 5 PM, which is two hours long. The workout is 30 minutes. The user is starting at 12 PM, so I need to fit these into the day.
+
+The meeting is in the afternoon, so maybe the user can do the workout and assignment before the meeting. But the assignment needs two hours. Let me check the time. If the meeting is at 2 PM, then from 12 PM to 2 PM is two hours. But the assignment is due at 5 PM, so maybe the user needs to start the assignment earlier. Wait, the assignment is due at 5 PM, so they need to finish it by then. If the assignment takes two hours, they need to start it by 3 PM. But the meeting is from 2-3 PM. So maybe the user can do the workout first,",16.2,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Many-shot,Think block never closes within the 256-token budget; no final answer produced
+Qwen/Qwen3-4B,T3,Success,"<think>
+Okay, the user has a lot to do today. Let me start by listing all the tasks: study for 3 hours, prepare a presentation for 2 hours, reply to emails for 30 minutes, and attend class from 1 PM to 3 PM. They're available from 9 AM to 6 PM. First, I need to prioritize these tasks. The class is at 1 PM to 3 PM, so that's a fixed time slot. The other tasks are more flexible.
+
+The user mentioned short breaks, so I should include those. Let me check the total time. The class is 2 hours, study is 3, presentation 2, emails 30 minutes. That's 3+2+0.5=5.5 hours. Plus the class, that's 7.5 hours. The available time is 9 AM to 6 PM, which is 9 hours. So there's 1.5 hours of buffer. That's enough for breaks and maybe some flexibility.
+
+The user might want to maximize productivity without overworking. The class is a fixed time, so that should be scheduled first. Then, the other tasks can be arranged around it. Let's see. From 9",16.17,256,True,,0,0,0,0,None (FP16),Transformers / Colab GPU,Many-shot,"Think block never closes within the 256-token budget; no final answer produced, even on the larger 4B model"

@@ -1,0 +1,131 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+google/gemma-2-2b-it,T1,Success,"## Priority: **Finish report**
+
+## Schedule: 
+* **Today:** Finish report.
+* **Tonight:** Buy groceries.
+* **Tomorrow:** Clean room.
+
+## Reason:  The report is due tomorrow, so it needs to be your top priority.  Cleaning your room and grocery shopping can be done later. 
+",502.62,71,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,"Correct priority, concise schedule, clear reasoning; all three sections present"
+google/gemma-2-2b-it,T2,Success,"## Priority:  Assignment Due
+
+## Schedule:
+
+* 12:00 PM - 1:00 PM:  Lunch and quick review of assignment materials
+* 1:00 PM - 2:00 PM:  Work on assignment
+* 2:00 PM - 3:00 PM:  Meeting
+* 3:00 PM - 4:30 PM:  Work on assignment
+* 4:30 PM - 5:00 PM:  Wrap up assignment, final touches
+
+## Reason:  Prioritize the assignment due at 5 PM.  Break down the work into manageable chunks to avoid feeling overwhelmed.  Schedule the workout and meeting in the afternoon to allow for a more relaxed pace. 
+",1235.48,164,False,,4,4,5,13,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Correct meeting/assignment timing but omits the 30-minute workout entirely
+google/gemma-2-2b-it,T3,Success,"## Priority: 
+1. **Study:** 3 hours
+2. **Presentation:** 2 hours
+3. **Emails:** 30 minutes
+
+## Schedule:
+* **9:00 AM - 9:30 AM:**  Study Session 1
+* **9:30 AM - 10:00 AM:**  Break (stretch, walk, coffee)
+* **10:00 AM - 12:00 PM:**  Study Session 2
+* **12:00 PM - 1:00 PM:**  Lunch Break
+* **1:00 PM - 3:00 PM:**  Class
+* **3:00 PM - 3:30 PM:**  Break (walk, quick errand)
+* **3:30 PM - 5:30 PM:**  Presentation Preparation
+* **5:30 PM - 6:00 PM:**  Emails
+
+## Reason: 
+This schedule prioritizes your most important tasks (study and presentation) in the morning and afternoon, leaving the evening for a lighter workload.  The breaks are short and allow for movement and mental rest.  This schedule allows for",1589.08,256,True,,4,4,4,12,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Study time 2.5h vs the requested 3h; Reason section cut off at the 256-token limit
+google/gemma-2-2b-it,T1,Success,"Priority: Finish the report due tomorrow
+Schedule:
+1. Finish the report due tomorrow.
+2. Buy groceries.
+3. Clean your room.
+Reason: The report has the most immediate deadline, so it should be prioritized. 
+
+
+",12.5,52,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,"Correct, concise, complete answer"
+google/gemma-2-2b-it,T2,Success,"Priority: Assignment due at 5 PM
+Schedule:
+1. 12:00 PM - 1:00 PM:  Workout
+2. 1:00 PM - 2:00 PM:  Work on assignment
+3. 2:00 PM - 3:00 PM: Meeting
+4. 3:00 PM - 5:00 PM:  Work on assignment
+Reason:  Prioritize the assignment due time and schedule the workout and meeting in a way that allows for a full 2 hours of work. 
+",23.24,124,False,,4,4,5,13,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,Workout given 1h instead of 30 min; assignment work over-allocated to 3h total
+google/gemma-2-2b-it,T3,Success,"Priority: Study for 3 hours
+Schedule:
+1. 9:00 AM - 10:00 AM: Study Session 1
+2. 10:00 AM - 10:30 AM: Break
+3. 10:30 AM - 12:30 PM: Study Session 2
+4. 12:30 PM - 1:00 PM: Lunch Break
+5. 1:00 PM - 3:00 PM: Class
+6. 3:00 PM - 3:30 PM:  Email Reply
+7. 3:30 PM - 4:30 PM:  Prepare Presentation
+8. 4:30 PM - 5:30 PM:  Study Session 3
+9. 5:30 PM - 6:00 PM:  Wrap up and Relax
+
+Reason:  This schedule allocates time for focused study sessions with breaks in between. It also incorporates the email reply and presentation preparation into your available time slots. 
+",37.33,233,False,,3,3,5,11,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,"Study given 4h and presentation only 1h, reversing the stated 3h/2h split, though structure stays clean"
+google/gemma-2-2b-it,T1,Success,"Priority: Finish report
+Schedule:
+1. Finish report (focus on it for a few hours today).
+2. Buy groceries.
+3. Clean your room.
+Reason:  A report due tomorrow is the most urgent task.  It needs to be completed before other tasks. 
+
+
+",31.35,62,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Correct, concise, complete answer"
+google/gemma-2-2b-it,T2,Success,"Priority: Workout
+Schedule:
+1. Workout: 12:00 PM - 12:30 PM
+2.  Lunch: 12:30 PM - 1:30 PM
+3.  Meeting: 2:00 PM - 3:00 PM
+4.  Assignment: 3:00 PM - 5:00 PM
+Reason:  Prioritize the workout first to get it out of the way. The meeting and assignment are scheduled back-to-back to maximize time. 
+
+
+",37.06,119,False,,3,3,5,11,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,Chooses Workout as priority over the actually time-critical assignment; invents an unprompted lunch block
+google/gemma-2-2b-it,T3,Success,"Priority: Study
+Schedule:
+1. 9:00 AM - 10:30 AM: Study
+2. 10:30 AM - 11:00 AM: Break
+3. 11:00 AM - 1:00 PM: Prepare presentation
+4. 1:00 PM - 3:00 PM: Class
+5. 3:00 PM - 3:30 PM: Break
+6. 3:30 PM - 4:00 PM: Reply to emails
+7. 4:00 PM - 6:00 PM: Study 
+Reason:  Prioritize study time, then break, then class, then emails, and finally study again. 
+
+
+",40.55,166,False,,4,4,5,13,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,Study slightly over at 3.5h; otherwise matches presentation/email/class constraints well
+google/gemma-2-2b-it,T1,Success,"Priority: Finish the report
+Schedule:
+1. Finish the report.
+2. Buy groceries.
+3. Clean your room.
+Reason: The report has a deadline, making it the most urgent task.  Grocery shopping and cleaning can be done at a later time. 
+",37.68,60,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,"Correct, concise, complete answer"
+google/gemma-2-2b-it,T2,Success,"Priority: Assignment due at 5 PM
+Schedule:
+1. 12:00 PM - 1:00 PM:  Lunch and quick review of the assignment.
+2. 1:00 PM - 2:00 PM:  Work on the assignment.
+3. 2:00 PM - 3:00 PM:  Meeting.
+4. 3:00 PM - 4:00 PM:  Workout.
+5. 4:00 PM - 5:00 PM:  Finish the assignment.
+Reason:  The assignment has a deadline, so it's prioritized. The meeting and workout are scheduled around it. 
+
+
+",52.07,151,False,,4,4,5,13,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Workout duration wrong (1h vs 30 min); invents an unprompted lunch/review block
+google/gemma-2-2b-it,T3,Success,"Priority: Study
+Schedule:
+1. Study: 9:00 AM - 12:00 PM (with a 15-minute break)
+2. Prepare presentation: 12:00 PM - 2:00 PM (with a 30-minute break)
+3. Emails: 2:00 PM - 2:30 PM
+4. Class: 2:30 PM - 3:00 PM
+5.  Relax/Free time: 3:00 PM - 6:00 PM
+Reason:  Prioritize study time, then break it down into manageable chunks with breaks.  The class time is fixed, and emails can be done in a short burst. 
+
+
+",54.24,162,False,,2,2,5,9,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Does not respect the fixed 1-3 PM class window at all (schedules class 2:30-3:00); major constraint violation despite clean formatting
