@@ -1,111 +1,80 @@
 Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
-Qwen/Qwen3-0.6B,T1,Success,"<think>
-Okay, the user has three tasks: finish a report due tomorrow, buy groceries, and clean their room. They want to know which one to prioritize. Let me think.
+Qwen/Qwen3-0.6B,T1,Success,"Priority: Schedule  
+Reason: The task of completing the report due tomorrow is the most urgent and important. It directly impacts your ability to focus on other tasks and may affect your overall well-being.  
 
-First, the report is due tomorrow. If they have to finish it, that's a critical task. But maybe they can't do it right now. Then there's the grocery shopping. That's a daily task, so maybe it's not as urgent. Cleaning the room is also a daily habit, so maybe not as urgent. 
-
-So, the priority would be the report. But wait, maybe the user can't finish it right now. But the question is about which task to prioritize. If they have to finish the report, that's a high-priority task. The other two are more routine. So the answer should be the report, explaining why. The schedule would include the report, and the reason is that it's a deadline. That makes sense.
-</think>
-
-Priority: Report  
-Reason: The report is a critical deadline that requires immediate attention. Other tasks (groceries and cleaning) are more routine and can be addressed later.  
-
+Schedule: Buy groceries and clean your room  
+Reason: While both tasks are important, they are less urgent than the report. Cleaning your room is a personal and relaxing task, and buying groceries is a necessary daily activity.",4.88,85,False,,2,2,2,6,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Priority field is mislabeled Schedule; duplicated Schedule/Reason headers with no real ordering; content touches all three tasks but format is confused
+Qwen/Qwen3-0.6B,T2,Success,"Priority:  
 Schedule:  
-- **Report**: Complete by tomorrow morning.  
-- **Groceries**: Arrange shopping by tomorrow afternoon.  
-- **",9.26,256,True,,3,3,3,9,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,"Visible think-block reasoning is sound, but the final Schedule section is cut off mid-sentence by the 256-token limit"
-Qwen/Qwen3-0.6B,T2,Success,"<think>
-Okay, let's see. The user has a meeting from 2 PM to 3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. They want a realistic schedule starting at 12 PM. 
+Reason:  
+12:00 PM - 2:00 PM: Meeting  
+5:00 PM - 7:00 PM: Assignment (2 hours)  
+3:00 PM - 3:30 PM: Workout (30 minutes)",2.72,64,False,,1,1,2,4,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Priority/Schedule/Reason left empty; meeting scheduled 12-2 PM instead of the fixed 2-3 PM; assignment scheduled to start after its own 5 PM deadline
+Qwen/Qwen3-0.6B,T3,Success,"Priority:
+Schedule:
+Reason:  
+- Study for 3 hours  
+- Prepare a presentation for 2 hours  
+- Reply to emails for 30 minutes  
+- Attend class from 1 PM to 3 PM  
 
-First, I need to account for all these events. The meeting is from 2 PM to 3 PM, so starting at 12 PM, that's 1 hour before the meeting. The assignment is due at 5 PM, which is 3 hours later. The workout is 30 minutes, so that's 1 hour later. 
-
-Wait, but the user wants the schedule starting at 12 PM. So the first thing is to set the time for the workout. Let me check the time zones. The workout is 30 minutes, so starting at 12 PM, that's 12:00 PM. Then the meeting is 2 PM to 3 PM, so that's 1 hour. The assignment is due at 5 PM, which is 3 hours later. 
-
-So the schedule would be: 12:00 PM (workout), 1:00 PM (meeting), 2:0",8.39,256,True,,0,0,0,0,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Entire 256-token budget consumed by think-block reasoning; no final answer ever produced (enable_thinking not disabled)
-Qwen/Qwen3-0.6B,T3,Success,"<think>
-Okay, let's see. The user wants to study for 3 hours, prepare a presentation for 2 hours, reply to emails for 30 minutes, and attend class from 1 PM to 3 PM. They're available from 9 AM to 6 PM. They need help planning their day with short breaks.
-
-First, I need to break down each task into manageable parts. Study for 3 hours, which is a lot. Maybe split into study sessions. Then prepare the presentation, which is 2 hours. Reply emails in 30 minutes. Attend class from 1 PM to 3 PM. 
-
-Wait, the user mentioned they are available from 9 AM to 6 PM. So the time frame is 9 AM to 6 PM, which is 12 hours. But they need to do tasks within that time. Let me check the tasks again. Study for 3 hours, prepare presentation for 2 hours, reply emails for 30 minutes, and attend class from 1 PM to 3 PM. 
-
-So the total time needed is 3+2+0.5+2=7.5 hours. But they have 12 hours available. That's a lot. Maybe they",8.48,256,True,,0,0,0,0,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Entire 256-token budget consumed by think-block reasoning; no final answer ever produced
-Qwen/Qwen3-0.6B,T1,Success,"<think>
-Okay, let's see. The user has three tasks: finish a report, buy groceries, and clean their room. They need to prioritize them. First, I should consider what's most urgent. Usually, the first thing to do is something that affects their immediate needs. 
-
-The report due tomorrow is a deadline. If they can't finish it, they might not have time for other tasks. So that's a high priority. Next, buying groceries. Even if the report is due, it's a necessary task to get the essentials. Then cleaning their room. 
-
-Wait, but maybe the order depends on the user's schedule. If they have time, they might do the report first, then groceries, then cleaning. But the user might want to do the tasks in the order that makes sense. The key is to prioritize based on the urgency and the impact on their daily routine. 
-
-So the priority would be the report first because it's a deadline. Then groceries, and finally cleaning. That way, they address the most critical needs first.
-</think>
-
-Priority: Report due tomorrow  
-Schedule: 1. Finish the report.  
-Reason: The report is a time-sensitive task that directly impacts the user's ability to complete their work.  
-
-Priority:",10.03,256,True,,3,3,4,10,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,"Reaches a complete Priority/Schedule/Reason answer after the think block, but trails off with a stray repeated Priority line at the end"
-Qwen/Qwen3-0.6B,T2,Success,"<think>
-Okay, let's see. The user has a meeting from 2 PM to 3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. They want a realistic schedule starting at 12 PM.
-
-First, I need to break down the tasks. The meeting is from 2 PM to 3 PM, so starting at 12 PM, that's 1 hour. Then the assignment due at 5 PM, which is 3 hours. The workout is 30 minutes. So adding those up: 1 hour (meeting) + 3 hours (assignment) + 30 minutes (workout) = 4 hours. But the user wants the schedule starting at 12 PM. Let me check the time again. Starting at 12 PM, adding 4 hours would be 4 PM. So the schedule would be 12 PM to 4 PM for the tasks. But I need to make sure the order is correct. The meeting is from 2 PM to 3 PM, so starting at 12 PM, that's 1 hour. Then the assignment from 5 PM, which is 3 hours. The workout is 3",10.29,256,True,,0,0,0,0,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,Entire 256-token budget consumed by think-block reasoning; no final answer
-Qwen/Qwen3-0.6B,T3,Success,"<think>
-Okay, let's see. The user has a schedule for studying, preparing a presentation, responding to emails, and attending class. They also mention they're available from 9 AM to 6 PM. They want short breaks. I need to break down their tasks into manageable parts with time allocations and short breaks.
-
-First, the study time is 3 hours. If they start at 9 AM, maybe they can fit that into their schedule. But since they need to attend class from 1 PM to 3 PM, they might need to adjust. Wait, the class is from 1 PM to 3 PM, so that's 2 hours. So the total time they have is 9 AM to 6 PM, which is 9 hours. But they have to cover study (3h), presentation (2h), emails (30m), and class (2h). Let me add those up: 3+2+0.5+2=7.5 hours. So they have 9 hours available. That leaves 1.5 hours for breaks. But the user wants short breaks. Maybe 15 minutes each? But the user might prefer more. Wait, the original answer had 15 minutes each.",10.28,256,True,,0,0,0,0,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,Entire 256-token budget consumed by think-block reasoning; no final answer
-Qwen/Qwen3-0.6B,T1,Success,"<think>
-Okay, the user has three tasks: finish a report, buy groceries, and clean the room. They need to prioritize them. Let me think about what's most important.
-
-First, the report due tomorrow. That's a deadline, so it's a high-priority task. The user might need to finish it before other things. Then, buying groceries. While important, maybe the report is more urgent. Cleaning the room is also important, but maybe the report is the top priority. I should check if there's any other factors. The user might have time constraints, but the report is the main deadline. So the priority would be the report first, then groceries and cleaning. That makes sense.
-</think>
-
-Priority: Report due tomorrow  
+Reason:  
+I will plan my day to ensure all tasks are completed within the available time frame, including short breaks to maintain productivity and prevent burnout.",3.19,77,False,,2,2,2,6,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Priority/Schedule left empty; just restates the four given tasks as a bullet list rather than assigning any times
+Qwen/Qwen3-0.6B,T1,Success,"Priority: Report due tomorrow  
 Schedule:  
 1. Finish the report.  
 2. Buy groceries.  
-3. Clean the room.  
-Reason: The report is a time-sensitive deadline, so it should be prioritized first. The other tasks can be scheduled in order of urgency or importance.",11.68,206,False,,5,4,5,14,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Falls under the 256-token limit for the first time; complete, correct, clearly structured answer"
-Qwen/Qwen3-0.6B,T2,Success,"<think>
-Okay, let's see. The user wants a realistic schedule starting at 12 PM. They have a meeting from 2 PM to 3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. 
-
-First, I need to break down the time. Starting at 12 PM, so the first thing is to account for the meeting. The meeting is from 2 PM to 3 PM, so that's 1 hour. Then the assignment due at 5 PM, which is 2 hours. The workout is 30 minutes. 
-
-Wait, but the user said the assignment needs 2 hours. So if the meeting is 1 hour, the assignment is 2 hours, and the workout is 30 minutes, that adds up to 1+2+0.3=3.3 hours. But starting at 12 PM, adding 3.3 hours would be 3:18 PM. But maybe the user wants to fit all tasks into the 12 PM window. 
-
-Wait, maybe I should adjust. Let me check again. The meeting is 2 PM to 3 PM, so that's 1 hour. The assignment",14.59,256,True,,0,0,0,0,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,Entire 256-token budget consumed by think-block reasoning; no final answer
-Qwen/Qwen3-0.6B,T3,Success,"<think>
-Okay, let's see. The user has a schedule of studying for 3 hours, preparing a presentation for 2 hours, responding to emails for 30 minutes, and attending class from 1 PM to 3 PM. They are available from 9 AM to 6 PM. They want a plan with short breaks.
-
-First, I need to break down each task into time blocks. The total time is 3+2+0.5+2 = 7.5 hours. But they have a 2-hour window. So, they need to fit these tasks within that time, including breaks.
-
-Starting with the class from 1 PM to 3 PM. That's 2 hours. Then the presentation and study. Let's see, if they start studying at 9 AM, they can do the 3-hour study session. But they need to account for breaks. Maybe a 10-minute break after studying. Then the presentation, which is 2 hours, can be done in the remaining time. Then the email response. 
-
-Wait, the user mentioned they are available from 9 AM to 6 PM. So the total time is 7 hours. Let me check the breakdown again. Study: 3h,",14.3,256,True,,0,0,0,0,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,Entire 256-token budget consumed by think-block reasoning; no final answer
-Qwen/Qwen3-0.6B,T1,Success,"<think>
-Okay, the user has three tasks: finish a report, buy groceries, and clean the room. They need to prioritize them. Let me think. First, the report is due tomorrow, so that's a deadline. Then, buying groceries is a daily task, and cleaning the room is also a daily habit. But since the report is due tomorrow, it's the most urgent. The other tasks are non-urgent. So the priority should be the report. The reason is that the report has a fixed deadline, making it the first priority. The other tasks can be scheduled later. I need to make sure the schedule is clear and concise.
-</think>
-
-Priority: Finish the report  
+3. Clean your room.  
+Reason: The report is a time-sensitive task, so it should be prioritized first.",3.08,48,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,"Correct, concise, complete answer"
+Qwen/Qwen3-0.6B,T2,Success,"Priority: Meeting from 2 PM to 3 PM  
 Schedule:  
-1. Finish the report in the morning.  
+1. 12:00 PM - 2:00 PM - Meeting.  
+2. 2:30 PM - 5:00 PM - Assignment.  
+3. 3:00 PM - 3:30 PM - Workout.  
+Reason: The schedule is flexible and accounts for the time constraints.",4.73,87,False,,2,2,4,8,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,"Meeting scheduled 12-2 PM instead of the fixed 2-3 PM, and that slot overlaps the 2:30-5 PM assignment block and the 3-3:30 PM workout block"
+Qwen/Qwen3-0.6B,T3,Success,"Priority: Study for 3 hours  
+Schedule:  
+1. Study for 3 hours.  
+2. Prepare a presentation for 2 hours.  
+3. Reply to emails for 30 minutes.  
+Reason: The time is fixed, so the flexible tasks are placed around it.",4.2,60,False,,2,2,5,9,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,Drops the fixed 1-3 PM class constraint entirely; restates study/presentation/email durations with no actual time-of-day schedule
+Qwen/Qwen3-0.6B,T1,Success,"Priority: Finish a report  
+Schedule:  
+1. Finish a report.  
 2. Buy groceries.  
-3. Clean the room.  
-Reason: The report has a fixed deadline, making it the most urgent task. The other tasks are non-urgent and can be scheduled later.",15.66,196,False,,5,4,5,14,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,"Complete, correct, clearly structured answer within budget"
-Qwen/Qwen3-0.6B,T2,Success,"<think>
-Okay, let's see. The user wants a realistic schedule starting at 12 PM. They have a meeting from 2-3 PM, an assignment due at 5 PM that needs 2 hours, and a 30-minute workout. 
+3. Clean your room.  
+Reason: The report is a critical task with a deadline, so it should be prioritized first.",6.18,50,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Correct, concise, complete answer"
+Qwen/Qwen3-0.6B,T2,Success,"Priority: Meeting from 2 PM to 3 PM  
+Schedule:  
+1. 12:00 PM – 2:00 PM (Meeting)  
+2. 2:00 PM – 4:00 PM (Assignment)  
+3. 4:00 PM – 4:30 PM (Workout)  
+Reason: The meeting and workout are scheduled to fit within the 2-hour window, while the assignment is placed after the meeting to account for the time difference.",8.0,107,False,,2,3,5,10,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Meeting still scheduled 12-2 PM instead of the fixed 2-3 PM, though assignment (2h) and workout (30m) durations are now correct and non-overlapping"
+Qwen/Qwen3-0.6B,T3,Success,"Priority: Study for 3 hours  
+Schedule:  
+1. Study for 3 hours.  
+2. Prepare a presentation for 2 hours.  
+3. Reply to emails for 30 minutes.  
+4. Attend class from 1 PM to 3 PM.  
 
-First, I need to break down the time. Starting at 12 PM, so the first thing is to account for the meeting. The meeting is from 2-3 PM, so that's 1 hour. Then the assignment due at 5 PM, which is 3 hours. The workout is 30 minutes. 
+Reason: The time is fixed and non-negotiable, so the breaks are scheduled to fit the total time.",7.35,81,False,,3,3,5,11,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Now includes the class constraint, but study/presentation/email still have no real time-of-day slots, just a duration list"
+Qwen/Qwen3-0.6B,T1,Success,"Priority: Finish the report  
+Schedule:  
+1. Finish the report.  
+2. Buy groceries.  
+3. Clean your room.  
+Reason: The report is a critical task with no fixed time, so it should be prioritized first. The other tasks can be scheduled in the remaining time.",9.58,62,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,"Correct, concise, complete answer"
+Qwen/Qwen3-0.6B,T2,Success,"Priority: Meeting  
+Schedule:  
+1. 12:00 PM - 2:00 PM (Meeting)  
+2. 2:00 PM - 4:00 PM (Assignment)  
+3. 4:00 PM - 4:30 PM (Workout)  
 
-Wait, but the user said the assignment needs 2 hours. So maybe the meeting is 1 hour, the assignment is 2 hours, and the workout is 30 minutes. So total time would be 1+2+0.5=3.5 hours. But the user wants a schedule starting at 12 PM. So the plan would be: 12-13 PM for meeting, 13-15 PM for assignment, 15-16 PM for workout. That makes sense. 
-
-I need to check if the time fits. The meeting is 1 hour, assignment 2 hours, workout",18.64,256,True,,0,0,0,0,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Entire 256-token budget consumed by think-block reasoning; no final answer
-Qwen/Qwen3-0.6B,T3,Success,"<think>
-Okay, let's see. The user has a schedule for studying, preparing a presentation, responding to emails, and attending class. They need to plan their day with short breaks. 
-
-First, I need to break down each task into time blocks. The user is available from 9 AM to 6 PM, which is 7 hours. The tasks are 3 hours study, 2 hours presentation, 30 minutes email, and 2 hours class. 
-
-Wait, adding all those up: 3 + 2 + 0.5 + 2 = 7.5 hours. That's exactly the available time. So the user has enough time. 
-
-But the user wants to include short breaks. So I should adjust the time to account for breaks. Let me check the original plan again. The user mentioned 3 hours study, 2 hours presentation, 30 minutes email, and 2 hours class. 
-
-If I add a 15-minute break between study and presentation, that would make the total time 3 + 2 + 0.5 + 2 = 7.5, plus 15 minutes = 8.5, which is over. Maybe a 10-minute break between study",19.23,256,True,,0,0,0,0,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Entire 256-token budget consumed by think-block reasoning; no final answer
+Reason: The meeting is scheduled first, followed by the assignment and workout, which are time-bound and fit within the 2-hour window.",11.48,95,False,,2,3,5,10,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Same 12-2 PM meeting-time error as few-shot; assignment and workout durations correct
+Qwen/Qwen3-0.6B,T3,Success,"Priority: Study for 3 hours  
+Schedule:  
+1. Study from 9:00 AM to 12:00 PM.  
+2. Prepare presentation from 12:00 PM to 1:30 PM.  
+3. Reply to emails from 1:30 PM to 3:00 PM.  
+4. Attend class from 3:00 PM to 5:00 PM.  
+Reason: Short breaks are included to maintain energy and productivity.",12.0,106,False,,2,2,5,9,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,"Attempts a real time-of-day schedule (study 9-12 correct); class moved to 3-5 PM instead of the fixed 1-3 PM, and emails given 1.5h instead of 30m"
