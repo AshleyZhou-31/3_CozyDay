@@ -1,0 +1,80 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+Qwen/Qwen3-0.6B,T1,Success,"Priority: Schedule  
+Reason: The task of completing the report due tomorrow is the most urgent and important. It directly impacts your ability to focus on other tasks and may affect your overall well-being.  
+
+Schedule: Buy groceries and clean your room  
+Reason: While both tasks are important, they are less urgent than the report. Cleaning your room is a personal and relaxing task, and buying groceries is a necessary daily activity.",4.88,85,False,,2,2,2,6,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Priority field is mislabeled Schedule; duplicated Schedule/Reason headers with no real ordering; content touches all three tasks but format is confused
+Qwen/Qwen3-0.6B,T2,Success,"Priority:  
+Schedule:  
+Reason:  
+12:00 PM - 2:00 PM: Meeting  
+5:00 PM - 7:00 PM: Assignment (2 hours)  
+3:00 PM - 3:30 PM: Workout (30 minutes)",2.72,64,False,,1,1,2,4,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Priority/Schedule/Reason left empty; meeting scheduled 12-2 PM instead of the fixed 2-3 PM; assignment scheduled to start after its own 5 PM deadline
+Qwen/Qwen3-0.6B,T3,Success,"Priority:
+Schedule:
+Reason:  
+- Study for 3 hours  
+- Prepare a presentation for 2 hours  
+- Reply to emails for 30 minutes  
+- Attend class from 1 PM to 3 PM  
+
+Reason:  
+I will plan my day to ensure all tasks are completed within the available time frame, including short breaks to maintain productivity and prevent burnout.",3.19,77,False,,2,2,2,6,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Priority/Schedule left empty; just restates the four given tasks as a bullet list rather than assigning any times
+Qwen/Qwen3-0.6B,T1,Success,"Priority: Report due tomorrow  
+Schedule:  
+1. Finish the report.  
+2. Buy groceries.  
+3. Clean your room.  
+Reason: The report is a time-sensitive task, so it should be prioritized first.",3.08,48,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,"Correct, concise, complete answer"
+Qwen/Qwen3-0.6B,T2,Success,"Priority: Meeting from 2 PM to 3 PM  
+Schedule:  
+1. 12:00 PM - 2:00 PM - Meeting.  
+2. 2:30 PM - 5:00 PM - Assignment.  
+3. 3:00 PM - 3:30 PM - Workout.  
+Reason: The schedule is flexible and accounts for the time constraints.",4.73,87,False,,2,2,4,8,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,"Meeting scheduled 12-2 PM instead of the fixed 2-3 PM, and that slot overlaps the 2:30-5 PM assignment block and the 3-3:30 PM workout block"
+Qwen/Qwen3-0.6B,T3,Success,"Priority: Study for 3 hours  
+Schedule:  
+1. Study for 3 hours.  
+2. Prepare a presentation for 2 hours.  
+3. Reply to emails for 30 minutes.  
+Reason: The time is fixed, so the flexible tasks are placed around it.",4.2,60,False,,2,2,5,9,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,Drops the fixed 1-3 PM class constraint entirely; restates study/presentation/email durations with no actual time-of-day schedule
+Qwen/Qwen3-0.6B,T1,Success,"Priority: Finish a report  
+Schedule:  
+1. Finish a report.  
+2. Buy groceries.  
+3. Clean your room.  
+Reason: The report is a critical task with a deadline, so it should be prioritized first.",6.18,50,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Correct, concise, complete answer"
+Qwen/Qwen3-0.6B,T2,Success,"Priority: Meeting from 2 PM to 3 PM  
+Schedule:  
+1. 12:00 PM – 2:00 PM (Meeting)  
+2. 2:00 PM – 4:00 PM (Assignment)  
+3. 4:00 PM – 4:30 PM (Workout)  
+Reason: The meeting and workout are scheduled to fit within the 2-hour window, while the assignment is placed after the meeting to account for the time difference.",8.0,107,False,,2,3,5,10,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Meeting still scheduled 12-2 PM instead of the fixed 2-3 PM, though assignment (2h) and workout (30m) durations are now correct and non-overlapping"
+Qwen/Qwen3-0.6B,T3,Success,"Priority: Study for 3 hours  
+Schedule:  
+1. Study for 3 hours.  
+2. Prepare a presentation for 2 hours.  
+3. Reply to emails for 30 minutes.  
+4. Attend class from 1 PM to 3 PM.  
+
+Reason: The time is fixed and non-negotiable, so the breaks are scheduled to fit the total time.",7.35,81,False,,3,3,5,11,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Now includes the class constraint, but study/presentation/email still have no real time-of-day slots, just a duration list"
+Qwen/Qwen3-0.6B,T1,Success,"Priority: Finish the report  
+Schedule:  
+1. Finish the report.  
+2. Buy groceries.  
+3. Clean your room.  
+Reason: The report is a critical task with no fixed time, so it should be prioritized first. The other tasks can be scheduled in the remaining time.",9.58,62,False,,5,5,5,15,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,"Correct, concise, complete answer"
+Qwen/Qwen3-0.6B,T2,Success,"Priority: Meeting  
+Schedule:  
+1. 12:00 PM - 2:00 PM (Meeting)  
+2. 2:00 PM - 4:00 PM (Assignment)  
+3. 4:00 PM - 4:30 PM (Workout)  
+
+Reason: The meeting is scheduled first, followed by the assignment and workout, which are time-bound and fit within the 2-hour window.",11.48,95,False,,2,3,5,10,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Same 12-2 PM meeting-time error as few-shot; assignment and workout durations correct
+Qwen/Qwen3-0.6B,T3,Success,"Priority: Study for 3 hours  
+Schedule:  
+1. Study from 9:00 AM to 12:00 PM.  
+2. Prepare presentation from 12:00 PM to 1:30 PM.  
+3. Reply to emails from 1:30 PM to 3:00 PM.  
+4. Attend class from 3:00 PM to 5:00 PM.  
+Reason: Short breaks are included to maintain energy and productivity.",12.0,106,False,,2,2,5,9,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,"Attempts a real time-of-day schedule (study 9-12 correct); class moved to 3-5 PM instead of the fixed 1-3 PM, and emails given 1.5h instead of 30m"
