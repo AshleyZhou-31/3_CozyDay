@@ -1,0 +1,108 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+Qwen/Qwen2.5-3B-Instruct,T1,Success,"Priority:
+- Report: Due tomorrow, it's crucial to have this completed before the deadline.
+- Groceries: Essential for daily living, but can be postponed slightly if time is tight.
+- Clean Room: Can wait until later in the day or the next day.
+
+Schedule:
+- Start with the Report: Allocate at least 2 hours to work on the report.
+- Next, Clean Room: Spend about 30 minutes to an hour cleaning your room.
+- Finally, Buy Groceries: Plan to do this during your lunch break or after dinner.
+
+Reason: Focusing first on the report ensures you meet the deadline, which is critical. Cleaning your room will make your living space more comfortable and reduce stress. Buying groceries can be done when you have free time, as it's less urgent compared to the other two tasks.",9.65,168,False,,4,3,5,12,None (FP16),Transformers / Colab GPU,Zero-shot,Correct report-first; Priority order (groceries 2nd) differs from Schedule (clean 2nd); invents durations.
+Qwen/Qwen2.5-3B-Instruct,T2,Success,"Priority:
+- Workout (30 minutes)
+- Meeting (2 PM - 3 PM)
+- Assignment (5 PM)
+
+Schedule:
+- 12 PM - 1 PM: Work on the assignment
+- 1 PM - 2 PM: Workout
+- 2 PM - 3 PM: Meeting
+- 3 PM - 5 PM: Continue working on the assignment
+
+Reason: Allocating time for the workout in the middle of the day helps maintain energy levels and reduces the likelihood of burnout. The meeting is scheduled during the afternoon when you're likely more focused. Starting the assignment early ensures it's completed before the deadline.",6.31,132,False,,3,3,5,11,None (FP16),Transformers / Colab GPU,Zero-shot,Priority puts workout first; workout 1h not 30 min; assignment gets 3h total.
+Qwen/Qwen2.5-3B-Instruct,T3,Success,"Priority:
+- Study for 3 hours
+- Attend class from 1 PM to 3 PM
+- Prepare a presentation for 2 hours
+
+Schedule:
+- 9:00 AM - 10:30 AM: Study
+- 10:30 AM - 10:45 AM: Short Break
+- 10:45 AM - 12:45 PM: Study
+- 12:45 PM - 1:00 PM: Lunch Break
+- 1:00 PM - 3:00 PM: Attend Class
+- 3:00 PM - 3:15 PM: Short Break
+- 3:15 PM - 5:15 PM: Prepare Presentation
+- 5:15 PM - 5:30 PM: Short Break
+- 5:30 PM - 6:00 PM: Review and Edit Presentation
+
+Reason: This schedule ensures that you dedicate focused time to studying and preparing for your presentation, while also allowing for necessary breaks and attending an important class. The class slot is prioritized as it's a mandatory commitment.",11.71,244,False,,3,2,5,10,None (FP16),Transformers / Colab GPU,Zero-shot,Study 3.5h; emails missing; extra review slot; class correct.
+Qwen/Qwen2.5-3B-Instruct,T1,Success,"Priority: Finish the report due tomorrow
+Schedule:
+1. Work on the report until completion.
+2. Buy groceries after finishing the report.
+3. Clean your room after buying groceries.
+Reason: Completing the report ensures that you meet the deadline, which is crucial. After that, the other tasks can be handled in a more relaxed manner.",3.37,70,False,,5,4,5,14,None (FP16),Transformers / Colab GPU,One-shot,"Correct, concise, all headings clear."
+Qwen/Qwen2.5-3B-Instruct,T2,Success,"Priority: Assignment due at 5 PM (2 hours)
+Schedule:
+1. Work on the assignment from 12 PM to 2 PM.
+2. Attend the meeting from 2 PM to 3 PM.
+3. Workout for 30 minutes after the meeting.
+Reason: The assignment deadline requires focused work, followed by a scheduled meeting and concluding with a short workout session.",3.83,79,False,,5,5,5,15,None (FP16),Transformers / Colab GPU,One-shot,"Assignment 12-2, meeting 2-3, workout 3-3:30; all constraints met."
+Qwen/Qwen2.5-3B-Instruct,T3,Success,"Priority: Study for 3 hours
+Schedule:
+1. Study from 9 AM to 12 PM (3 hours).
+2. Take a break from 12 PM to 1 PM.
+3. Prepare the presentation from 1 PM to 3 PM (2 hours).
+4. Reply to emails from 3 PM to 3:30 PM (30 minutes).
+5. Attend class from 3 PM to 6 PM.
+
+Reason: Allocate specific times for each task, ensuring there's a break between study and preparation, and another break after the presentation. Class time is fixed, so the other activities are planned around it.",6.38,133,False,,2,1,5,8,None (FP16),Transformers / Colab GPU,One-shot,Presentation 1-3 PM overlaps class; class moved to 3-6 PM.
+Qwen/Qwen2.5-3B-Instruct,T1,Success,"Priority: Finish the report due tomorrow
+Schedule:
+1. Work on the report until completion.
+2. Buy groceries after finishing the report.
+3. Clean your room after grocery shopping.
+Reason: Completing the report ensures that it meets the deadline, which is crucial for academic or professional success. Grocery shopping can be done quickly, and cleaning the room can wait until later if needed.",3.86,78,False,,5,4,5,14,None (FP16),Transformers / Colab GPU,Few-shot,"Correct, concise; slightly generic Reason."
+Qwen/Qwen2.5-3B-Instruct,T2,Success,"Priority: Assignment due at 5 PM
+Schedule:
+1. Work on the assignment from 12 PM to 2 PM (2 hours).
+2. Attend the meeting from 2 PM to 3 PM.
+3. Workout from 3 PM to 3:30 PM (30 minutes).
+Reason: The assignment has a specific deadline, so it's best to allocate the required 2 hours during the day. The meeting and workout can be scheduled around the assignment work period.",4.97,101,False,,5,5,5,15,None (FP16),Transformers / Colab GPU,Few-shot,"Assignment 12-2, meeting 2-3, workout 3-3:30; all constraints met."
+Qwen/Qwen2.5-3B-Instruct,T3,Success,"Priority: Study for 3 hours
+Schedule:
+1. Study from 9 AM to 12 PM (3 hours).
+2. Take a break (12 PM - 1 PM).
+3. Prepare the presentation from 1 PM to 3 PM (2 hours).
+4. Reply to emails from 3:30 PM to 4 PM (30 minutes).
+5. Take a final break (4 PM - 4:30 PM).
+6. Free time from 4:30 PM to 6 PM.
+
+Reason: Studying and preparing the presentation are the most critical tasks that require focused attention. Email management can be done during a break or a shorter period. Class attendance is mandatory and should be scheduled accordingly.",7.56,153,False,,2,1,5,8,None (FP16),Transformers / Colab GPU,Few-shot,Presentation 1-3 PM overlaps class; class not scheduled.
+Qwen/Qwen2.5-3B-Instruct,T1,Success,"Priority: Finish the report
+Schedule:
+1. Work on the report until it's completed.
+2. Buy groceries immediately after finishing the report.
+3. Clean your room later if there's extra time.
+Reason: Completing the report ensures it meets the deadline, which is crucial. Buying groceries can be done quickly and doesn't require much time. Cleaning the room can wait until after other tasks are completed.",4.24,83,False,,5,4,5,14,None (FP16),Transformers / Colab GPU,Many-shot,"Correct, concise."
+Qwen/Qwen2.5-3B-Instruct,T2,Success,"Priority: Assignment due at 5 PM
+Schedule:
+1. Meet with colleagues from 12 PM to 1 PM.
+2. Work on the assignment from 1 PM to 3 PM.
+3. Workout for 30 minutes from 3:30 PM to 4 PM.
+4. Review and finalize the assignment by 5 PM.
+Reason: Allocate the bulk of productive time to the assignment, leaving room for the meeting and workout.",4.75,94,False,,2,1,5,8,None (FP16),Transformers / Colab GPU,Many-shot,Invents 12-1 meeting; assignment 1-3 PM overlaps the fixed 2-3 PM meeting.
+Qwen/Qwen2.5-3B-Instruct,T3,Success,"Priority: Study
+Schedule:
+1. Study from 9:00-11:00 AM (3 hours).
+2. Take a short break (10:00-10:15 AM).
+3. Prepare presentation from 11:15 AM-1:15 PM (2 hours).
+4. Take a short break (1:15-1:30 PM).
+5. Reply to emails from 1:45-2:15 PM (30 minutes).
+6. Attend class from 2:30-3:30 PM (1 hour).
+7. Take a long break (3:30-5:00 PM).
+8. Continue studying or review presentation materials as needed.
+Reason: Study and preparation are critical tasks that require focus, followed by a short break to maintain energy. Email can be handled quickly during a break, and class attendance is essential. A longer break allows for relaxation and potential additional study/review time.",10.34,208,False,,2,1,5,8,None (FP16),Transformers / Colab GPU,Many-shot,Study only 2h; presentation/emails overlap class; class moved to 2:30-3:30.
