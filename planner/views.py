@@ -10,6 +10,7 @@ from django.db.models import Count, Q
 from .models import Category, PlanItem
 from .forms import AIPlannerForm, PlanItemForm
 from .ai_planner import AIPlannerError, generate_plan
+from .external_ai import ExternalAIError, generate_external_plan
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
@@ -590,5 +591,36 @@ def ai_planner(request):
     return render(
         request,
         "planner/ai_planner.html",
+        {"form": form, "result": result, "error_message": error_message},
+    )
+
+
+@login_required
+def api_ai_planner(request):
+    """External Gemini planning suggestion with explicit, minimal data sharing."""
+    result = None
+    error_message = ""
+
+    if request.method == "POST":
+        form = AIPlannerForm(request.POST)
+        if form.is_valid():
+            titles = []
+            if form.cleaned_data["include_plan_items"]:
+                titles = list(
+                    PlanItem.objects.filter(user=request.user, is_completed=False)
+                    .values_list("title", flat=True)[:settings.AI_PLANNER_MAX_PLAN_ITEMS]
+                )
+            try:
+                result = generate_external_plan(
+                    form.cleaned_data["request_text"], titles
+                )
+            except ExternalAIError as exc:
+                error_message = exc.user_message
+    else:
+        form = AIPlannerForm()
+
+    return render(
+        request,
+        "planner/external_ai_planner.html",
         {"form": form, "result": result, "error_message": error_message},
     )
