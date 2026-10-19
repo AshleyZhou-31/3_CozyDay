@@ -65,6 +65,7 @@ class CleanTextTests(SimpleTestCase):
 
 class FakeTokenizer:
     eos_token_id = 0
+    chat_template = "fake-template"
 
     def apply_chat_template(self, messages, tokenize, add_generation_prompt):
         self.messages = messages
@@ -84,6 +85,59 @@ class PromptTests(SimpleTestCase):
         tokenizer = FakeTokenizer()
         build_prompt(tokenizer, "My request", n_shots=0)
         self.assertEqual([m["role"] for m in tokenizer.messages], ["system", "user"])
+
+
+class NoSystemRoleTokenizer(FakeTokenizer):
+    """Behaves like Gemma's template: rejects the system role."""
+
+    def apply_chat_template(self, messages, tokenize, add_generation_prompt):
+        if any(m["role"] == "system" for m in messages):
+            raise ValueError("System role not supported")
+        return super().apply_chat_template(messages, tokenize, add_generation_prompt)
+
+
+class BrokenTemplateTokenizer(FakeTokenizer):
+    def apply_chat_template(self, messages, tokenize, add_generation_prompt):
+        raise ValueError("template error")
+
+
+class NoTemplateTokenizer:
+    chat_template = None
+
+
+class PromptFallbackTests(SimpleTestCase):
+    def test_system_role_rejected_folds_instruction_into_first_user_turn(self):
+        tokenizer = NoSystemRoleTokenizer()
+        prompt = build_prompt(tokenizer, "My request")
+        messages = tokenizer.messages
+        self.assertNotIn("system", [m["role"] for m in messages])
+        self.assertEqual([m["role"] for m in messages], ["user", "assistant"] * 3 + ["user"])
+        self.assertTrue(
+            messages[0]["content"].startswith(ai_planner.SYSTEM_INSTRUCTION)
+        )
+        self.assertIn(ai_planner.SHOT_EXAMPLES[0]["input"], messages[0]["content"])
+        self.assertEqual(messages[-1]["content"], "My request")
+        self.assertIn("My request", prompt)
+
+    def test_zero_shots_without_system_role_folds_into_the_request(self):
+        tokenizer = NoSystemRoleTokenizer()
+        build_prompt(tokenizer, "My request", n_shots=0)
+        self.assertEqual(
+            tokenizer.messages,
+            [{"role": "user", "content": f"{ai_planner.SYSTEM_INSTRUCTION}\n\nMy request"}],
+        )
+
+    def test_broken_template_falls_back_to_plain_text(self):
+        prompt = build_prompt(BrokenTemplateTokenizer(), "My request")
+        self.assertIn(ai_planner.SYSTEM_INSTRUCTION, prompt)
+        self.assertIn("User request:\nMy request", prompt)
+        self.assertTrue(prompt.endswith("Assistant response:\n"))
+
+    def test_tokenizer_without_chat_template_uses_plain_text(self):
+        prompt = build_prompt(NoTemplateTokenizer(), "My request", n_shots=1)
+        self.assertIn(ai_planner.SYSTEM_INSTRUCTION, prompt)
+        self.assertIn(ai_planner.SHOT_EXAMPLES[0]["response"], prompt)
+        self.assertIn("User request:\nMy request", prompt)
 
 
 class ParseResponseTests(SimpleTestCase):

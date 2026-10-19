@@ -168,18 +168,60 @@ def build_user_message(request_text, plan_items=None):
     return message
 
 
+def _chat_messages(user_message, n_shots, fold_system_into_first_user):
+    """Build the chat turns. Some templates (e.g. Gemma) reject a ``system`` role,
+    so the system instruction can instead be folded into the first user turn."""
+    examples = SHOT_EXAMPLES[:n_shots]
+    messages = []
+    if not fold_system_into_first_user:
+        messages.append({"role": "system", "content": SYSTEM_INSTRUCTION})
+    folded = False
+    for example in examples:
+        content = example["input"]
+        if fold_system_into_first_user and not folded:
+            content = f"{SYSTEM_INSTRUCTION}\n\n{content}"
+            folded = True
+        messages.append({"role": "user", "content": content})
+        messages.append({"role": "assistant", "content": example["response"]})
+    final_content = user_message
+    if fold_system_into_first_user and not folded:
+        final_content = f"{SYSTEM_INSTRUCTION}\n\n{user_message}"
+    messages.append({"role": "user", "content": final_content})
+    return messages
+
+
+def _plain_prompt(user_message, n_shots):
+    parts = [f"Instructions:\n{SYSTEM_INSTRUCTION}\n"]
+    for example in SHOT_EXAMPLES[:n_shots]:
+        parts.append(
+            f"User request:\n{example['input']}\n\nAssistant response:\n{example['response']}\n"
+        )
+    parts.append(f"User request:\n{user_message}\n\nAssistant response:\n")
+    return "\n".join(parts)
+
+
 def build_prompt(tokenizer, user_message, n_shots=None):
-    """Chat-template prompt with the shared system instruction and few-shot pairs."""
+    """Prompt with the shared system instruction and few-shot pairs.
+
+    Mirrors the notebook's ``build_prompt_shots`` fallbacks: try the chat template
+    with a system role; if the template rejects it (Gemma raises "System role not
+    supported"), retry with the system instruction folded into the first user turn;
+    if the tokenizer has no chat template or both attempts fail, use plain text.
+    """
     if n_shots is None:
         n_shots = _setting("AI_PLANNER_FEW_SHOTS", 3)
-    messages = [{"role": "system", "content": SYSTEM_INSTRUCTION}]
-    for example in SHOT_EXAMPLES[:n_shots]:
-        messages.append({"role": "user", "content": example["input"]})
-        messages.append({"role": "assistant", "content": example["response"]})
-    messages.append({"role": "user", "content": user_message})
-    return tokenizer.apply_chat_template(
-        messages, tokenize=False, add_generation_prompt=True
-    )
+
+    if getattr(tokenizer, "chat_template", None):
+        for fold in (False, True):
+            try:
+                return tokenizer.apply_chat_template(
+                    _chat_messages(user_message, n_shots, fold),
+                    tokenize=False,
+                    add_generation_prompt=True,
+                )
+            except Exception:
+                continue
+    return _plain_prompt(user_message, n_shots)
 
 
 # --------------------------------------------------------------------------

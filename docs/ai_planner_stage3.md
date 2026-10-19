@@ -32,6 +32,19 @@ Optional environment variables (all have defaults): `AI_PLANNER_MODEL_ID`, `AI_P
 (`auto`/`cpu`/`cuda`/`mps`), `AI_PLANNER_MAX_INPUT_CHARS` (600), `AI_PLANNER_MAX_NEW_TOKENS` (256),
 `AI_PLANNER_MAX_TIME_SECONDS` (120), `AI_PLANNER_MAX_PLAN_ITEMS` (10), `AI_PLANNER_FEW_SHOTS` (3).
 
+## Switching models
+
+Set `AI_PLANNER_MODEL_ID` (environment variable or `.env`) and restart the server.
+
+* **Qwen2.5-Instruct models** (the family used here) work as they are.
+* **`google/gemma-2-2b-it`**: Gemma's chat template rejects the system role, so `build_prompt()` automatically
+  retries with the system instruction folded into the first user turn (the same fallback the notebook uses; covered by
+  tests with a Gemma-style tokenizer). The model is gated: accept its license on huggingface.co and run
+  `huggingface-cli login` (or set `HF_TOKEN`) before the first request. The Django page itself has not been run with
+  Gemma; only the prompt fallback is tested.
+* **Not supported without code changes:** Qwen3 models (need `enable_thinking=False`) and models that need 4-bit
+  quantization such as Mistral-Nemo (the service loads models in plain float16/bfloat16).
+
 ## Data input, preprocessing and guardrails
 
 * **Input:** one text box, plus an optional checkbox that adds the titles of the user's own open plan items
