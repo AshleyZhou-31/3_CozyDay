@@ -1,0 +1,121 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+Qwen/Qwen2.5-1.5B-Instruct,T1,Success,"**Priority:** Finish the report
+
+**Reason:** The report is due tomorrow, which means it's an urgent deadline that requires immediate attention. Completing this task first will ensure you meet your academic obligations on time.
+
+**Schedule:**
+1. **Finish the Report (Due Tomorrow)**
+2. **Buy Groceries**
+3. **Clean Your Room**
+
+This prioritization helps manage your tasks effectively, ensuring that critical responsibilities like completing the report receive the necessary focus and resources.",9.66,97,False,,4,4,4,12,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Correct priority; Reason placed before Schedule and bold markdown headings; schedule has no time slots.
+Qwen/Qwen2.5-1.5B-Instruct,T2,Success,"**Priority:** 
+- Finish your workout (30 minutes)
+- Start working on your assignment (2 hours)
+
+**Schedule:**
+- 12:00 PM - Start your workout
+- 12:30 PM - End of workout
+- 12:45 PM - Begin working on your assignment
+
+**Reason:** This schedule ensures you allocate time for both your physical activity and academic responsibilities effectively without overcommitting yourself. The priority is set based on the urgency and importance of each task, with the workout taking precedence as it's a personal commitment. After completing the workout, you can then focus on your assignment, which should be manageable within the given timeframe.",9.08,141,False,,2,1,4,7,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Meeting omitted; assignment has no end time; Reason claims workout takes precedence.
+Qwen/Qwen2.5-1.5B-Instruct,T3,Success,"**Priority:** Study for 3 hours, prepare a presentation for 2 hours, reply to emails for 30 minutes, attend class from 1 PM to 3 PM.
+
+**Schedule:**
+
+- **8:45 AM - 9:15 AM**: Start studying for 3 hours.
+- **9:15 AM - 10:15 AM**: Take a 15-minute break.
+- **10:15 AM - 11:15 AM**: Prepare your presentation for 2 hours.
+- **11:15 AM - 12:15 PM**: Take another 15-minute break.
+- **12:15 PM - 1:15 PM**: Reply to emails for 30 minutes.
+- **1:15 PM - 2:15 PM**: Attend class from 1 PM to 3 PM.
+- **2:15 PM - 3:15 PM**: Take a 15-minute break.
+- **3:15 PM - 4:15 PM**: Continue preparing your presentation if needed (if you have more time).
+- **4:15 PM - 5:15 PM**: Review notes",15.29,256,True,,1,1,3,5,No GGUF quantization (Transformers),Transformers (local CPU),Zero-shot,Truncated at 256 tokens; no Reason; study split into 30 min slots; class misplaced.
+Qwen/Qwen2.5-1.5B-Instruct,T1,Success,"Priority: Finish the report due tomorrow
+Schedule:
+1. Start working on the report immediately.
+2. Buy groceries later in the day.
+3. Clean your room as soon as possible.
+
+Reason: Since the report is due tomorrow, completing it first ensures that you meet the deadline. Buying groceries can be done later when you have more free time, and cleaning your room can be scheduled once you've finished the report.",8.31,85,False,,4,4,5,13,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,Correct report-first priority and sensible follow-ups; clear Reason.
+Qwen/Qwen2.5-1.5B-Instruct,T2,Success,"Priority: Meeting from 2 PM to 3 PM
+Schedule:
+1. Start your day with a quick breakfast break (12-1 PM) if needed.
+2. Begin working on your assignment immediately after finishing breakfast (12-1 PM).
+3. End your work session early in case of unexpected delays (around 1:30 PM).
+4. Take a short lunch break (1:30-2 PM).
+5. Attend your meeting from 2 PM to 3 PM.
+6. After the meeting, continue working on your assignment until it's completed (around 3:30 PM).
+7. Finish your assignment and take a brief rest (3:30-4 PM).
+8. Spend some time reviewing your notes or any other materials related to your assignment (4-4:30 PM).
+9. Engage in your 30-minute workout (4:30-5 PM).
+10. Prepare yourself for dinner and relaxation afterwards.
+
+Reason: This schedule ensures you allocate specific times for each task while allowing flexibility within those slots.",15.84,222,False,,3,2,5,10,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,"Meeting right, but Priority names meeting; invents breakfast/lunch overlapping assignment; wordy."
+Qwen/Qwen2.5-1.5B-Instruct,T3,Success,"Priority: Study for 3 hours (9 AM - 12 PM)
+- Break: 15 minutes (12:15 PM)  
+- Prepare presentation for 2 hours (1 PM - 3 PM)
+- Break: 15 minutes (3:15 PM)
+- Reply to emails for 30 minutes (4 PM)
+
+Reason: Prioritize longer activities that require sustained focus and break times to maintain energy levels throughout the day.
+
+**Note:** Adjustments may be necessary based on your specific schedule and personal preferences.",10.73,113,False,,2,2,3,7,No GGUF quantization (Transformers),Transformers (local CPU),One-shot,No Schedule heading; presentation overlaps the 1-3 PM class; class not scheduled.
+Qwen/Qwen2.5-1.5B-Instruct,T1,Success,"Priority: Finish the report due tomorrow
+Schedule:
+1. Finish the report due tomorrow.
+2. Buy groceries later today.
+3. Clean your room later this week.
+Reason: The deadline for finishing the report is imminent, making it the most critical task.",11.71,53,False,,4,4,5,13,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,"Correct, concise; 'clean room later this week' invents a timeframe."
+Qwen/Qwen2.5-1.5B-Instruct,T2,Success,"Priority: Meeting from 2 PM to 3 PM
+Schedule:
+1. Meet from 2 PM to 3 PM.
+2. After the meeting, start working on the assignment (2 hours) until 6 PM.
+3. Take a 30-minute break for exercise.
+4. Return home and finish the assignment if needed.
+Reason: The meeting is scheduled and cannot be changed, so prioritize it. The remaining tasks can be planned within the available time slots.",14.69,97,False,,2,1,5,8,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,Assignment scheduled until 6 PM (past 5 PM deadline); nothing planned 12-2 PM.
+Qwen/Qwen2.5-1.5B-Instruct,T3,Success,"Priority: Study for 3 hours
+Schedule:
+1. Study from 9 AM to 12 PM.
+   - Take a 15-minute break every hour.
+
+Priority: Prepare a presentation for 2 hours
+Schedule:
+2. Prepare the presentation from 12 PM to 2 PM.
+   - Take a 15-minute break every hour.
+
+Priority: Reply to emails for 30 minutes
+Schedule:
+3. Respond to emails from 2 PM to 2:30 PM.
+   - Take a 15-minute break immediately afterward.
+
+Priority: Attend class from 1 PM to 3 PM
+Schedule:
+4. Attend class from 1 PM to 3 PM.
+   - Take a 15-minute break right after class ends.
+
+Reason: Breaks help maintain focus and prevent burnout during long periods of work.",19.58,176,False,,2,1,2,5,No GGUF quantization (Transformers),Transformers (local CPU),Few-shot,Repeats Priority/Schedule blocks per task; presentation and emails overlap class.
+Qwen/Qwen2.5-1.5B-Instruct,T1,Success,"Priority: Finish the report
+Schedule:
+1. Finish the report today.
+2. Buy groceries later in the day.
+3. Clean your room next.
+
+Reason: The report needs to be completed today because it has a deadline that cannot be pushed back. Buying groceries can wait until later in the day when you have more time, and cleaning your room can also be done later if needed.",19.78,79,False,,4,4,5,13,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Correct priority and follow-ups; concise Reason.
+Qwen/Qwen2.5-1.5B-Instruct,T2,Success,"Priority: Assignment due at 5 PM
+Schedule:
+1. Complete the assignment from 12:00 - 2:00 PM.
+2. Take a 30-minute workout session between 2:00 - 2:30 PM.
+3. Have a meeting from 2:30 - 3:30 PM.
+4. Finish the assignment from 3:30 - 5:00 PM.
+
+Reason: The assignment requires focus and time, so it starts early. The meeting follows naturally after the assignment ends. The workout fits in the middle to maintain energy levels.",24.69,128,False,,2,2,5,9,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Workout placed during meeting; meeting moved to 2:30-3:30 PM (fixed 2-3 PM).
+Qwen/Qwen2.5-1.5B-Instruct,T3,Success,"Priority: Study for 3 hours
+Schedule:
+1. Study from 9:00 AM - 12:00 PM.
+2. Prepare a presentation from 12:00 PM - 2:00 PM.
+3. Reply to emails during lunch break (12:00 PM - 12:30 PM).
+4. Attend class from 1:00 PM - 3:00 PM.
+
+Reason: Studying takes priority due to its long duration and importance. Breaks are scheduled between activities to maintain focus and productivity.",23.14,120,False,,2,1,5,8,No GGUF quantization (Transformers),Transformers (local CPU),Many-shot,Presentation and emails overlap class; no breaks scheduled despite Reason.

@@ -144,3 +144,8 @@ main li a {
     color: #17365d;
     font-size: 16px;
 }
+.ai-planner-error {
+    border-left: 4px solid #b5654a;
+    padding: 4px 14px;
+    margin: 16px 0;
+}

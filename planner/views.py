@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template import loader
@@ -7,7 +8,8 @@ from django.http import JsonResponse
 
 from django.db.models import Count, Q
 from .models import Category, PlanItem
-from .forms import PlanItemForm
+from .forms import AIPlannerForm, PlanItemForm
+from .ai_planner import AIPlannerError, generate_plan
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
@@ -560,4 +562,33 @@ def external_book_search_api(request):
             "external_results": external_results,
             "cozyday_match_count": cozyday_match_count,
         }
+    )
+
+
+@login_required
+def ai_planner(request):
+    """Local-model planning suggestion from free text (and optionally plan items)."""
+    result = None
+    error_message = ""
+
+    if request.method == "POST":
+        form = AIPlannerForm(request.POST)
+        if form.is_valid():
+            titles = []
+            if form.cleaned_data["include_plan_items"]:
+                titles = list(
+                    PlanItem.objects.filter(user=request.user, is_completed=False)
+                    .values_list("title", flat=True)[:settings.AI_PLANNER_MAX_PLAN_ITEMS]
+                )
+            try:
+                result = generate_plan(form.cleaned_data["request_text"], titles)
+            except AIPlannerError as exc:
+                error_message = exc.user_message
+    else:
+        form = AIPlannerForm()
+
+    return render(
+        request,
+        "planner/ai_planner.html",
+        {"form": form, "result": result, "error_message": error_message},
     )

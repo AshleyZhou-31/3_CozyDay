@@ -1,0 +1,140 @@
+Model,Test ID,Status,Response,Response Time (s),Generated Tokens,Reached Token Limit,Error,Instruction Adherence,Output Quality,Formatting Consistency,Total Score,Quantization,Backend,Prompt Mode,Evaluation Notes
+Qwen/Qwen2.5-14B-Instruct,T1,Success,"Priority:
+Finish the report due tomorrow - This is the highest priority because it has an immediate deadline.
+
+Schedule:
+1. Start with finishing the report.
+2. Once the report is complete, move on to buying groceries.
+3. After grocery shopping, clean your room.
+
+Reason:
+The report has a strict deadline of tomorrow, making it the most urgent task. Completing it first ensures you meet this deadline without risking late submission. Buying groceries can be done relatively quickly once the report is finished, and cleaning your room can be scheduled for after the more pressing tasks are completed.",14.03,116,False,,5,5,5,15,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Zero-shot,"Correct priority, ordered plan, clear Reason."
+Qwen/Qwen2.5-14B-Instruct,T2,Success,"Priority:
+1. Complete the assignment due at 5 PM.
+2. Attend the meeting from 2 PM to 3 PM.
+3. Workout for 30 minutes.
+
+Schedule:
+- 12 PM - 2 PM: Work on the assignment (1 hour)
+- 2 PM - 3 PM: Meeting
+- 3 PM - 4 PM: Work on the assignment (1 hour)
+- 4 PM - 4:30 PM: Workout
+- 4:30 PM: Final touches on the assignment
+
+Reason:
+This schedule allows you to dedicate focused time blocks to your assignment before and after your meeting, ensuring you can complete it on time. The workout is scheduled during a natural break in your work session, helping you stay energized and productive.",17.08,162,False,,4,3,5,12,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Zero-shot,Meeting right; assignment gets 3h total and '1 hour' label is wrong; workout 4-4:30.
+Qwen/Qwen2.5-14B-Instruct,T3,Success,"Priority:
+1. Attend class from 1 PM to 3 PM.
+2. Study for 3 hours.
+3. Prepare a presentation for 2 hours.
+4. Reply to emails for 30 minutes.
+
+Schedule:
+- 9:00 AM - 10:00 AM: Study (1 hour)
+- 10:00 AM - 10:15 AM: Break
+- 10:15 AM - 11:15 AM: Study (1 hour)
+- 11:15 AM - 11:30 AM: Break
+- 11:30 AM - 12:30 PM: Study (1 hour)
+- 12:30 PM - 1:00 PM: Lunch break
+- 1:00 PM - 3:00 PM: Attend class
+- 3:00 PM - 3:15 PM: Break
+- 3:15 PM - 5:00 PM: Prepare presentation (2 hours)
+- 5:00 PM - 5:15 PM: Break
+- 5:15 PM - 5:45 PM:",26.61,256,True,,3,3,3,9,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Zero-shot,Truncated at 256 tokens; no emails or Reason; study and class correct.
+Qwen/Qwen2.5-14B-Instruct,T1,Success,"Priority: Finish the report due tomorrow
+Schedule:
+1. Start working on the report as soon as possible, ideally in large blocks of time to maintain focus.
+2. Buy groceries during a break from work if the store is open, or schedule it for later in the day.
+3. Clean your room after completing the report or during a short break if you feel it will help you focus better.
+
+Reason: The report has an immediate deadline, making it the highest priority. Finishing it first ensures you meet your deadline, while the other tasks can be adjusted more flexibly around this commitment.",12.99,120,False,,5,4,5,14,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,One-shot,Correct and clear; schedule slightly generic.
+Qwen/Qwen2.5-14B-Instruct,T2,Success,"Priority: 
+1. Assignment due at 5 PM
+2. Meeting from 2 PM to 3 PM
+3. Workout
+
+Schedule:
+1. Start working on the assignment from 12 PM to 2 PM.
+2. Attend the meeting from 2 PM to 3 PM.
+3. Continue working on the assignment from 3 PM to 5 PM.
+4. Take a 30-minute workout break between 5 PM and 5:30 PM.
+
+Reason: The assignment takes priority due to its deadline. The meeting is fixed, so it disrupts the work block but can be resumed afterward. The workout is scheduled after the assignment to ensure all academic responsibilities are met first.",15.75,145,False,,4,3,5,12,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,One-shot,Meeting right; assignment 12-2 plus 3-5 (4h vs 2h); workout after 5 PM.
+Qwen/Qwen2.5-14B-Instruct,T3,Success,"Priority:
+1. Attend class from 1 PM to 3 PM
+2. Study for 3 hours
+3. Prepare a presentation for 2 hours
+4. Reply to emails for 30 minutes
+
+Schedule:
+- 9:00 AM - 10:00 AM: Study (1 hour)
+- 10:00 AM - 10:15 AM: Break
+- 10:15 AM - 11:15 AM: Study (1 hour)
+- 11:15 AM - 11:30 AM: Break
+- 11:30 AM - 12:30 PM: Study (1 hour)
+- 12:30 PM - 1:00 PM: Lunch break
+- 1:00 PM - 3:00 PM: Attend class
+- 3:00 PM - 3:15 PM: Break
+- 3:15 PM - 4:30 PM: Prepare presentation (1.5 hours)
+- 4:30 PM - 4:45 PM: Break
+- 4:45 PM - 5:15",27.19,256,True,,3,3,3,9,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,One-shot,"Truncated at 256 tokens; presentation partial, no Reason."
+Qwen/Qwen2.5-14B-Instruct,T1,Success,"Priority: Finish the report
+Schedule:
+1. Finish the report today.
+2. Buy groceries after finishing the report.
+3. Clean your room later in the evening or another day.
+
+Reason: The report has an imminent deadline, making it the highest priority. Completing it first ensures you meet the deadline, and the other tasks can be handled afterward when you have more flexibility.",9.11,77,False,,5,4,5,14,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Few-shot,Correct and concise.
+Qwen/Qwen2.5-14B-Instruct,T2,Success,"Priority: Assignment due at 5 PM
+
+Schedule:
+1. Workout from 12 PM to 12:30 PM.
+2. Meeting from 2 PM to 3 PM.
+3. Work on the assignment from 3 PM to 5 PM.
+
+Reason: The assignment has a strict deadline, so it's best to schedule it immediately after the meeting. The workout can be done earlier to avoid overlapping with the meeting and assignment.",10.46,92,False,,5,4,5,14,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Few-shot,"Workout 12-12:30, meeting 2-3, assignment 3-5; 12:30-2 unused."
+Qwen/Qwen2.5-14B-Instruct,T3,Success,"Priority: Study and prepare presentation
+
+Schedule:
+1. **9:00 AM - 10:30 AM**: Study (1.5 hours)
+2. **10:30 AM - 10:45 AM**: Short break (15 minutes)
+3. **10:45 AM - 12:15 PM**: Study (1.5 hours)
+4. **12:15 PM - 12:45 PM**: Lunch break (30 minutes)
+5. **12:45 PM - 1:00 PM**: Reply to emails (30 minutes)
+6. **1:00 PM - 3:00 PM**: Attend class
+7. **3:00 PM - 5:00 PM**: Prepare presentation (2 hours)
+8. **5:00 PM - 5:15 PM**: Short break (15 minutes)
+9. **5:15 PM - 6:00 PM**: Review notes or additional study (45 minutes)
+
+Reason: This schedule allows for focused blocks of work with short breaks to maintain productivity and manage time effectively within your available hours.",27.53,249,False,,4,4,5,13,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Few-shot,"Complete plan with breaks; study 3h, class, presentation 2h; emails only 15 min."
+Qwen/Qwen2.5-14B-Instruct,T1,Success,"Priority: Finish the report
+Schedule:
+1. Work on the report in the morning.
+2. Buy groceries during the afternoon.
+3. Clean your room in the evening.
+
+Reason: The report is due tomorrow and has the highest urgency. Completing it first ensures you meet the deadline. Buying groceries can be done efficiently during the day, and cleaning your room can be scheduled for when you have more downtime in the evening.",10.84,86,False,,5,4,5,14,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Many-shot,Correct and concise.
+Qwen/Qwen2.5-14B-Instruct,T2,Success,"Priority: Assignment due at 5 PM
+
+Schedule:
+1. Workout from 12 PM to 12:30 PM.
+2. Work on the assignment from 12:30 PM to 2 PM.
+3. Attend the meeting from 2 PM to 3 PM.
+4. Continue working on the assignment from 3 PM to 5 PM.
+
+Reason: The assignment requires the most time and should be worked on during available blocks before and after the meeting. The workout can be done early in the afternoon to avoid overlapping with the meeting.",14.24,116,False,,4,4,5,13,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Many-shot,"Workout, meeting 2-3, assignment 12:30-2 and 3-5; 3.5h on assignment."
+Qwen/Qwen2.5-14B-Instruct,T3,Success,"Priority: Study and prepare presentation
+
+Schedule:
+1. **9:00 AM - 10:30 AM**: Study (1.5 hours)
+2. **10:30 AM - 10:45 AM**: Short break (15 minutes)
+3. **10:45 AM - 12:15 PM**: Study (1.5 hours)
+4. **12:15 PM - 12:45 PM**: Lunch break (30 minutes)
+5. **12:45 PM - 1:00 PM**: Reply to emails (30 minutes)
+6. **1:00 PM - 3:00 PM**: Attend class
+7. **3:00 PM - 3:15 PM**: Short break (15 minutes)
+8. **3:15 PM - 5:15 PM**: Prepare presentation (2 hours)
+9. **5:15 PM - 5:30 PM**: Short break (15 minutes)
+10. **5:30 PM - 6:00 PM**: Review notes or additional study (30 minutes)
+
+Reason: This schedule allocates specific blocks for",30.09,256,True,,4,4,4,12,4-bit NF4 (bitsandbytes),Transformers / Colab GPU,Many-shot,"Schedule complete, emails 15 min; Reason truncated at 256 tokens."
