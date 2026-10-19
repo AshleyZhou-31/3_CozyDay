@@ -169,3 +169,8 @@ AI_PLANNER_MAX_NEW_TOKENS = _env_int("AI_PLANNER_MAX_NEW_TOKENS", 256)
 AI_PLANNER_MAX_TIME_SECONDS = _env_int("AI_PLANNER_MAX_TIME_SECONDS", 120)
 AI_PLANNER_MAX_PLAN_ITEMS = _env_int("AI_PLANNER_MAX_PLAN_ITEMS", 10)
 AI_PLANNER_FEW_SHOTS = _env_int("AI_PLANNER_FEW_SHOTS", 3)
+
+# External AI planner. The secret is environment-only and never committed.
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
+GEMINI_API_TIMEOUT_SECONDS = _env_int("GEMINI_API_TIMEOUT_SECONDS", 20)

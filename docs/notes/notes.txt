@@ -357,3 +357,130 @@ Week of Oct 12, 2026 — Rishabh (A5.1 Part 2 — Final Production Deployment)
 - Screenshots: docs/screenshots/a5/rishabh_part2/.
 - Handoff: production deployment and OAuth verification complete.
   Remaining: team demonstration video.
+
+
+Week of Oct 19, 2026 — Ashley (AI Assignment Stage 4 — API, Analysis, and Final QA)
+
+Implementation completed
+------------------------
+- Added a second AI-powered feature at `/planitems/api-ai-planner/` using the
+  Google Gemini generateContent REST API. The model defaults to
+  `gemini-2.5-flash-lite` and is configurable by environment variable.
+- Reused the local planner's validated input and structured output contract so
+  the two deployment approaches can be compared fairly.
+- Added explicit privacy disclosure and opt-in sharing of open PlanItem titles.
+  The external prompt never includes account IDs, email, categories, notes,
+  dates, completed items, or another user's data.
+- Kept the API key in `.env`; it is transmitted in `x-goog-api-key` and never
+  appears in the URL, repository, logs, or browser output.
+- Added safe handling for missing/rejected credentials, timeouts, connection
+  failures, rate limits, provider errors, safety blocks, invalid JSON, and
+  malformed model output.
+- Added `README_AI.md` covering Data Input, Preprocessing, Safety Guardrails,
+  workflow, setup, limitations, and testing.
+- Added isolated tests with mocked Gemini responses; tests never contact Google
+  or download model weights.
+
+1. Model size versus response quality
+--------------------------------------
+The strongest directly comparable prompt-evaluation results (12 scored cases,
+maximum 180) were:
+
+| Model | Parameters | Score / 180 | Environment |
+| Mistral-Nemo-Instruct-2407 | 12B | 157 | Colab T4, 4-bit NF4 |
+| Gemma-2-2B-IT | ~2B | 155 | Transformers CPU/MPS |
+| Qwen2.5-14B-Instruct | 14.7B | 151 | Colab T4, 4-bit NF4 |
+| Qwen3-4B | 4B | 141 | Colab T4 FP16 |
+| Qwen2.5-3B-Instruct | ~3B | 137 | Colab T4 FP16 |
+| Qwen2.5-7B-Instruct | 7B | 137 | Colab T4, 4-bit NF4 |
+| Qwen3-0.6B | 0.6B | 118 | Transformers CPU/MPS |
+| Qwen2.5-1.5B-Instruct | 1.5B | 110 | local 16 GB Mac CPU |
+| SmolLM2-360M-Instruct | 360M | 87 | local 16 GB Mac CPU |
+
+The Stage 1 baseline files contain only three cases per model, rather than the
+12-case prompt matrix, so their totals are retained as evidence but are not
+treated as numerically interchangeable with the table above.
+
+Larger models generally improved adherence and reasoning, but size alone did
+not predict quality: the ~2B Gemma model scored 155, above the 4B and 7B models
+and nearly equal to the 12B leader. Prompt-template compatibility also mattered:
+Qwen3 scores were artificially low until thinking mode was disabled. For this
+short structured planning task, roughly 2B–3B is the practical sweet spot.
+Qwen2.5-3B scored 137/180, follows the required structure, can run without a
+paid per-request service, and avoids the much larger memory footprint of
+12B–15B models. That is why it was selected for the Django local planner.
+
+Expected local infrastructure is workload-dependent. A 3B model uses roughly
+6 GB for FP16/bfloat16 weights before runtime overhead, so a practical process
+needs about 8–12 GB RAM and more for concurrent workers. A CPU instance may be
+inexpensive but slow; an always-on GPU scenario can plausibly cost hundreds to
+over one thousand dollars per month. These are planning ranges rather than a
+provider quote and must be rechecked for the chosen host, region, concurrency,
+and uptime.
+
+2. Cost and scaling at 10,000 daily users
+-----------------------------------------
+Assumption for a transparent comparison: 10,000 users make one AI request per
+day, each request averages 750 input tokens and 250 output tokens, for 300,000
+requests/month (30 days), 225 million input tokens, and 75 million output
+tokens.
+
+Using Google's published standard paid rates for Gemini 2.5 Flash-Lite on
+2026-10-19 ($0.10 per million input tokens and $0.40 per million output tokens):
+
+- Input: 225M x $0.10/M = $22.50/month
+- Output: 75M x $0.40/M = $30.00/month
+- Estimated model charge: $52.50/month, before taxes, networking, retries,
+  caching, and any provider pricing changes.
+
+The API path scales with demand and has little operations work, but has quota,
+vendor, privacy, outage, and variable-bill risk. Rate limiting, request budgets,
+usage alerts, retry backoff, and cached safe responses would be required.
+
+The local 3B path has no token bill but must be provisioned for peak requests.
+At 10,000 daily users, a single CPU worker would likely create unacceptable
+queues. Multiple CPU replicas or one/more GPU workers, a request queue, health
+checks, monitoring, warm model processes, and autoscaling would be needed. A
+rough always-on GPU planning range of $0.50–$1.50/hour is $365–$1,095/month per
+worker, before the Django/database tier. Local hosting can become economical at
+high steady utilization, but it is not automatically cheaper at this scale.
+
+3. Hybrid solution potential
+-----------------------------
+A hybrid design is the best production direction. Send short, low-risk,
+well-structured planning requests to the local 3B model. Escalate only requests
+that fail output validation, require stronger reasoning, or exceed local queue
+latency to the external API, after user disclosure and consent. The application
+can also use local preprocessing to remove identifiers before an API call.
+
+Routing inputs should include privacy level, request complexity, latency target,
+local queue depth, provider availability, user consent, and a per-user cost
+budget. Both paths should retain the same output schema and safety validation so
+the interface does not depend on a provider. The current two-page prototype
+demonstrates both paths separately; automatic routing would be a later feature.
+
+4. When to use local configuration versus an API
+-------------------------------------------------
+Choose a local model when data must remain under organizational control,
+requests are predictable and repetitive, offline availability matters, the
+team can operate inference infrastructure, and sufficient steady traffic can
+justify fixed hardware. Local deployment also offers stronger version pinning
+and avoids per-token price changes, but requires capacity planning, security
+patches, model downloads, monitoring, and fallbacks.
+
+Choose an external API when time-to-market, elasticity, stronger general model
+quality, and low operational burden matter more than full infrastructure
+control. It is especially suitable for prototypes and bursty or low-volume
+traffic. It requires explicit privacy review, secret management, quotas,
+timeouts, provider-error handling, cost controls, and a degradation plan.
+
+For CozyDay today, the external API is the easiest inexpensive scalable option
+under the stated 10,000-request/day assumptions, while the local 3B planner is
+valuable for privacy-sensitive use and learning. A measured hybrid rollout is
+preferable to committing exclusively to either approach.
+
+Sources used for API design and cost assumptions (accessed 2026-10-19):
+- Google Gemini API text generation documentation:
+  https://ai.google.dev/gemini-api/docs/text-generation/
+- Google Gemini Developer API pricing:
+  https://ai.google.dev/gemini-api/docs/pricing

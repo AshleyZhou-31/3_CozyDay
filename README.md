@@ -22,6 +22,8 @@ one consistent end-to-end flow.
 - Django 5.2.17
 - SQLite (default database)
 - Matplotlib (server-side charts)
+- Hugging Face Transformers (local AI planner)
+- Google Gemini API (external AI planner)
 
 ---
 
@@ -99,6 +101,11 @@ one consistent end-to-end flow.
    to open its detail page. Also visit `/planitems/search/` to try the title
    search (GET and POST), the category filter, and the grouped
    item-per-category summary.
+
+9. Optional AI setup and the complete data/safety workflow are documented in
+   [`README_AI.md`](README_AI.md). Authenticated users can compare the local
+   planner at `/planitems/ai-planner/` with the external API planner at
+   `/planitems/api-ai-planner/`.
 
 ---
 
