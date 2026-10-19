@@ -149,3 +149,23 @@ SOCIALACCOUNT_PROVIDERS = {
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "planner:planitem-list"
 LOGOUT_REDIRECT_URL = "home"
+
+
+# ---------------------------------------------------------------------------
+# Local AI planner (Stage 3). The model is downloaded by Hugging Face
+# Transformers the first time the feature is used. See docs/ai_planner_stage3.md.
+# ---------------------------------------------------------------------------
+def _env_int(name, default):
+    try:
+        return int(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+AI_PLANNER_MODEL_ID = os.environ.get("AI_PLANNER_MODEL_ID", "Qwen/Qwen2.5-3B-Instruct")
+AI_PLANNER_DEVICE = os.environ.get("AI_PLANNER_DEVICE", "auto")  # auto, cpu, cuda or mps
+AI_PLANNER_MAX_INPUT_CHARS = _env_int("AI_PLANNER_MAX_INPUT_CHARS", 600)
+AI_PLANNER_MAX_NEW_TOKENS = _env_int("AI_PLANNER_MAX_NEW_TOKENS", 256)
+AI_PLANNER_MAX_TIME_SECONDS = _env_int("AI_PLANNER_MAX_TIME_SECONDS", 120)
+AI_PLANNER_MAX_PLAN_ITEMS = _env_int("AI_PLANNER_MAX_PLAN_ITEMS", 10)
+AI_PLANNER_FEW_SHOTS = _env_int("AI_PLANNER_FEW_SHOTS", 3)

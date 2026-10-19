@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}AI Planner - CozyDay{% endblock %}
+
+{% block content %}
+<h2>AI Planner</h2>
+
+<p>
+    Describe what you need to get done today and the local AI model will suggest a
+    priority, a schedule, and a short reason. Suggestions are only a starting point,
+    so please double-check the times.
+</p>
+<p>
+    <small>
+        The model runs on this computer. The first request can take a few minutes while
+        the model downloads and loads; later requests are faster.
+    </small>
+</p>
+
+<form method="post" action="{% url 'planner:ai-planner' %}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <p>
+        <label for="{{ form.request_text.id_for_label }}">{{ form.request_text.label }}</label><br>
+        {{ form.request_text }}
+        {% if form.request_text.help_text %}<br><small>{{ form.request_text.help_text }}</small>{% endif %}
+        {{ form.request_text.errors }}
+    </p>
+    <p>
+        {{ form.include_plan_items }}
+        <label for="{{ form.include_plan_items.id_for_label }}">{{ form.include_plan_items.label }}</label>
+    </p>
+
+    <button type="submit" class="cozy-button">Suggest a plan</button>
+</form>
+
+{% if error_message %}
+    <div role="alert" class="ai-planner-error">
+        <p><strong>Sorry:</strong> {{ error_message }}</p>
+    </div>
+{% endif %}
+
+{% if result %}
+    <section aria-labelledby="ai-result-heading">
+        <h3 id="ai-result-heading">Your suggested plan</h3>
+
+        <h4>Priority</h4>
+        <p>{{ result.priority }}</p>
+
+        <h4>Schedule</h4>
+        <ol>
+            {% for step in result.schedule %}
+                <li>{{ step }}</li>
+            {% endfor %}
+        </ol>
+
+        {% if result.reason %}
+            <h4>Reason</h4>
+            <p>{{ result.reason }}</p>
+        {% endif %}
+
+        {% if not result.complete %}
+            <p><small>
+                This suggestion looks incomplete (the model may have been cut off).
+                Try a shorter request if you need the full reasoning.
+            </small></p>
+        {% endif %}
+    </section>
+{% endif %}
+{% endblock %}

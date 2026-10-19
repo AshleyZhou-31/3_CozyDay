@@ -34,6 +34,7 @@
 
                 <a href="{% url 'planner:analytics' %}">Analytics</a>
                 <a href="{% url 'planner:planitem-reports' %}">Reports</a>
+                <a href="{% url 'planner:ai-planner' %}">AI Planner</a>
 
                 <form method="post" action="{% url 'logout' %}" style="display: inline;">
                     {% csrf_token %}
