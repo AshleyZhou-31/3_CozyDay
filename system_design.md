@@ -108,3 +108,18 @@ Final comparison, routing analysis, verification, and submission.
 - **Unresolved limitation:** The modeled HF API rates and “hypothetical hosted equivalent” model mappings are not verified provider quotes and should not be presented as actual Hugging Face paid-pricing results. Source a real available comparable model/provider, output and input pricing (or compute-based rate), URL, currency and access date before final Step 2.4 submission.
 - Original Stage 1 scores and raw measurements are preserved. Borderline scores (Model 2 P5, Model 3 M4, Model 4 S5, Model 5 S1) require a documented scoring audit; do not modify values without a defensible rationale.
 - Model 4 and 5 GPU timings used CUDA synchronization. No identical-hardware throughput conclusion is justified because the test backends and dtypes differ.
+
+
+### Step 2.4 — Updated verified HF provider prices (2026-10-21)
+
+**Use `llm-test/results/a7_stage1_api_cost.csv` for the authoritative provider-price scenarios.** Earlier notebook illustrative rates are superseded. Official source: https://huggingface.co/inference/models (prices can change). Listed input/output charges are USD per million tokens.
+
+| Stage 1 local model | Comparable paid model | Provider | Input / 1M | Output / 1M | Limitation |
+|---|---|---|---:|---:|---|
+| SmolLM2-135M | Not verified | — | — | — | No defensible sub-0.5B API quote; 6 cost cells intentionally unavailable |
+| Qwen2.5-0.5B | DeepSeek-R1-Distill-Qwen-1.5B | nscale | $0.10 | $0.10 | Proxy is 3× larger, not equivalent |
+| Qwen3-1.7B | DeepSeek-R1-Distill-Qwen-1.5B | nscale | $0.10 | $0.10 | Similar size but different model/training |
+| Phi-3.5-mini (3.8B) | Qwen3-4B-Instruct-2507 | nscale | $0.01 | $0.03 | Similar size but different model family |
+| Qwen3-8B | Qwen3-8B | nscale | $0.07 | $0.18 | Exact model, hosted versus local NF4 |
+
+For the 24 priced rows, assume 250 input tokens + 500 output tokens per request, one request per DAU per day, 30 days per month. Monthly provider charge is (monthly input tokens × provider input USD/1M + monthly output tokens × provider output USD/1M) / 1,000,000. Total monthly cost adds previously assumed gateway cost. Six 135M scenarios retain gateway and load fields but have blank API/total cost; **do not treat blanks as $0 or quote the pricing table as 30 verified pairs**. Proxy comparisons are approximate and should not be interpreted as equivalent quality. The old $0.10/$0.20/$0.40/$0.75/$1.20 illustrative numbers should not be used in the final recommendation.
