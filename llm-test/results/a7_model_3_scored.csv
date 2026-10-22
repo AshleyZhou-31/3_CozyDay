@@ -171,7 +171,7 @@ Qwen/Qwen3-1.7B,Medium (>1.5B-3B),4.337,16.6,Plan Summarization,"Summarize this 
 - Exam at 10 AM  
 - Lunch at 1 PM  
 - Office hours at 3 PM",72,False,Transformers,cpu,torch.bfloat16,256,10,10,9,10
-Qwen/Qwen3-1.7B,Medium (>1.5B-3B),2.358,8.058,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",9,M4,"I will finish the readings, send the emails, clean the apartment, and prepare meals.",19,False,Transformers,cpu,torch.bfloat16,256,7,9,10,8
+Qwen/Qwen3-1.7B,Medium (>1.5B-3B),2.358,8.058,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",8,M4,"I will finish the readings, send the emails, clean the apartment, and prepare meals.",19,False,Transformers,cpu,torch.bfloat16,256,7,9,10,7
 Qwen/Qwen3-1.7B,Medium (>1.5B-3B),3.402,12.346,Plan Summarization,"Provide a short daily overview: 9 AM project work, noon lunch, 2 PM class, 5 PM gym, and 7 PM dinner.",10,M5,"**Daily Overview:**
 
 - **9 AM:** Project work  

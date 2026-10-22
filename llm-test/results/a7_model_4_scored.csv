@@ -177,7 +177,7 @@ microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.214,5.037,Schedule Generation,
 - **03:00 PM - 04:00 PM:** Cleaning.
 
 
-This schedule allows you to complete all your tasks within the specified time frame, with a 1-hour buffer if needed for travel or unexpected delays.",127,False,Transformers (Colab T4 GPU),cuda:0,float16,256,9,9,9,10
+This schedule allows you to complete all your tasks within the specified time frame, with a 1-hour buffer if needed for travel or unexpected delays.",127,False,Transformers (Colab T4 GPU),cuda:0,float16,256,9,6,9,10
 microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),24.884,1.688,Plan Summarization,"Summarize my day: 9 AM lecture, 11 AM library study, 2 PM grocery shopping, and 6 PM dinner with friends.",10,M1,"Your day included attending a 9 AM lecture, studying at the library from 11 AM, grocery shopping at 2 PM, and having dinner with friends at 6 PM.",42,False,Transformers (Colab T4 GPU),cuda:0,float16,256,10,10,10,10
 microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.789,2.598,Plan Summarization,"Give me a concise summary of tomorrow: morning workout, afternoon team meeting, evening homework.",10,M2,"Tomorrow's schedule includes:
 

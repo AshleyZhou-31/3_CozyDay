@@ -270,9 +270,9 @@ This ranking helps prioritize tasks based on their urgency and importance, ensur
 2,Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),11.543,3.465,Priority Ranking,"I must submit an assignment by 5 PM, call a friend sometime this week, and prepare dinner tonight. Rank these tasks by urgency.",6,P4,"1. Prepare dinner tonight - Urgent
 2. Call a friend sometime this week - Important but not urgent
 3. Submit an assignment by 5 PM - Not urgent but important for deadlines",40,False,Transformers,cpu,torch.bfloat16,256,6,2,8,8
-2,Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),8.917,2.692,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",9,P5,"1. Finish your group project.
+2,Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),8.917,2.692,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",8,P5,"1. Finish your group project.
 2. Organize your desk.
-3. Prepare for the quiz on Monday.",24,False,Transformers,cpu,torch.bfloat16,256,9,8,9,9
+3. Prepare for the quiz on Monday.",24,False,Transformers,cpu,torch.bfloat16,256,8,7,9,9
 2,Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),16.744,11.945,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",5,S1,"Here's your study schedule:
 
 **Morning:**
@@ -663,7 +663,7 @@ Let me know if you'd like to adjust anything!",142,False,Transformers,cpu,torch.
 - Exam at 10 AM  
 - Lunch at 1 PM  
 - Office hours at 3 PM",72,False,Transformers,cpu,torch.bfloat16,256,10,10,9,10
-3,Qwen/Qwen3-1.7B,Medium (>1.5B-3B),2.358,8.058,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",9,M4,"I will finish the readings, send the emails, clean the apartment, and prepare meals.",19,False,Transformers,cpu,torch.bfloat16,256,7,9,10,8
+3,Qwen/Qwen3-1.7B,Medium (>1.5B-3B),2.358,8.058,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",8,M4,"I will finish the readings, send the emails, clean the apartment, and prepare meals.",19,False,Transformers,cpu,torch.bfloat16,256,7,9,10,7
 3,Qwen/Qwen3-1.7B,Medium (>1.5B-3B),3.402,12.346,Plan Summarization,"Provide a short daily overview: 9 AM project work, noon lunch, 2 PM class, 5 PM gym, and 7 PM dinner.",10,M5,"**Daily Overview:**
 
 - **9 AM:** Project work  
@@ -931,7 +931,7 @@ This schedule allows for a balanced day with time for studying, a meeting, erran
 - **03:00 PM - 04:00 PM:** Cleaning.
 
 
-This schedule allows you to complete all your tasks within the specified time frame, with a 1-hour buffer if needed for travel or unexpected delays.",127,False,Transformers (Colab T4 GPU),cuda:0,float16,256,9,9,9,10
+This schedule allows you to complete all your tasks within the specified time frame, with a 1-hour buffer if needed for travel or unexpected delays.",127,False,Transformers (Colab T4 GPU),cuda:0,float16,256,9,6,9,10
 4,microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),24.884,1.688,Plan Summarization,"Summarize my day: 9 AM lecture, 11 AM library study, 2 PM grocery shopping, and 6 PM dinner with friends.",10,M1,"Your day included attending a 9 AM lecture, studying at the library from 11 AM, grocery shopping at 2 PM, and having dinner with friends at 6 PM.",42,False,Transformers (Colab T4 GPU),cuda:0,float16,256,10,10,10,10
 4,microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.789,2.598,Plan Summarization,"Give me a concise summary of tomorrow: morning workout, afternoon team meeting, evening homework.",10,M2,"Tomorrow's schedule includes:
 
@@ -1161,7 +1161,7 @@ go for a run - Health",24,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256
 5,Qwen/Qwen3-8B,Very Large (>7B),12.452,5.862,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",8,P5,"1. **Finish the group project** – This is the most urgent task since it's due tomorrow.  
 2. **Organize your desk** – This can be done while working on the project or after, but it will help with focus.  
 3. **Prepare for the quiz next Monday** – Start reviewing materials now to avoid last-minute stress.",73,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,8,7,9,9
-5,Qwen/Qwen3-8B,Very Large (>7B),12.175,21.027,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",9,S1,"**Schedule: 9 AM - 5 PM**
+5,Qwen/Qwen3-8B,Very Large (>7B),12.175,21.027,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",8,S1,"**Schedule: 9 AM - 5 PM**
 
 - **9:00 AM - 10:00 AM**: Study (Focus on one subject or task)  
 - **10:00 AM - 10:15 AM**: Break (Light walk or stretch)  
@@ -1172,7 +1172,7 @@ go for a run - Health",24,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256
 - **12:45 PM - 1:45 PM**: Grocery Shopping (Focus on list and efficiency)  
 - **1:45 PM - 2:00 PM**: Break (Rest or short walk)  
 - **2:00 PM - 3:00 PM**: Study (Review or deep dive into material)  
-- **3:00 PM - 3:15 PM**:",256,True,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,8,10,9,7
+- **3:00 PM - 3:15 PM**:",256,True,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,7,10,9,6
 5,Qwen/Qwen3-8B,Very Large (>7B),12.265,12.393,Schedule Generation,"Plan my day between 8 AM and 6 PM. I have class from 10 AM to noon, need 2 hours for homework, and want 1 hour for lunch.",10,S2,"Here's a suggested plan for your day from 8 AM to 6 PM:
 
 - **8:00 AM - 10:00 AM**: Free time (you can read, relax, or do light exercise)  

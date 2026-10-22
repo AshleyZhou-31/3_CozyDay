@@ -30,9 +30,9 @@ Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),6.104,1.966,Priority Ranking,"My pr
 Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),11.543,3.465,Priority Ranking,"I must submit an assignment by 5 PM, call a friend sometime this week, and prepare dinner tonight. Rank these tasks by urgency.",6,P4,"1. Prepare dinner tonight - Urgent
 2. Call a friend sometime this week - Important but not urgent
 3. Submit an assignment by 5 PM - Not urgent but important for deadlines",40,False,Transformers,cpu,torch.bfloat16,256,6,2,8,8
-Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),8.917,2.692,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",9,P5,"1. Finish your group project.
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),8.917,2.692,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",8,P5,"1. Finish your group project.
 2. Organize your desk.
-3. Prepare for the quiz on Monday.",24,False,Transformers,cpu,torch.bfloat16,256,9,8,9,9
+3. Prepare for the quiz on Monday.",24,False,Transformers,cpu,torch.bfloat16,256,8,7,9,9
 Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),16.744,11.945,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",5,S1,"Here's your study schedule:
 
 **Morning:**

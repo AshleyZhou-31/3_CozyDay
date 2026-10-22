@@ -17,10 +17,10 @@ The overall evaluation score is rounded to the nearest integer on a 1?10 scale.
 | Model | Avg Quality | Avg Latency (s) | Avg Tokens/sec |
 |---|---:|---:|---:|
 | SmolLM2-135M | 2.76 | 5.19 | 24.49 |
-| Qwen2.5-0.5B | 6.80 | 5.56 | 12.37 |
-| Qwen3-1.7B | 8.00 | 17.34 | 4.34 |
+| Qwen2.5-0.5B | 6.76 | 5.56 | 12.37 |
+| Qwen3-1.7B | 7.96 | 17.34 | 4.34 |
 | Phi-3.5-mini | 9.40 | 6.05 | 24.21 |
-| Qwen3-8B | 9.64 | 6.66 | 11.76 |
+| Qwen3-8B | 9.60 | 6.66 | 11.76 |
 
 Models 1?3 were benchmarked locally on CPU. Models 4?5 were tested using a Google Colab Tesla T4 GPU. Model 4 used FP16; Model 5 used 4-bit NF4 quantization.
 
@@ -123,3 +123,12 @@ Final comparison, routing analysis, verification, and submission.
 | Qwen3-8B | Qwen3-8B | nscale | $0.07 | $0.18 | Exact model, hosted versus local NF4 |
 
 For the 24 priced rows, assume 250 input tokens + 500 output tokens per request, one request per DAU per day, 30 days per month. Monthly provider charge is (monthly input tokens × provider input USD/1M + monthly output tokens × provider output USD/1M) / 1,000,000. Total monthly cost adds previously assumed gateway cost. Six 135M scenarios retain gateway and load fields but have blank API/total cost; **do not treat blanks as $0 or quote the pricing table as 30 verified pairs**. Proxy comparisons are approximate and should not be interpreted as equivalent quality. The old $0.10/$0.20/$0.40/$0.75/$1.20 illustrative numbers should not be used in the final recommendation.
+
+### Quality-score calibration log
+
+- Model 2, P5: overall 9 -> 8; Desk organization is prioritized ahead of the upcoming quiz, with no reason supplied; Model 5 uses the same order. Reduced instruction and accuracy points for consistency.
+- Model 3, M4: overall 9 -> 8; The prompt explicitly requests two sentences, but the response contains only one. Reduced structure score.
+- Model 4, S5: overall 9 -> 9; The task durations total four hours (noon-4 PM), leaving two hours until 6 PM, not the claimed one-hour buffer. Reduced accuracy.
+- Model 5, S1: overall 9 -> 8; The answer reaches 256-token cap and ends mid-schedule, despite including all requested durations and several breaks. Reduced adherence and structure for incompleteness.
+
+The original response text, token counts, latency, and throughput were preserved. Overall scores use round-half-up across the four equally weighted criteria.
