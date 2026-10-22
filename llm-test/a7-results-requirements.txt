@@ -1,0 +1,7 @@
+# Results-only environment used for the repaired A7 notebook: Python 3.12.
+# Does not install inference libraries or download model weights.
+pandas==2.2.3
+IPython==9.17.1
+nbformat==5.11.1
+nbclient==0.11.0
+ipykernel==7.4.0

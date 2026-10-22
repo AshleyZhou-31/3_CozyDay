@@ -1,0 +1,364 @@
+Model,Model Category,Tokens/sec,Latency,Prompt Type,Prompt,Self-Evaluation Score (1-10),Prompt ID,Response,Generated Tokens,Reached Token Limit,Backend,Device,Precision,Max New Tokens,Instruction Adherence,Accuracy,Clarity,Structure
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),14.607,6.23,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: finish project report, review lecture notes, buy groceries, and go for a run. Return one category per task.",,C1,"- Finish project report: Work
+- Review lecture notes: Study
+- Buy groceries: Personal
+- Go for a run: Health
+
+Each task is categorized based on its primary nature and the context in which it is typically performed. Work tasks are related to professional responsibilities, study tasks to academic activities, personal tasks to daily living and errands, and health tasks to physical well-being and exercise.",91,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),22.249,11.506,Task Classification,"Categorize my tasks: email my supervisor, prepare for an exam, clean my room, and attend a dental appointment.",,C2,"- Communication Task: Email your supervisor
+
+- Academic Task: Prepare for an exam
+
+- Household Task: Clean your room
+
+- Health-related Task: Attend a dental appointment
+
+
+Each task has been categorized based on the nature of the activity:
+
+
+1. **Communication Task**: Emailing your supervisor is a task that involves professional communication. It's essential for maintaining work relationships and ensuring that you are up-to-date with any work-related matters.
+
+
+2. **Academic Task**: Preparing for an exam is directly related to your educational goals. It involves studying, reviewing notes, and understanding the material to perform well academically.
+
+
+3. **Household Task**: Cleaning your room is a personal responsibility that contributes to maintaining a healthy and organized living environment. It's a part of daily life that helps in reducing stress and improving mental clarity.
+
+
+4. **Health-related Task**: Attending a dental appointment is a task that pertains to your physical well-being. Regular dental check-ups",256,True,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.753,7.533,Task Classification,"Classify these activities: submit homework, schedule a team meeting, call my family, and attend a yoga class.",,C3,"1. Submit Homework - Academic/School-related Task
+   - This activity involves completing and turning in assignments, which is directly related to educational pursuits.
+
+2. Schedule a Team Meeting - Professional/Work-related Task
+   - Organizing a team meeting is a task typically associated with workplace collaboration and project management.
+
+3. Call my Family - Personal/Family-related Task
+   - This activity is focused on maintaining personal relationships and communication with family members.
+
+4. Attend a Yoga Class - Health/Wellness-related Task
+   - Participating in a yoga class is an activity aimed at improving physical fitness, mental well-being, and overall health.
+
+Each activity can be categorized based on the primary focus or domain it pertains to: academic, professional, personal, or health/wellness.",194,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),22.434,4.19,Task Classification,"Organize these tasks by category: write a research summary, cook dinner, review class slides, and visit the gym.",,C4,"**Work-Related Tasks:**
+1. Review class slides
+2. Write a research summary
+
+**Personal Tasks:**
+1. Cook dinner
+2. Visit the gym
+
+By categorizing the tasks, we can prioritize and manage time effectively. Work-related tasks are focused on professional development and academic responsibilities, while personal tasks are centered around daily living and personal well-being.",94,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),12.595,9.687,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: update a client spreadsheet, study Python, pay rent, and attend a medical checkup.",,C5,"- Update a client spreadsheet: Work
+- Study Python: Study
+- Pay rent: Personal (though it could also be considered a financial aspect of Work, it is typically categorized under personal finances)
+- Attend a medical checkup: Health
+
+Each task is categorized based on its primary focus and the context in which it is usually performed. Work tasks are those related to professional responsibilities, study tasks are related to learning and education, personal tasks are those related to individual life management, and health tasks are those related to physical well-being and medical care.",122,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),23.0,8.783,Priority Ranking,"I have a report due tomorrow, groceries to buy, and a room to clean. Rank these tasks by priority and explain briefly.",,P1,"1. Report due tomorrow - This task is the highest priority because it has a strict deadline, which can affect your professional responsibilities and potentially your job performance or standing.
+
+2. Groceries to buy - This is the second priority. While it's essential for daily living, it can usually be scheduled for later in the day or even the next day, depending on the urgency of your dietary needs.
+
+3. Room to clean - This is the lowest priority among the three tasks. Although maintaining a clean living space is important for health and well-being, it can be postponed until after the report is completed and groceries are bought. It's a task that can be spread out over multiple days.
+
+Remember to allocate time efficiently, perhaps by dedicating the morning to the report, taking a break for lunch, and then handling the groceries and cleaning in the afternoon or evening.",202,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.608,9.997,Priority Ranking,"I have an exam tomorrow, a meeting next week, and laundry to finish. What should I prioritize today?",,P2,"Given the tasks at hand, prioritization should be based on urgency and importance. Here's a suggested plan for today:
+
+1. **Exam Preparation**: Since the exam is tomorrow, it should be your top priority. Allocate the majority of your time today to study and review key concepts. Break down your study session into manageable chunks, and take short breaks to maintain focus.
+
+2. **Laundry**: If the laundry can be completed within a few hours, it should be your next priority. Doing laundry after your study session can help you relax and clear your mind before the exam.
+
+3. **Meeting Preparation**: Although the meeting is next week, it's still important to prepare for it. Set aside a small portion of your time to review meeting agenda, prepare any necessary materials, and jot down questions or topics you'd like to discuss.
+
+Here's a sample schedule for your day:
+
+- **Morning**: Focus on exam preparation. Study for 3-4 hours, taking short breaks every 45-60 minutes.
+- **Afternoon**",256,True,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.616,4.958,Priority Ranking,"My presentation is due tonight, my emails can wait until Friday, and I need to exercise. Rank these tasks.",,P3,"1. Prepare for your presentation tonight - Given the immediate deadline, this task should be your top priority.
+2. Exercise - Schedule your exercise for a time that does not conflict with your presentation preparation, ideally after the presentation or during a break.
+3. Check and respond to emails - Since these can wait until Friday, they should be your lowest priority for the day. However, if there are urgent emails, they should be addressed after your presentation and exercise.
+
+Remember to allocate specific time slots for each task to ensure you manage your time effectively.",127,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.603,7.499,Priority Ranking,"I must submit an assignment by 5 PM, call a friend sometime this week, and prepare dinner tonight. Rank these tasks by urgency.",,P4,"1. Prepare dinner tonight - This task is time-sensitive as it needs to be completed within the current day.
+
+2. Submit an assignment by 5 PM - This task has a fixed deadline, making it the next most urgent task.
+
+3. Call a friend sometime this week - While important for personal reasons, this task is the least urgent as it can be scheduled flexibly within the week.
+
+
+Here's a suggested schedule:
+
+- Prioritize dinner preparation in the evening before the 5 PM deadline.
+
+- Allocate time slots throughout the day to work on the assignment, ensuring it's completed by 5 PM.
+
+- Schedule the call with your friend at a time that does not conflict with the other two tasks, such as after dinner or during a break in your work on the assignment.",192,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.357,5.916,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",,P5,"1. Finish Group Project: Prioritize completing the group project due tomorrow as it has the most immediate deadline.
+
+2. Prepare for Quiz: Allocate time after the project is completed to study for the quiz next Monday, ensuring you understand the material and can perform well.
+
+3. Organize Desk: Once the project is finished and you've dedicated time to studying, tidy up your workspace to maintain a conducive environment for productivity.
+
+
+By following this order, you address the most urgent task first, then transition to preparing for future responsibilities, and finally, ensure your workspace is organized for optimal efficiency.",150,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.52,10.031,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",,S1,"Here is a suggested schedule for your day:
+
+
+9:00 AM - 10:00 AM: Study
+
+- Focus on your most challenging subject or task first to make the most of your mental energy.
+
+
+10:00 AM - 10:15 AM: Short Break
+
+- Stretch, hydrate, and take a moment to rest your eyes and mind.
+
+
+10:15 AM - 11:15 AM: Study
+
+- Continue with your study session, possibly reviewing notes or working on assignments.
+
+
+11:15 AM - 12:15 PM: Exercise
+
+- Engage in a physical activity that you enjoy, such as a brisk walk, jogging, or a workout session.
+
+
+12:15 PM - 1:00 PM: Lunch Break
+
+- Have a healthy meal to refuel your body and mind.
+
+
+1:00 PM - 2:00 PM: Grocery Shopping
+
+- Prepare a shopping list beforehand to make the most efficient use of",256,True,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.54,8.066,Schedule Generation,"Plan my day between 8 AM and 6 PM. I have class from 10 AM to noon, need 2 hours for homework, and want 1 hour for lunch.",,S2,"8:00 AM - 9:30 AM: Morning routine (wake up, breakfast, prepare for class)
+
+9:30 AM - 10:00 AM: Travel to class
+
+10:00 AM - 12:00 PM: Class
+
+12:00 PM - 1:00 PM: Lunch break
+
+1:00 PM - 3:00 PM: Homework
+
+3:00 PM - 4:00 PM: Free time/break
+
+4:00 PM - 6:00 PM: Continue with homework or any additional study/work tasks, followed by preparing for the next day.
+
+Note: This schedule assumes that travel time to class is included in the morning routine and that there are no additional commitments outside of the specified activities. Adjustments may be necessary based on actual travel time and personal pace.",206,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.508,4.783,Schedule Generation,"I am free from 1 PM to 9 PM. Schedule 3 hours of project work, 1 hour of exercise, and 1 hour of cooking.",,S3,"Here is a suggested schedule based on your availability and requested activities:
+
+1:00 PM - 2:00 PM: Exercise
+2:00 PM - 5:00 PM: Project work
+5:00 PM - 6:00 PM: Cooking
+6:00 PM - 9:00 PM: Free time/Additional project work or relaxation
+
+This schedule allows for a balanced distribution of your activities while also providing you with some free time in the evening. Feel free to adjust as needed.",122,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.57,9.269,Schedule Generation,"Build a realistic schedule from 9 AM to 7 PM with a meeting from 11 AM to noon, 3 hours of studying, and 2 hours of errands.",,S4,"Here is a realistic schedule from 9 AM to 7 PM, incorporating your specified activities:
+
+9:00 AM - 10:30 AM: Study
+10:30 AM - 11:00 AM: Break/Preparation for meeting
+11:00 AM - 12:00 PM: Meeting
+12:00 PM - 1:00 PM: Lunch
+1:00 PM - 4:00 PM: Study (3 hours)
+4:00 PM - 4:30 PM: Break/Relaxation
+4:30 PM - 6:30 PM: Errands (2 hours)
+6:30 PM - 7:00 PM: Wrap up the day, review accomplishments, and plan for the next day
+
+This schedule allows for a balanced day with time for studying, a meeting, errands, and breaks. It also includes time for lunch and relaxation. Adjustments can be made based on personal preferences and specific errand details.",237,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.214,5.037,Schedule Generation,"Organize my afternoon from noon to 6 PM. I need 2 hours for research, 1 hour for groceries, and 1 hour for cleaning.",,S5,"Here is a structured plan for your afternoon activities from noon to 6 PM:
+
+
+- **12:00 PM - 01:00 PM:** Grocery shopping.
+
+- **01:00 PM - 03:00 PM:** Research time.
+
+- **03:00 PM - 04:00 PM:** Cleaning.
+
+
+This schedule allows you to complete all your tasks within the specified time frame, with a 1-hour buffer if needed for travel or unexpected delays.",127,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),24.884,1.688,Plan Summarization,"Summarize my day: 9 AM lecture, 11 AM library study, 2 PM grocery shopping, and 6 PM dinner with friends.",,M1,"Your day included attending a 9 AM lecture, studying at the library from 11 AM, grocery shopping at 2 PM, and having dinner with friends at 6 PM.",42,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.789,2.598,Plan Summarization,"Give me a concise summary of tomorrow: morning workout, afternoon team meeting, evening homework.",,M2,"Tomorrow's schedule includes:
+
+- Morning: Workout session
+
+- Afternoon: Team meeting
+
+- Evening: Homework completion
+
+
+This summary encapsulates the three main activities planned for tomorrow, providing a clear and brief overview of the day's commitments.",67,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.912,4.129,Plan Summarization,"Summarize this schedule and highlight key commitments: 8 AM breakfast, 10 AM exam, 1 PM lunch, 3 PM office hours.",,M3,"Schedule Summary:
+
+- 8 AM: Breakfast
+- 10 AM: Exam
+- 1 PM: Lunch
+- 3 PM: Office hours
+
+Key Commitments:
+
+1. Attend an exam at 10 AM.
+2. Have lunch at 1 PM.
+3. Participate in office hours at 3 PM.
+
+These commitments are critical and should be prioritized to ensure a productive day.",107,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.223,1.665,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",,M4,"Your tasks for the day include completing assigned readings and sending out necessary emails, as well as maintaining cleanliness by tidying up your apartment and planning and cooking your meals.",42,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.446,4.559,Plan Summarization,"Provide a short daily overview: 9 AM project work, noon lunch, 2 PM class, 5 PM gym, and 7 PM dinner.",,M5,"Morning:
+
+- 9 AM: Begin project work.
+
+
+Afternoon:
+
+- 12 PM: Take a lunch break.
+
+- 2 PM: Attend scheduled class.
+
+
+Evening:
+
+- 5 PM: Go to the gym for a workout session.
+
+- 7 PM: Have dinner.
+
+
+Today's schedule is packed with productive activities, ensuring a balance between work, education, fitness, and relaxation.",116,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.62,3.63,Structured Extraction,"Extract tasks and times as JSON from: I need to attend class at 9 AM, buy groceries at 4 PM, and study at 7 PM.",,E1,"```json
+{
+  ""tasks"": [
+    {
+      ""task"": ""attend class"",
+      ""time"": ""9 AM""
+    },
+    {
+      ""task"": ""buy groceries"",
+      ""time"": ""4 PM""
+    },
+    {
+      ""task"": ""study"",
+      ""time"": ""7 PM""
+    }
+  ]
+}
+```",93,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.54,4.033,Structured Extraction,"Convert this into JSON with task and deadline fields: Finish the report by Friday, email the professor by Wednesday, and submit homework tomorrow.",,E2,"```json
+{
+  ""tasks"": [
+    {
+      ""task"": ""Finish the report"",
+      ""deadline"": ""Friday""
+    },
+    {
+      ""task"": ""Email the professor"",
+      ""deadline"": ""Wednesday""
+    },
+    {
+      ""task"": ""Submit homework"",
+      ""deadline"": ""tomorrow""
+    }
+  ]
+}
+```",103,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.695,5.643,Structured Extraction,"Extract tasks, durations, and categories into JSON: study Python for 2 hours, exercise for 45 minutes, and clean the kitchen for 30 minutes.",,E3,"```json
+
+{
+
+  ""tasks"": [
+
+    {
+
+      ""description"": ""study Python"",
+
+      ""duration"": ""2 hours"",
+
+      ""category"": ""education""
+
+    },
+
+    {
+
+      ""description"": ""exercise"",
+
+      ""duration"": ""45 minutes"",
+
+      ""category"": ""fitness""
+
+    },
+
+    {
+
+      ""description"": ""clean the kitchen"",
+
+      ""duration"": ""30 minutes"",
+
+      ""category"": ""household chores""
+
+    }
+
+  ]
+
+}
+
+```",145,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.205,5.793,Structured Extraction,"Create a JSON task list from: Meeting at 10 AM, lunch at noon, project work at 2 PM, and dinner at 6 PM.",,E4,"```json
+
+{
+
+  ""task_list"": [
+
+    {
+
+      ""task_name"": ""Meeting"",
+
+      ""time"": ""10 AM""
+
+    },
+
+    {
+
+      ""task_name"": ""Lunch"",
+
+      ""time"": ""noon""
+
+    },
+
+    {
+
+      ""task_name"": ""Project Work"",
+
+      ""time"": ""2 PM""
+
+    },
+
+    {
+
+      ""task_name"": ""Dinner"",
+
+      ""time"": ""6 PM""
+
+    }
+
+  ]
+
+}
+
+```",146,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
+microsoft/Phi-3.5-mini-instruct,Large (>3B-7B),25.819,4.067,Structured Extraction,"Extract structured task data as JSON: submit the assignment by 11:59 PM, call my parents at 7 PM, and exercise for 30 minutes.",,E5,"```json
+{
+  ""tasks"": [
+    {
+      ""description"": ""submit the assignment"",
+      ""deadline"": ""11:59 PM""
+    },
+    {
+      ""description"": ""call my parents"",
+      ""time"": ""7 PM""
+    },
+    {
+      ""description"": ""exercise for 30 minutes"",
+      ""duration"": ""30 minutes""
+    }
+  ]
+}
+```",105,False,Transformers (Colab T4 GPU),cuda:0,float16,256,,,,
