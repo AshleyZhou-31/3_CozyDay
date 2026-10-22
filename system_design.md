@@ -97,3 +97,14 @@ To be completed by Stage 3.
 ## Stage 4 ? Ashley
 
 Final comparison, routing analysis, verification, and submission.
+
+
+## Stage 1 audit corrections and team handoff
+
+- Reusable `llm-test/a7_shared.py` provides a 15-model registry, opt-in CPU/GPU inference, safe per-prompt CSV saving and reusable local/API cost functions. Do not overwrite Stage 1 scored files. Team members select their own model numbers and fresh output directory.
+- Historical CPU Models 1–3 report bfloat16 metadata. Colab T4 Model 4 used FP16 and native Phi-3.5 code; Model 5 used 4-bit NF4 with double quantization and FP16 compute, and disabled Qwen3 thinking mode. A6 matrix status is not an A7 backend report.
+- In the legacy cost CSV, `Per Machine Cost (Cloud)` is in USD/hour; `Total Machine Cost` is USD/month. API `Total Token Load` is per day while `Estimated API Cost` and `Total Cost` are USD/month.
+- The 500 generated tokens/request workload is a prospective scale-planning assumption, not the observed benchmark output (capped at 256). Model throughput and gateway costs are estimates. Gateway counts reflect average-load rather than peak capacity.
+- **Unresolved limitation:** The modeled HF API rates and “hypothetical hosted equivalent” model mappings are not verified provider quotes and should not be presented as actual Hugging Face paid-pricing results. Source a real available comparable model/provider, output and input pricing (or compute-based rate), URL, currency and access date before final Step 2.4 submission.
+- Original Stage 1 scores and raw measurements are preserved. Borderline scores (Model 2 P5, Model 3 M4, Model 4 S5, Model 5 S1) require a documented scoring audit; do not modify values without a defensible rationale.
+- Model 4 and 5 GPU timings used CUDA synchronization. No identical-hardware throughput conclusion is justified because the test backends and dtypes differ.
