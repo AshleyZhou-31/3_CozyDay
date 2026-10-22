@@ -81,6 +81,42 @@ Assumed client-side API gateway price is USD 0.05/hour with capacity 100 request
 
 Estimates exclude storage, transfer, redundancy, labor, taxes, discounts, subscription credits, quotas, peak queues and provider capacity reservations. Average-load machine counts are not peak-load service guarantees. Cloud throughput, gateway economics and proxy output lengths are assumptions, not production measurements. Provider quality, hosted precision and thinking behavior may differ; a real architecture decision requires task-quality and capacity checks. Final scale-switching conclusions belong to Ashley's all-model analysis.
 
+## Peak Usage Hours routing scenario
+
+Stage 2 adds one routing scenario, Peak Usage Hours, covering trigger condition, local and API model choice, fallback behavior, expected benefit, and a latency/cost/quality evaluation kept as three separate axes rather than one blended score. It uses Model 8 (`google/gemma-2-2b-it`, Medium) and Model 10 (`mistralai/Mistral-Nemo-Instruct-2407`, Very Large, NF4) from Rishabh's Stage 2 slot as the local-side examples, reusing the shared traffic tiers, throughput assumptions and cost-model contract from the "Shared traffic and local hosting estimates" section above rather than introducing new ones, except for one explicitly labeled addition below.
+
+### Trigger
+
+The shared cost model sizes a fleet for each tier's daily-average output rate; it does not model intra-day peaks. This scenario adds one new, explicitly labeled **planning assumption**, not a measured value: peak hours carry 3x the day's uniform-average output rate for 4 hours/day. At the 100,000 DAU tier (250 input / 500 output tokens/request, the shared convention), the uniform-average rate is 578.70 output tokens/second; the assumed peak rate is 1,736.11 tokens/second.
+
+Using the Very Large category's assumed 12 tokens/second/machine at 70% utilization (effective 8.4 tokens/second/machine, same as the shared local-hosting formula), average load needs ceiling(578.70 / 8.4) = 69 machines; peak load would need ceiling(1,736.11 / 8.4) = 207 machines, a gap of 138 machines. The trigger fires whenever instantaneous demand on the Very Large tier exceeds the 69-machine fleet sized for the daily average: rather than keep 138 extra machines running 24/7 for a 4-hour window, the system routes the overflow above baseline capacity to the paid API.
+
+### Local and API model choice
+
+Model 10 is the primary local candidate for this scenario: it is Rishabh's highest-scoring Stage 2 model (8.44/10 mean, `llm-test/results/a7_stage2_summary.csv`), and its 5.51-second mean latency was measured on a real GPU (Colab T4, NF4, double quantization, FP16 compute) rather than CPU, so it is at least directionally representative of the production A10G reference machine's interactive behavior, though the Colab and AWS environments are not identical and no standardized rerun was done on the reference machine itself.
+
+Model 8 is explicitly **not** proposed as a peak-hours local option despite its comparable quality (8.04/10 mean): its only measured latency, 615.87 seconds/request, was on local CPU with no MPS path, which is unusable for interactive peak traffic. This is a known gap, not a judgment on the model's quality, and a production decision would require a GPU retest of Model 8 before it could be considered here, consistent with the "Hardware and reproducibility limits" section's caution against attributing speed differences solely to model size.
+
+The paid fallback reuses Rishabh's verified Model 10 proxy quote in `llm-test/a7_api_pricing.json` (entry 10): `Qwen/Qwen3-8B` on `nscale`, USD 0.07 input / USD 0.18 output per million tokens, checked 2026-10-22. As recorded there, this paid 8B model is smaller than the local 12B Mistral-Nemo NF4 model it backs up; no size or quality equivalence is claimed, the same disclosure standard as the Paid Hugging Face provider comparison table above.
+
+### Fallback behavior
+
+New requests during a peak-hours trigger route first to the already-warm local Model 10 fleet up to its provisioned baseline capacity (69 machines in the illustration above); demand beyond that capacity routes to the `Qwen/Qwen3-8B`/nscale API. If the API is unavailable or itself saturated, requests queue briefly against a latency budget rather than silently degrading quality; if the queue is not drained within that budget, the system degrades to a faster, already-capacity-rich local tier (for example the Small or Medium categories) instead of dropping the request, and that degraded response is logged as a capacity event rather than a normal-routing record. No fallback step substitutes a fabricated or cached response for a failed generation.
+
+### Expected benefit
+
+The benefit is avoiding 24/7 provisioning of peak-only capacity. Running the 138-machine gap as dedicated local capacity around the clock would cost 138 x USD 1.006/hour x 24 x 30 = USD 99,956.16/month at the 100,000 DAU tier, almost all of it idle outside the assumed 4 peak hours/day. Routing only the overflow above baseline capacity to the paid API during those 4 hours, using the same input/output token ratio and the shared monthly-cost formula from the Paid Hugging Face provider comparison section, costs an estimated USD 107.42/month in provider charges plus USD 36.00/month in gateway cost (one gateway machine suffices at this overflow volume), for a total of about USD 143.42/month against the same illustration. This is a planning illustration built on the peak-multiplier assumption above, not a measured production saving, but the gap between the two approaches is large enough that provisioning for average load and bursting to the paid API during peak hours is clearly preferable to provisioning for peak load locally at this tier.
+
+### Latency, cost and quality, evaluated separately
+
+Consistent with this document's convention of not collapsing unlike measurements into one score:
+
+- **Latency.** Model 10 locally: 5.51 seconds mean per request, measured on Colab T4 NF4 (`a7_stage2_summary.csv`). The `Qwen/Qwen3-8B`/nscale API's latency under load has not been measured here; a production rollout would need to benchmark provider latency before relying on it for an interactive latency budget during peak hours.
+- **Cost.** Baseline local fleet at the 100,000 DAU tier: USD 49,978.08/month for 69 machines. Overflow routed to the API instead of a dedicated 138-machine peak fleet: about USD 143.42/month versus USD 99,956.16/month, both figures resting on the peak-multiplier and peak-window assumptions stated above, not on measured traffic.
+- **Quality.** Model 10 scored 8.44/10 mean across its 25 shared prompts; the `Qwen/Qwen3-8B` proxy's task quality on these same prompts has not been benchmarked, the same limitation already disclosed for every paid-API proxy row in the Paid Hugging Face provider comparison table. A real peak-hours rollout should not assume the API fallback matches Model 10's measured quality without separately testing it.
+
+Final cross-scenario and cross-model routing conclusions, including whether this scenario should extend to other tiers or categories, belong to Ashley's all-model integration, consistent with the scoping already stated in "Stage 1 scope and evidence" and "Cost limitations" above.
+
 ## Team handoff and safe execution
 
 The notebook resolves paths from either repository root or `llm-test` and displays all Stage 1 benchmark and cost rows. Run All imports no model inference libraries, downloads no weights and writes no authoritative CSVs. Results-only dependencies and the environment used to execute saved outputs are documented in `llm-test/a7-results-requirements.txt`. Full inference requires separately tested torch/Transformers/accelerate and bitsandbytes installations.

@@ -1,0 +1,265 @@
+Model,Model Category,Tokens/sec,Latency,Prompt Type,Prompt,Self-Evaluation Score (1-10),Prompt ID,Response,Generated Tokens,Reached Token Limit,Backend,Device,Precision,Max New Tokens,Protocol ID,Runtime,Instruction Adherence,Accuracy,Clarity,Structure
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.123,334.248,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: finish project report, review lecture notes, buy groceries, and go for a run. Return one category per task.",9,C1,"Here are the tasks classified:
+
+* **finish project report:** Work
+* **review lecture notes:** Study
+* **buy groceries:** Personal
+* **go for a run:** Health 
+",41,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.121,419.789,Task Classification,"Categorize my tasks: email my supervisor, prepare for an exam, clean my room, and attend a dental appointment.",9,C2,"Here are your tasks categorized:
+
+**Work/Professional:**
+* Email my supervisor
+
+**Study/Education:**
+* Prepare for an exam
+
+**Household:**
+* Clean my room
+
+**Personal:**
+* Attend a dental appointment 
+",51,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,8,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.123,439.47,Task Classification,"Classify these activities: submit homework, schedule a team meeting, call my family, and attend a yoga class.",9,C3,"Here's a classification of your activities:
+
+* **Submit homework:**  School/Academic
+* **Schedule a team meeting:** Work/Professional
+* **Call my family:** Personal/Social
+* **Attend a yoga class:** Wellness/Fitness 
+",54,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,8,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),1.007,51.655,Task Classification,"Organize these tasks by category: write a research summary, cook dinner, review class slides, and visit the gym.",6,C4,"## CozyDay's Daily Plan:
+
+**Morning:**
+* **Review class slides** 
+
+**Afternoon:**
+* **Write a research summary**
+* **Cook dinner**
+
+**Evening:**
+* **Visit the gym** 
+",52,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",4,5,8,8
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.124,354.809,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: update a client spreadsheet, study Python, pay rent, and attend a medical checkup.",9,C5,"Here's a classification of your tasks:
+
+* **update a client spreadsheet:** Work
+* **study Python:** Study
+* **pay rent:** Personal
+* **attend a medical checkup:** Health 
+",44,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.123,902.31,Priority Ranking,"I have a report due tomorrow, groceries to buy, and a room to clean. Rank these tasks by priority and explain briefly.",9,P1,"Here's a prioritized list based on urgency:
+
+1. **Report Due Tomorrow:** This is your most pressing task with a deadline looming.  
+2. **Groceries:**  Essential for daily life, but can be done later if the report is completed.
+3. **Room to Clean:**  This can be done at any time, but it's less urgent than the report and groceries. 
+
+
+Let me know if you'd like me to help you break down the report writing or create a grocery list! 
+",111,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,8
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.126,501.669,Priority Ranking,"I have an exam tomorrow, a meeting next week, and laundry to finish. What should I prioritize today?",6,P2,"Here's a possible prioritization:
+
+**Today's Priority:**  Finish laundry. 
+
+**Reasoning:**  Laundry is a quick task that can be done in a short amount of time.  It will free up your time and mental space for studying and preparing for your meeting. 
+",63,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",6,5,7,5
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.123,113.464,Priority Ranking,"My presentation is due tonight, my emails can wait until Friday, and I need to exercise. Rank these tasks.",5,P3,"1. Exercise
+2. Presentation
+3. Emails 
+",14,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",5,4,6,6
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.127,606.203,Priority Ranking,"I must submit an assignment by 5 PM, call a friend sometime this week, and prepare dinner tonight. Rank these tasks by urgency.",9,P4,"Here's a ranking of your tasks by urgency, based on the information you provided:
+
+1. **Submit assignment by 5 PM:** This has the most immediate deadline.
+2. **Prepare dinner tonight:**  This is a task that needs to be done tonight.
+3. **Call a friend sometime this week:** This has a less strict deadline. 
+",77,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,8
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.129,749.509,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",4,P5,"Here's a priority order for your tasks:
+
+1. **Organize your desk:** This will help you focus on the group project and quiz preparation.
+2. **Prepare for the quiz next Monday:**  Start studying now to ensure you're well-prepared.
+3. **Finish the group project due tomorrow:**  This is your most urgent task. 
+
+
+Let me know if you'd like me to help you break down these tasks further! 
+",97,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",3,2,5,6
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.129,1208.459,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",7,S1,"## CozyDay's Schedule:
+
+**9:00 AM - 9:15 AM:** Wake up, get ready
+**9:15 AM - 12:15 PM:** Study Session 1
+**12:15 PM - 1:15 PM:** Lunch Break
+**1:15 PM - 2:15 PM:** Exercise
+**2:15 PM - 3:15 PM:** Study Session 2
+**3:15 PM - 4:15 PM:** Grocery Shopping
+**4:15 PM - 5:00 PM:** Wrap up, relax 
+
+
+Let me know if you'd like to adjust any of these times! 
+",156,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",7,5,8,8
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.129,1243.303,Schedule Generation,"Plan my day between 8 AM and 6 PM. I have class from 10 AM to noon, need 2 hours for homework, and want 1 hour for lunch.",9,S2,"## CozyDay's Plan for You:
+
+**8:00 AM - 9:00 AM:** Wake up, get ready, have breakfast.
+**9:00 AM - 10:00 AM:** Review class notes, prepare for class.
+**10:00 AM - 12:00 PM:** Class.
+**12:00 PM - 1:00 PM:** Lunch break.
+**1:00 PM - 3:00 PM:**  Homework.
+**3:00 PM - 6:00 PM:** Free time (optional activities: errands, exercise, relaxation, etc.) 
+
+
+Let me know if you'd like to adjust this schedule! 
+",160,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,8,8
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.13,454.884,Schedule Generation,"I am free from 1 PM to 9 PM. Schedule 3 hours of project work, 1 hour of exercise, and 1 hour of cooking.",9,S3,"## CozyDay's Schedule:
+
+**1:00 PM - 4:00 PM:** Project Work
+**4:00 PM - 5:00 PM:** Exercise
+**5:00 PM - 6:00 PM:** Cooking 
+",59,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.126,1513.774,Schedule Generation,"Build a realistic schedule from 9 AM to 7 PM with a meeting from 11 AM to noon, 3 hours of studying, and 2 hours of errands.",6,S4,"## CozyDay's Schedule:
+
+**9:00 AM - 10:00 AM:**  Morning Routine (Breakfast, check emails, etc.)
+**10:00 AM - 11:00 AM:**  Errands (Grocery shopping, post office, etc.)
+**11:00 AM - 12:00 PM:** Meeting
+**12:00 PM - 1:00 PM:**  Lunch Break
+**1:00 PM - 4:00 PM:**  Study Session 
+**4:00 PM - 6:00 PM:**  Errands (Continue errands if needed)
+**6:00 PM - 7:00 PM:**  Relaxation/Dinner Preparation 
+
+
+**Notes:** This schedule is flexible and can be adjusted based on your individual needs and preferences. 
+",190,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",6,5,7,7
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.126,570.926,Schedule Generation,"Organize my afternoon from noon to 6 PM. I need 2 hours for research, 1 hour for groceries, and 1 hour for cleaning.",9,S5,"## CozyDay's Afternoon Plan (12 PM - 6 PM)
+
+* **12:00 PM - 2:00 PM:** Research
+* **2:00 PM - 3:00 PM:** Grocery Shopping
+* **3:00 PM - 4:00 PM:** Cleaning 
+",72,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.127,410.675,Plan Summarization,"Summarize my day: 9 AM lecture, 11 AM library study, 2 PM grocery shopping, and 6 PM dinner with friends.",9,M1,"**Day Summary:**
+
+* 9:00 AM: Lecture
+* 11:00 AM: Library study
+* 2:00 PM: Grocery shopping
+* 6:00 PM: Dinner with friends 
+",52,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,8
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.121,231.473,Plan Summarization,"Give me a concise summary of tomorrow: morning workout, afternoon team meeting, evening homework.",9,M2,"## Tomorrow's Schedule:
+
+* **Morning:** Workout
+* **Afternoon:** Team Meeting
+* **Evening:** Homework 
+",28,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,8
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.121,545.439,Plan Summarization,"Summarize this schedule and highlight key commitments: 8 AM breakfast, 10 AM exam, 1 PM lunch, 3 PM office hours.",8,M3,"## CozyDay's Schedule:
+
+**Morning:**
+* 8:00 AM: Breakfast 
+
+**Midday:**
+* 10:00 AM: Exam
+* 1:00 PM: Lunch
+
+**Afternoon:**
+* 3:00 PM: Office Hours 
+",66,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",7,9,8,8
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.127,197.488,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",7,M4,"Your tasks today are to complete your readings, send out your emails, clean your apartment, and prepare meals.  
+",25,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",5,8,8,6
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.129,474.087,Plan Summarization,"Provide a short daily overview: 9 AM project work, noon lunch, 2 PM class, 5 PM gym, and 7 PM dinner.",9,M5,"## CozyDay Daily Overview:
+
+* **9:00 AM:** Project work
+* **12:00 PM:** Lunch
+* **2:00 PM:** Class
+* **5:00 PM:** Gym
+* **7:00 PM:** Dinner 
+",61,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.126,792.226,Structured Extraction,"Extract tasks and times as JSON from: I need to attend class at 9 AM, buy groceries at 4 PM, and study at 7 PM.",9,E1,"```json
+{
+  ""tasks"": [
+    {
+      ""task"": ""Attend class"",
+      ""time"": ""9:00 AM""
+    },
+    {
+      ""task"": ""Buy groceries"",
+      ""time"": ""4:00 PM""
+    },
+    {
+      ""task"": ""Study"",
+      ""time"": ""7:00 PM""
+    }
+  ]
+}
+``` 
+",100,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.128,641.373,Structured Extraction,"Convert this into JSON with task and deadline fields: Finish the report by Friday, email the professor by Wednesday, and submit homework tomorrow.",9,E2,"```json
+[
+  {
+    ""task"": ""Finish the report"",
+    ""deadline"": ""Friday""
+  },
+  {
+    ""task"": ""Email the professor"",
+    ""deadline"": ""Wednesday""
+  },
+  {
+    ""task"": ""Submit homework"",
+    ""deadline"": ""Tomorrow""
+  }
+]
+``` 
+",82,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.127,930.279,Structured Extraction,"Extract tasks, durations, and categories into JSON: study Python for 2 hours, exercise for 45 minutes, and clean the kitchen for 30 minutes.",9,E3,"```json
+{
+  ""tasks"": [
+    {
+      ""task"": ""study Python"",
+      ""duration"": ""2 hours"",
+      ""category"": ""Learning""
+    },
+    {
+      ""task"": ""exercise"",
+      ""duration"": ""45 minutes"",
+      ""category"": ""Fitness""
+    },
+    {
+      ""task"": ""clean the kitchen"",
+      ""duration"": ""30 minutes"",
+      ""category"": ""Household""
+    }
+  ]
+}
+``` 
+",118,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.128,920.694,Structured Extraction,"Create a JSON task list from: Meeting at 10 AM, lunch at noon, project work at 2 PM, and dinner at 6 PM.",9,E4,"```json
+[
+  {
+    ""time"": ""10:00 AM"",
+    ""task"": ""Meeting""
+  },
+  {
+    ""time"": ""12:00 PM"",
+    ""task"": ""Lunch""
+  },
+  {
+    ""time"": ""2:00 PM"",
+    ""task"": ""Project work""
+  },
+  {
+    ""time"": ""6:00 PM"",
+    ""task"": ""Dinner""
+  }
+]
+``` 
+",118,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",9,9,9,9
+google/gemma-2-2b-it,Medium (>1.5B-3B),0.127,788.475,Structured Extraction,"Extract structured task data as JSON: submit the assignment by 11:59 PM, call my parents at 7 PM, and exercise for 30 minutes.",8,E5,"```json
+{
+  ""tasks"": [
+    {
+      ""task"": ""Submit assignment"",
+      ""due_time"": ""11:59 PM""
+    },
+    {
+      ""task"": ""Call parents"",
+      ""due_time"": ""7 PM""
+    },
+    {
+      ""task"": ""Exercise"",
+      ""duration"": ""30 minutes""
+    }
+  ]
+}
+``` 
+",100,False,Transformers,cpu,bfloat16,256,32e6f458c7efef8aaa7e6bbe814e15cc4c4545528a5d22c24ab4545666e4a25b,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-26.5.2-arm64-arm-64bit-Mach-O"", ""python"": ""3.13.13 (v3.13.13:01104ce1beb, Apr  7 2026, 14:43:30) [Clang 16.0.0 (clang-1600.0.26.6)]"", ""torch"": ""2.14.1""}",8,8,8,7

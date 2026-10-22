@@ -16,6 +16,12 @@
       "provider": "nscale",
       "input_usd_per_million": 0.07,
       "output_usd_per_million": 0.18
+    },
+    {
+      "model": "meta-llama/Llama-3.1-8B-Instruct",
+      "provider": "nscale",
+      "input_usd_per_million": 0.06,
+      "output_usd_per_million": 0.06
     }
   ],
   "models": {
@@ -63,6 +69,52 @@
       "source_url": "https://huggingface.co/inference/models?model=Qwen/Qwen3-8B",
       "checked_date": "2026-10-21",
       "comparison_note": "Same Qwen3-8B model ID; hosted precision and thinking configuration are unverified, unlike local NF4 non-thinking run."
+    },
+    "6": {
+      "model": "meta-llama/Llama-3.1-8B-Instruct",
+      "provider": "nscale",
+      "input_usd_per_million": 0.06,
+      "output_usd_per_million": 0.06,
+      "source_url": "https://huggingface.co/inference/models?model=meta-llama/Llama-3.1-8B-Instruct",
+      "checked_date": "2026-10-22",
+      "comparison_note": "Task-based 8B instruct proxy for a 135M local model (about 59x larger); no size or quality equivalence claimed."
+    },
+    "7": {
+      "model": "meta-llama/Llama-3.1-8B-Instruct",
+      "provider": "nscale",
+      "input_usd_per_million": 0.06,
+      "output_usd_per_million": 0.06,
+      "source_url": "https://huggingface.co/inference/models?model=meta-llama/Llama-3.1-8B-Instruct",
+      "checked_date": "2026-10-22",
+      "comparison_note": "Task-based 8B instruct proxy for a 0.6B local model (about 13x larger); no size or quality equivalence claimed."
+    },
+    "8": {
+      "model": "meta-llama/Llama-3.1-8B-Instruct",
+      "provider": "nscale",
+      "input_usd_per_million": 0.06,
+      "output_usd_per_million": 0.06,
+      "source_url": "https://huggingface.co/inference/models?model=meta-llama/Llama-3.1-8B-Instruct",
+      "checked_date": "2026-10-22",
+      "comparison_note": "Task-based 8B instruct proxy for a ~2B local model (about 4x larger); different model family, no quality equivalence claimed."
+    },
+    "9": {
+      "model": "meta-llama/Llama-3.1-8B-Instruct",
+      "provider": "nscale",
+      "input_usd_per_million": 0.06,
+      "output_usd_per_million": 0.06,
+      "source_url": "https://huggingface.co/inference/models?model=meta-llama/Llama-3.1-8B-Instruct",
+      "checked_date": "2026-10-22",
+      "comparison_note": "Task-based 8B instruct proxy for a 4B local model (about 2x larger); different model family, no quality equivalence claimed."
+    },
+    "10": {
+      "model": "Qwen/Qwen3-8B",
+      "provider": "nscale",
+      "input_usd_per_million": 0.07,
+      "output_usd_per_million": 0.18,
+      "source_url": "https://huggingface.co/inference/models?model=Qwen/Qwen3-8B",
+      "checked_date": "2026-10-22",
+      "comparison_note": "Reuses Stage 1's Very Large proxy (Qwen3-8B/nscale). This paid 8B model is actually SMALLER than the local 12B Mistral-Nemo (4-bit NF4); no size or quality equivalence claimed. Chosen because it is nscale's largest currently-verified listed model in this evidence set."
     }
-  }
+  },
+  "verification_date_stage2": "2026-10-22"
 }
