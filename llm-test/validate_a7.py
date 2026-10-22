@@ -27,16 +27,16 @@ RESULTS = MODULE / "results"
 
 # SHA256 anchors from reviewed commit 36a2e4c; raw files also match dd681be.
 # Matrix anchor updated for the reviewed Model 4/5 status-only documentation correction.
-BASELINE = {'results/a7_model_1_benchmark.csv': 'b037fa8994da81b098a7d69c3096ed8f26043c7d3749e9226089bc5b4375e000', 'results/a7_model_1_scored.csv': 'e2cb821b08bcd2e34dc866643069423d2552abfcc17834551953c91fc3bb7a17', 'results/a7_model_2_benchmark.csv': '680492e1c9d72c71e993a7d648e87bac46c0ee22156838686d1e7af50c2ba812', 'results/a7_model_2_scored.csv': '90d885c8c0ea4b71e160b9a20d01ac238da1564d359a61001ae596878c4b75e9', 'results/a7_model_3_benchmark.csv': 'e7c41a4ee85a442e771a14d2a3f38f08da258484c378102754a1146f7ec883b3', 'results/a7_model_3_scored.csv': '660ee746b9e9fd41738906ad0d2c82f14bd9ac1fbe9ecbadc5372420c1fa1b6f', 'results/a7_model_4_benchmark.csv': 'd2092a328664159e2d5e2192edc40f43be1aa3137c1ac1c947231b17bcdbc549', 'results/a7_model_4_scored.csv': '8c2d7c34da6ce00be1b5c6e47b1b45f3c2aab5f9ecc92897963afe2eaff99764', 'results/a7_model_5_benchmark.csv': '6d244931f184afe2fcbb3d0319ce5f6e5d5e0614807fb2381af1e175daf19575', 'results/a7_model_5_scored.csv': '899a67fed94c718515da4be07aadd7feae4cdb63cf45b137c3b52eea16a3aa8a', 'results/a7_stage1_all_benchmarks.csv': '8e16d5e898baa4eed59f674003a21e9524d026516c4503329f072a3fa4ba9ea0', 'results/a7_stage1_summary.csv': '3d45d52241ad60f6304db36f45fbe229f660e008fe4c9659f00b9fef9fd1bcf1', 'results/a7_stage1_local_cost.csv': '7e734f939fa09e8aac7e6e92bad99d2011fb30faf09b5aedf282658b4fe7f118', 'results/research_matrix.csv': '29194ca699d7c938d130f383fa792cb9c856712fabec713f622f295d2b6dcd48'}
+BASELINE = {'results/a7_model_1_benchmark.csv': 'b037fa8994da81b098a7d69c3096ed8f26043c7d3749e9226089bc5b4375e000', 'results/a7_model_1_scored.csv': 'e2cb821b08bcd2e34dc866643069423d2552abfcc17834551953c91fc3bb7a17', 'results/a7_model_2_benchmark.csv': '680492e1c9d72c71e993a7d648e87bac46c0ee22156838686d1e7af50c2ba812', 'results/a7_model_2_scored.csv': '90d885c8c0ea4b71e160b9a20d01ac238da1564d359a61001ae596878c4b75e9', 'results/a7_model_3_benchmark.csv': 'e7c41a4ee85a442e771a14d2a3f38f08da258484c378102754a1146f7ec883b3', 'results/a7_model_3_scored.csv': '660ee746b9e9fd41738906ad0d2c82f14bd9ac1fbe9ecbadc5372420c1fa1b6f', 'results/a7_model_4_benchmark.csv': 'd2092a328664159e2d5e2192edc40f43be1aa3137c1ac1c947231b17bcdbc549', 'results/a7_model_4_scored.csv': '8c2d7c34da6ce00be1b5c6e47b1b45f3c2aab5f9ecc92897963afe2eaff99764', 'results/a7_model_5_benchmark.csv': '6d244931f184afe2fcbb3d0319ce5f6e5d5e0614807fb2381af1e175daf19575', 'results/a7_model_5_scored.csv': '899a67fed94c718515da4be07aadd7feae4cdb63cf45b137c3b52eea16a3aa8a', 'results/a7_stage1_all_benchmarks.csv': '8e16d5e898baa4eed59f674003a21e9524d026516c4503329f072a3fa4ba9ea0', 'results/a7_stage1_summary.csv': '3d45d52241ad60f6304db36f45fbe229f660e008fe4c9659f00b9fef9fd1bcf1', 'results/a7_stage1_local_cost.csv': '7e734f939fa09e8aac7e6e92bad99d2011fb30faf09b5aedf282658b4fe7f118', 'results/research_matrix.csv': '135c183246580da33a9da99b2943f07dbcfe526f07c3655e54e606ec74e4b6c3'}
 PROMPT_SHA256 = '2c939da3d069af8ad7ae63ef59a1bf97f22387d199f45160fc57b38c64d775e1'
 
 
 def digest(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def load_inputs():
-    notebook = json.loads((MODULE / "multi_model_system.ipynb").read_text())
+    notebook = json.loads((MODULE / "multi_model_system.ipynb").read_text(encoding="utf-8"))
     prompts = None
     for cell in notebook["cells"]:
         if cell["cell_type"] != "code":
@@ -56,7 +56,7 @@ class Stage1Checks(unittest.TestCase):
     def setUpClass(cls):
         cls.nb, cls.matrix, cls.prompts = load_inputs()
         cls.models = shared.registry(cls.matrix)
-        cls.pricing = json.loads((MODULE / "a7_api_pricing.json").read_text())
+        cls.pricing = json.loads((MODULE / "a7_api_pricing.json").read_text(encoding="utf-8"))
         cls.quotes = {int(k): v for k, v in cls.pricing["models"].items()}
 
     def test_unchanged_reviewed_files(self):
@@ -241,7 +241,7 @@ def execute_notebook():
     def no_csv_writes(*args, **kwargs):
         raise RuntimeError("Notebook CSV write forbidden")
     protected = {p: digest(p) for p in RESULTS.glob("*.csv")}
-    original = json.loads((MODULE / "multi_model_system.ipynb").read_text())
+    original = json.loads((MODULE / "multi_model_system.ipynb").read_text(encoding="utf-8"))
     finder = NoInferenceImports()
     shell = InteractiveShell.instance()
     sys.meta_path.insert(0, finder)
@@ -292,7 +292,7 @@ def check_live_prices():
         def handle_endtag(self, tag):
             if tag == "tr" and self.current is not None:
                 self.rows.append(" ".join(self.current)); self.current = None
-    pricing = json.loads((MODULE / "a7_api_pricing.json").read_text())
+    pricing = json.loads((MODULE / "a7_api_pricing.json").read_text(encoding="utf-8"))
     page = urllib.request.urlopen(pricing["verification_source"], timeout=30).read().decode()
     parser = Rows(); parser.feed(page)
     for item in pricing["price_evidence"]:
