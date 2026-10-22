@@ -1,134 +1,94 @@
-# CozyDay Multi-Model AI System ? Architecture and Cost Analysis
+# CozyDay Multi Model AI System
 
-## Stage 1 ? Benchmark Foundation (Lin)
+## Stage 1 scope and evidence
 
-### Model Benchmarking
+Lin supplies the shared 15-model registry, unchanged 25-prompt protocol, Models 1–5 experiments and scores, and 30 local plus 30 paid API cost scenarios. Stages 2 and 3 own the remaining models and their routing sections; Ashley owns final cross-model conclusions, architecture switching analysis, integration and remaining routes. Those experiments and final conclusions are intentionally not supplied here.
 
-The system evaluates 15 Hugging Face models across five parameter-size categories, using 25 identical CozyDay prompts.
+The five categories contain three models each and use the unchanged nominal A6 parameter labels, not exact tensor parameter counts. Prompt types are Task Classification, Priority Ranking, Schedule Generation, Plan Summarization and Structured Extraction, with five prompts each.
 
-The five prompt categories are Task Classification, Priority Ranking, Schedule Generation, Plan Summarization, and Structured Extraction.
+## Benchmark results
 
-Each model output is evaluated using four equally weighted criteria: instruction adherence, accuracy, clarity, and structure.
+| Model | Mean score | Mean latency seconds | Mean output tokens per second | Token cap hits |
+|---|---:|---:|---:|---:|
+| SmolLM2-135M | 2.76 | 5.19 | 24.49 | 10 |
+| Qwen2.5-0.5B | 6.76 | 5.56 | 12.37 | 1 |
+| Qwen3-1.7B | 7.96 | 17.34 | 4.34 | 2 |
+| Phi-3.5-mini | 9.40 | 6.05 | 24.21 | 3 |
+| Qwen3-8B | 9.60 | 6.66 | 11.76 | 1 |
 
-The overall evaluation score is rounded to the nearest integer on a 1?10 scale.
+Each model has 25 scored records. Raw response texts, generated-token counts, latencies and throughput are preserved exactly from the original Stage 1 experiments. The combined and summary CSVs retain the reviewed scores. These are single-run measurements, not estimates with confidence intervals. Low-quality or truncated responses remain legitimate measured records and are scored accordingly.
 
-### Stage 1 Experimental Results
+Latency measures the generate call, excluding loading, input preparation and text decoding. Throughput is generated token IDs divided by generation seconds, including generated special tokens; both reported timing fields are rounded to three decimals. The summary averages per-request rates, rather than dividing aggregate tokens by aggregate time. Output length varies by model, so request latency is also sensitive to response verbosity.
 
-| Model | Avg Quality | Avg Latency (s) | Avg Tokens/sec |
-|---|---:|---:|---:|
-| SmolLM2-135M | 2.76 | 5.19 | 24.49 |
-| Qwen2.5-0.5B | 6.76 | 5.56 | 12.37 |
-| Qwen3-1.7B | 7.96 | 17.34 | 4.34 |
-| Phi-3.5-mini | 9.40 | 6.05 | 24.21 |
-| Qwen3-8B | 9.60 | 6.66 | 11.76 |
+### Hardware and reproducibility limits
 
-Models 1?3 were benchmarked locally on CPU. Models 4?5 were tested using a Google Colab Tesla T4 GPU. Model 4 used FP16; Model 5 used 4-bit NF4 quantization.
+Models 1–3 used local CPU with bfloat16 metadata. Model 4 used Colab Tesla T4 FP16, native Phi implementation and eager attention. Model 5 used Colab T4 with NF4, double quantization and FP16 compute; Qwen3 thinking was disabled. Colab GPU memory was reported as 14.56 GB. The experiment author reported CUDA synchronization around generation; original GPU execution logs are not committed, so this historical detail is not independently authenticated here.
 
-Therefore, observed speed differences cannot be attributed solely to model size.
+Previously reported environments: Colab Python 3.13.15, torch 2.11.0+cu130, Transformers 5.20.1, accelerate 1.15.0 and bitsandbytes 0.50.2; local torch 2.14.1+cpu and Transformers 5.19.0. These are historical reports, not a promise that every version is available or installable on another system. Exact model revisions, CPU model, RAM and CPU thread settings were not captured. No standardized warm-up or identical-hardware rerun was conducted. Speed differences cannot be attributed solely to model size, and NF4 quality is not identical to full-precision quality.
 
-### Traffic Assumptions
+The repaired helper explicitly selects CPU float32/bfloat16 or CUDA FP16/NF4 and synchronizes future GPU timings. It does not retroactively change measurements or fill missing historical metadata. No model inference or weight download was performed during this correction.
 
-- Average generated tokens per request: 500
-- Requests per daily active user per day: 1
-- Month length: 30 days
-- Traffic categories: 1K, 10K, 100K, 1M, 10M, 100M daily active users
+## Evaluation rubric and calibration
 
-Daily token load = daily active users ? requests per user ? average generated tokens.
+Instruction adherence, accuracy, clarity and structure each receive an integer from 1–10 and equal 25% weight. Their mean is rounded half up: floor(mean + 0.5). Bands are 1–2 very poor, 3–4 poor, 5–6 acceptable, 7–8 good and 9–10 excellent. Scores are subjective manual evaluations of saved outputs, not independently calibrated quality estimates.
 
-### Local Hosting Assumptions
+Classification should cover all supplied tasks; C2–C4 permit meaningful alternative category labels. Priority ranking should respect explicit deadlines and avoid inventing urgency. Schedules should satisfy durations without collisions. Summaries should preserve facts and obey requested sentence count. Extraction should include requested tasks without inventions; JSON inside Markdown fences is accepted if the contents parse. Missing/truncated content reduces adherence or structure. Failed inference is reported as a failure, never filled with fabricated measurements or scores.
 
-Reference cloud configuration: AWS g5.xlarge, NVIDIA A10G 24 GB GPU.
+| Reviewed record | Adherence | Accuracy | Clarity | Structure | Overall | Reason |
+|---|---:|---:|---:|---:|---:|---|
+| Model 2 P5 | 8 | 7 | 9 | 9 | 8 | Desk precedes quiz without justification; calibrated consistently with Model 5 |
+| Model 3 M4 | 7 | 9 | 10 | 7 | 8 | One sentence instead of the requested two |
+| Model 4 S5 | 9 | 6 | 9 | 10 | 9 | Four scheduled hours leave two spare hours, not the claimed one; mean 8.5 rounds to 9 |
+| Model 5 S1 | 7 | 10 | 9 | 6 | 8 | Correct requested durations, but response ends mid-item at the 256-token cap |
 
-- Assumed hourly cost: USD 1.006
-- Assumed utilization: 70%
-- Assumed model throughput: 60, 45, 30, 20, and 12 output tokens/sec for Models 1?5
-- All cloud throughput figures are planning assumptions, not measured GPU benchmarks.
+These adjustments are complete. No further scoring change is included in this correction.
 
-Machine count = ceiling(daily token load / (tokens/sec ? 86,400 ? utilization)).
+## Shared traffic and local hosting estimates
 
-Monthly machine cost = machine count ? hourly cost ? 24 ? 30.
+The prospective planning workload is 250 input plus 500 generated tokens per request, one request per daily active user per day and 30 days per month. The 500-token output is a stress-planning assumption, not the measured output average or a change to the 256-token benchmark limit. All stages should retain these shared workload conventions or explicitly add a separately labeled sensitivity scenario.
 
-Larger models may require quantization to fit the reference GPU configuration.
+Daily users are 1,000; 10,000; 100,000; 1,000,000; 10,000,000; and 100,000,000. Daily output tokens = DAU × requests/user/day × output tokens/request. Daily input tokens use the same formula with input tokens/request.
 
-### Hugging Face API Cost Assumptions
+The reference machine is AWS g5.xlarge with NVIDIA A10G 24 GB. USD 1.006/hour is retained as an **unverified planning assumption**, not a newly sourced current quote. Assumed output throughput for Models 1–5 is 60, 45, 30, 20 and 12 tokens/second at 70% utilization. These are capacity assumptions, not measured A10G results. Quantization, memory headroom, CPU/RAM specifications and actual throughput must be checked before provisioning.
 
-The API comparison uses illustrative paid inference rates, not verified provider-specific quotes.
+- Daily machine capacity = assumed output tokens/second × 86,400 × utilization.
+- Machines needed = ceiling(daily output tokens / daily machine capacity).
+- Monthly local cost = machines × hourly machine price × 24 × 30.
 
-Assumed USD per million output tokens for Models 1?5:
+All 30 local rows are unchanged. Their historical `Per Machine Cost (Cloud)` field is USD/hour; `Total Machine Cost` is USD/month. Input prefill overhead is implicit in the assumed throughput, not separately benchmarked or billed. Relevant reference pages: https://aws.amazon.com/ec2/instance-types/g5/ and https://aws.amazon.com/ec2/pricing/on-demand/ (reference URLs recorded 2026-10-21; the assumed price is not independently verified).
 
-- Model 1: $0.10
-- Model 2: $0.20
-- Model 3: $0.40
-- Model 4: $0.75
-- Model 5: $1.20
+## Paid Hugging Face provider comparison
 
-Assumed API gateway hourly cost: $0.05 per machine.
+Verified on 2026-10-21 against the official [HF provider price listing](https://huggingface.co/inference/models), [Nscale integration](https://huggingface.co/docs/inference-providers/providers/nscale) and [Nscale-supported models](https://huggingface.co/models?inference_provider=nscale&sort=trending). Listing snapshots and per-local-model metadata live in `llm-test/a7_api_pricing.json`. Prices are USD per million tokens and can change; no paid API request was made. The previous unsupported DeepSeek-1.5B/nscale pairing and hypothetical prices are not used.
 
-Assumed gateway capacity: 100 requests/second.
+| Local model | Paid model and provider | Input USD per million | Output USD per million | Comparability limitation |
+|---|---|---:|---:|---|
+| SmolLM2-135M | Qwen/Qwen3-4B-Instruct-2507, nscale | 0.01 | 0.03 | Task-based instruct proxy, about 30 times larger; not a Tiny-model quote |
+| Qwen2.5-0.5B | Qwen/Qwen3-4B-Instruct-2507, nscale | 0.01 | 0.03 | Task-based proxy, about 8 times larger |
+| Qwen3-1.7B | Qwen/Qwen3-4B-Instruct-2507, nscale | 0.01 | 0.03 | Task-based proxy, about 2.4 times larger and different training |
+| Phi-3.5-mini 3.8B | Qwen/Qwen3-4B-Instruct-2507, nscale | 0.01 | 0.03 | Similar nominal size, different model family |
+| Qwen3-8B | Qwen/Qwen3-8B, nscale | 0.07 | 0.18 | Same model ID, but hosted precision/thinking settings unverified versus local NF4 non-thinking |
 
-Monthly API cost = daily output tokens / 1,000,000 ? assumed price ? 30.
+The paid instruct model is a plausible substitute for classification, scheduling, summarization and extraction tasks. Its task quality has not been benchmarked here. Reusing one task-based proxy for multiple local models is intentional; costs are not claimed to imply equivalent quality or equal parameter sizes. All six previously unavailable Tiny rows now have explicit larger-model proxy costs, not invented Tiny-model prices.
 
-Total monthly API infrastructure cost = monthly API cost + monthly gateway cost.
+Monthly provider cost = 30 × (daily input tokens × input USD/million + daily output tokens × output USD/million) / 1,000,000.
 
-### Cost Data and Limitations
+Assumed client-side API gateway price is USD 0.05/hour with capacity 100 requests/second. Gateway count = ceiling(daily requests / (86,400 × 100)), minimum one. Monthly gateway cost = count × 0.05 × 24 × 30. These are planning assumptions, not provider quotes or counts of the provider's inference GPUs. Both provider and gateway bills are rounded half up to cents before summing total monthly cost. Example: the 4B proxy at 1,000 DAU costs 0.525 unrounded provider dollars, rounded to 0.53; total including the 36.00 gateway is 36.53.
 
-Stage 1 produces 30 local hosting rows and 30 API cost rows.
+`llm-test/results/a7_stage1_api_cost.csv` contains 30 complete rows. Daily output load is `Total Token Load`; input load is `Total Daily Input Tokens`. API and total cost are USD/month. Both input and output charges are included. `Output USD per Token` represents output price only. The shared cost function reproduces both cost CSVs; notebook Run All recomputes them in memory and checks equality without overwriting them.
 
-Both approaches are compared in USD per month.
+### Cost limitations
 
-Cost estimates exclude input-token charges, storage, network transfer, high-availability redundancy, operational labor, and cloud discounts.
+Estimates exclude storage, transfer, redundancy, labor, taxes, discounts, subscription credits, quotas, peak queues and provider capacity reservations. Average-load machine counts are not peak-load service guarantees. Cloud throughput, gateway economics and proxy output lengths are assumptions, not production measurements. Provider quality, hosted precision and thinking behavior may differ; a real architecture decision requires task-quality and capacity checks. Final scale-switching conclusions belong to Ashley's all-model analysis.
 
-Source references:
+## Team handoff and safe execution
 
-- https://huggingface.co/docs/inference-providers/en/pricing
-- https://aws.amazon.com/ec2/instance-types/g5/
-- https://aws.amazon.com/ec2/pricing/on-demand/
+The notebook resolves paths from either repository root or `llm-test` and displays all Stage 1 benchmark and cost rows. Run All imports no model inference libraries, downloads no weights and writes no authoritative CSVs. Results-only dependencies and the environment used to execute saved outputs are documented in `llm-test/a7-results-requirements.txt`. Full inference requires separately tested torch/Transformers/accelerate and bitsandbytes installations.
 
-Prices and service availability require verification before production use.
+`a7_shared.registry` covers all 15 models. `run_models` defaults to execute=False. Future experiments require explicit execute=True, model numbers, backend, precision and a fresh stage-specific output directory. Gemma 2 gets the system instruction prepended to a user message because its template rejects system turns; Qwen3 thinking is disabled. Gemma also requires license acceptance and external HF authentication. Large models may need NF4. Never commit tokens or weights.
 
-## Stage 2 ? Rishabh
+Completed historical records are validated and returned unchanged without loading models, regardless of new-run hardware arguments. Partial historical files are not silently resumed. New partial files require matching protocol, normalized precision, backend and runtime metadata. Precision aliases such as torch.bfloat16/bfloat16, float16/fp16 and 4-bit NF4/nf4 are recognized without rewriting CSVs. Future measured files record runtime metadata; model revision pinning remains the experimenter's responsibility. Only explicitly enabled new benchmark files use atomic per-prompt writes; scored files are never written by the helper.
 
-To be completed by Stage 2.
+`calculate_costs(numbers, model_matrix, throughput, api_models, ...)` requires sourced model/provider metadata and separate input/output prices. It returns tables and never writes files. Rishabh and Shivani add their own throughput assumptions and verified quotes for their assigned models. They must not regenerate Stage 1 measurements or scored files. Stage 1 aggregation deliberately remains scoped to Models 1–5; later stages append separately and final integration combines them.
 
-## Stage 3 ? Shivani
-
-To be completed by Stage 3.
-
-## Stage 4 ? Ashley
-
-Final comparison, routing analysis, verification, and submission.
-
-
-## Stage 1 audit corrections and team handoff
-
-- Reusable `llm-test/a7_shared.py` provides a 15-model registry, opt-in CPU/GPU inference, safe per-prompt CSV saving and reusable local/API cost functions. Do not overwrite Stage 1 scored files. Team members select their own model numbers and fresh output directory.
-- Historical CPU Models 1–3 report bfloat16 metadata. Colab T4 Model 4 used FP16 and native Phi-3.5 code; Model 5 used 4-bit NF4 with double quantization and FP16 compute, and disabled Qwen3 thinking mode. A6 matrix status is not an A7 backend report.
-- In the legacy cost CSV, `Per Machine Cost (Cloud)` is in USD/hour; `Total Machine Cost` is USD/month. API `Total Token Load` is per day while `Estimated API Cost` and `Total Cost` are USD/month.
-- The 500 generated tokens/request workload is a prospective scale-planning assumption, not the observed benchmark output (capped at 256). Model throughput and gateway costs are estimates. Gateway counts reflect average-load rather than peak capacity.
-- **Unresolved limitation:** The modeled HF API rates and “hypothetical hosted equivalent” model mappings are not verified provider quotes and should not be presented as actual Hugging Face paid-pricing results. Source a real available comparable model/provider, output and input pricing (or compute-based rate), URL, currency and access date before final Step 2.4 submission.
-- Original Stage 1 scores and raw measurements are preserved. Borderline scores (Model 2 P5, Model 3 M4, Model 4 S5, Model 5 S1) require a documented scoring audit; do not modify values without a defensible rationale.
-- Model 4 and 5 GPU timings used CUDA synchronization. No identical-hardware throughput conclusion is justified because the test backends and dtypes differ.
-
-
-### Step 2.4 — Updated verified HF provider prices (2026-10-21)
-
-**Use `llm-test/results/a7_stage1_api_cost.csv` for the authoritative provider-price scenarios.** Earlier notebook illustrative rates are superseded. Official source: https://huggingface.co/inference/models (prices can change). Listed input/output charges are USD per million tokens.
-
-| Stage 1 local model | Comparable paid model | Provider | Input / 1M | Output / 1M | Limitation |
-|---|---|---|---:|---:|---|
-| SmolLM2-135M | Not verified | — | — | — | No defensible sub-0.5B API quote; 6 cost cells intentionally unavailable |
-| Qwen2.5-0.5B | DeepSeek-R1-Distill-Qwen-1.5B | nscale | $0.10 | $0.10 | Proxy is 3× larger, not equivalent |
-| Qwen3-1.7B | DeepSeek-R1-Distill-Qwen-1.5B | nscale | $0.10 | $0.10 | Similar size but different model/training |
-| Phi-3.5-mini (3.8B) | Qwen3-4B-Instruct-2507 | nscale | $0.01 | $0.03 | Similar size but different model family |
-| Qwen3-8B | Qwen3-8B | nscale | $0.07 | $0.18 | Exact model, hosted versus local NF4 |
-
-For the 24 priced rows, assume 250 input tokens + 500 output tokens per request, one request per DAU per day, 30 days per month. Monthly provider charge is (monthly input tokens × provider input USD/1M + monthly output tokens × provider output USD/1M) / 1,000,000. Total monthly cost adds previously assumed gateway cost. Six 135M scenarios retain gateway and load fields but have blank API/total cost; **do not treat blanks as $0 or quote the pricing table as 30 verified pairs**. Proxy comparisons are approximate and should not be interpreted as equivalent quality. The old $0.10/$0.20/$0.40/$0.75/$1.20 illustrative numbers should not be used in the final recommendation.
-
-### Quality-score calibration log
-
-- Model 2, P5: overall 9 -> 8; Desk organization is prioritized ahead of the upcoming quiz, with no reason supplied; Model 5 uses the same order. Reduced instruction and accuracy points for consistency.
-- Model 3, M4: overall 9 -> 8; The prompt explicitly requests two sentences, but the response contains only one. Reduced structure score.
-- Model 4, S5: overall 9 -> 9; The task durations total four hours (noon-4 PM), leaving two hours until 6 PM, not the claimed one-hour buffer. Reduced accuracy.
-- Model 5, S1: overall 9 -> 8; The answer reaches 256-token cap and ends mid-schedule, despite including all requested durations and several breaks. Reduced adherence and structure for incompleteness.
-
-The original response text, token counts, latency, and throughput were preserved. Overall scores use round-half-up across the four equally weighted criteria.
+Run `python llm-test/validate_a7.py` for Stage 1 regression checks; use `--execute-notebook` to additionally execute the notebook from both supported working directories without saving it. No model inference is needed. The existing `verify_stage1.py` is an A6 verifier and is outside this change's scope.
