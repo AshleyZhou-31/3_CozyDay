@@ -1,0 +1,214 @@
+Model,Model Category,Tokens/sec,Latency,Prompt Type,Prompt,Self-Evaluation Score (1-10),Prompt ID,Response,Generated Tokens,Reached Token Limit,Backend,Device,Precision,Max New Tokens,Instruction Adherence,Accuracy,Clarity,Structure
+Qwen/Qwen3-8B,Very Large (>7B),5.439,4.413,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: finish project report, review lecture notes, buy groceries, and go for a run. Return one category per task.",10,C1,"finish project report - Work  
+review lecture notes - Study  
+buy groceries - Personal  
+go for a run - Health",24,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),7.962,4.647,Task Classification,"Categorize my tasks: email my supervisor, prepare for an exam, clean my room, and attend a dental appointment.",10,C2,"- **Work/Professional**: Email my supervisor  
+- **Education**: Prepare for an exam  
+- **Personal Care**: Clean my room  
+- **Health**: Attend a dental appointment",37,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.152,5.76,Task Classification,"Classify these activities: submit homework, schedule a team meeting, call my family, and attend a yoga class.",10,C3,"Here is the classification of the activities:
+
+1. **Submit homework** – **Academic Task**  
+2. **Schedule a team meeting** – **Work/Professional Task**  
+3. **Call my family** – **Personal/Relationship Task**  
+4. **Attend a yoga class** – **Self-Care/Health Task**",70,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.062,3.399,Task Classification,"Organize these tasks by category: write a research summary, cook dinner, review class slides, and visit the gym.",9,C4,"**Study/Work Tasks:**  
+- Write a research summary  
+- Review class slides  
+
+**Personal Care/Health Tasks:**  
+- Visit the gym  
+
+**Household Tasks:**  
+- Cook dinner",41,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,9,9,9,9
+Qwen/Qwen3-8B,Very Large (>7B),12.099,2.727,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: update a client spreadsheet, study Python, pay rent, and attend a medical checkup.",10,C5,"- **Update a client spreadsheet**: Work  
+- **Study Python**: Study  
+- **Pay rent**: Personal  
+- **Attend a medical checkup**: Health",33,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.275,6.68,Priority Ranking,"I have a report due tomorrow, groceries to buy, and a room to clean. Rank these tasks by priority and explain briefly.",10,P1,"1. **Report due tomorrow** – Highest priority. This task has a clear deadline and potential consequences for not completing it on time.  
+2. **Groceries to buy** – Medium priority. Necessary for daily living, but can be done later if time is limited.  
+3. **Room to clean** – Lower priority. While important for comfort and health, it can be postponed if needed.",82,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.322,7.548,Priority Ranking,"I have an exam tomorrow, a meeting next week, and laundry to finish. What should I prioritize today?",10,P2,"**Prioritize today:**  
+1. **Exam preparation** – Focus on reviewing key material and organizing study notes.  
+2. **Laundry** – Complete it early to avoid last-minute stress.  
+3. **Meeting** – Lightly review notes or prepare any necessary materials in advance.  
+
+**Why:** The exam is imminent and requires immediate attention, followed by laundry to prevent added stress later. The meeting can be addressed with minimal effort in advance.",93,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.342,3.403,Priority Ranking,"My presentation is due tonight, my emails can wait until Friday, and I need to exercise. Rank these tasks.",10,P3,"1. **Presentation** – Due tonight, highest priority.  
+2. **Exercise** – Important for health, schedule after completing presentation.  
+3. **Emails** – Can wait until Friday.",42,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.037,4.985,Priority Ranking,"I must submit an assignment by 5 PM, call a friend sometime this week, and prepare dinner tonight. Rank these tasks by urgency.",7,P4,"1. **Prepare dinner tonight** – This is time-sensitive and needs to be done tonight.  
+2. **Submit assignment by 5 PM** – Urgent deadline, needs immediate attention.  
+3. **Call a friend sometime this week** – Less urgent, can be scheduled later.",60,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,6,4,9,9
+Qwen/Qwen3-8B,Very Large (>7B),12.452,5.862,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",8,P5,"1. **Finish the group project** – This is the most urgent task since it's due tomorrow.  
+2. **Organize your desk** – This can be done while working on the project or after, but it will help with focus.  
+3. **Prepare for the quiz next Monday** – Start reviewing materials now to avoid last-minute stress.",73,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,8,7,9,9
+Qwen/Qwen3-8B,Very Large (>7B),12.175,21.027,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",9,S1,"**Schedule: 9 AM - 5 PM**
+
+- **9:00 AM - 10:00 AM**: Study (Focus on one subject or task)  
+- **10:00 AM - 10:15 AM**: Break (Light walk or stretch)  
+- **10:15 AM - 11:15 AM**: Study (Continue with next task or review)  
+- **11:15 AM - 11:30 AM**: Break (Drink water, rest)  
+- **11:30 AM - 12:30 PM**: Exercise (Workout, walk, or yoga)  
+- **12:30 PM - 12:45 PM**: Break (Light snack or relaxation)  
+- **12:45 PM - 1:45 PM**: Grocery Shopping (Focus on list and efficiency)  
+- **1:45 PM - 2:00 PM**: Break (Rest or short walk)  
+- **2:00 PM - 3:00 PM**: Study (Review or deep dive into material)  
+- **3:00 PM - 3:15 PM**:",256,True,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,8,10,9,7
+Qwen/Qwen3-8B,Very Large (>7B),12.265,12.393,Schedule Generation,"Plan my day between 8 AM and 6 PM. I have class from 10 AM to noon, need 2 hours for homework, and want 1 hour for lunch.",10,S2,"Here's a suggested plan for your day from 8 AM to 6 PM:
+
+- **8:00 AM - 10:00 AM**: Free time (you can read, relax, or do light exercise)  
+- **10:00 AM - 12:00 PM**: Class  
+- **12:00 PM - 1:00 PM**: Lunch  
+- **1:00 PM - 3:00 PM**: Homework (2 hours)  
+- **3:00 PM - 6:00 PM**: Free time (you can socialize, take a walk, or do something you enjoy)  
+
+Let me know if you'd like to adjust anything!",152,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.423,6.198,Schedule Generation,"I am free from 1 PM to 9 PM. Schedule 3 hours of project work, 1 hour of exercise, and 1 hour of cooking.",10,S3,"Here's your schedule from 1 PM to 9 PM:
+
+- **1:00 PM - 4:00 PM**: Project Work  
+- **4:00 PM - 5:00 PM**: Exercise  
+- **5:00 PM - 6:00 PM**: Cooking  
+
+Let me know if you'd like to adjust anything!",77,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.51,15.428,Schedule Generation,"Build a realistic schedule from 9 AM to 7 PM with a meeting from 11 AM to noon, 3 hours of studying, and 2 hours of errands.",8,S4,"**Daily Schedule (9:00 AM - 7:00 PM)**
+
+- **9:00 AM - 10:00 AM** – Morning Routine & Light Work  
+- **10:00 AM - 11:00 AM** – Focus Time (Task/Project Work)  
+- **11:00 AM - 12:00 PM** – Meeting  
+- **12:00 PM - 1:00 PM** – Lunch Break  
+- **1:00 PM - 3:00 PM** – Studying (3 hours)  
+- **3:00 PM - 5:00 PM** – Errands (2 hours)  
+- **5:00 PM - 7:00 PM** – Free Time / Wind Down  
+
+Let me know if you'd like to adjust the timing or add specific tasks!",193,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,7,5,9,9
+Qwen/Qwen3-8B,Very Large (>7B),12.523,6.787,Schedule Generation,"Organize my afternoon from noon to 6 PM. I need 2 hours for research, 1 hour for groceries, and 1 hour for cleaning.",10,S5,"Here's your afternoon schedule from **Noon to 6 PM**:
+
+- **12:00 PM – 2:00 PM**: Research  
+- **2:00 PM – 3:00 PM**: Groceries  
+- **3:00 PM – 4:00 PM**: Cleaning  
+
+Let me know if you'd like to adjust the timing or add more details!",85,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.103,4.379,Plan Summarization,"Summarize my day: 9 AM lecture, 11 AM library study, 2 PM grocery shopping, and 6 PM dinner with friends.",10,M1,"Here's a summary of your day:
+
+- **9:00 AM**: Lecture  
+- **11:00 AM**: Library study  
+- **2:00 PM**: Grocery shopping  
+- **6:00 PM**: Dinner with friends",53,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),11.768,2.209,Plan Summarization,"Give me a concise summary of tomorrow: morning workout, afternoon team meeting, evening homework.",10,M2,"Tomorrow's schedule:  
+- **Morning:** Workout  
+- **Afternoon:** Team meeting  
+- **Evening:** Homework",26,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.206,6.554,Plan Summarization,"Summarize this schedule and highlight key commitments: 8 AM breakfast, 10 AM exam, 1 PM lunch, 3 PM office hours.",10,M3,"**Summary of Schedule:**
+
+- **8:00 AM** – Breakfast  
+- **10:00 AM** – Exam  
+- **1:00 PM** – Lunch  
+- **3:00 PM** – Office Hours  
+
+**Key Commitments:**  
+- Exam at 10:00 AM  
+- Office Hours at 3:00 PM",80,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),11.917,2.182,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",10,M4,Finish readings and prepare meals to complete your study and cooking tasks. Send emails and clean the apartment to handle communication and maintenance.,26,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),12.142,4.694,Plan Summarization,"Provide a short daily overview: 9 AM project work, noon lunch, 2 PM class, 5 PM gym, and 7 PM dinner.",10,M5,"**Daily Overview:**  
+- **9:00 AM:** Project work  
+- **12:00 PM:** Lunch  
+- **2:00 PM:** Class  
+- **5:00 PM:** Gym  
+- **7:00 PM:** Dinner",57,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,10
+Qwen/Qwen3-8B,Very Large (>7B),11.87,6.15,Structured Extraction,"Extract tasks and times as JSON from: I need to attend class at 9 AM, buy groceries at 4 PM, and study at 7 PM.",10,E1,"```json
+{
+  ""tasks"": [
+    {
+      ""time"": ""9 AM"",
+      ""task"": ""attend class""
+    },
+    {
+      ""time"": ""4 PM"",
+      ""task"": ""buy groceries""
+    },
+    {
+      ""time"": ""7 PM"",
+      ""task"": ""study""
+    }
+  ]
+}
+```",73,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,9
+Qwen/Qwen3-8B,Very Large (>7B),12.014,6.159,Structured Extraction,"Convert this into JSON with task and deadline fields: Finish the report by Friday, email the professor by Wednesday, and submit homework tomorrow.",10,E2,"```json
+{
+  ""tasks"": [
+    {
+      ""task"": ""Finish the report"",
+      ""deadline"": ""Friday""
+    },
+    {
+      ""task"": ""Email the professor"",
+      ""deadline"": ""Wednesday""
+    },
+    {
+      ""task"": ""Submit homework"",
+      ""deadline"": ""tomorrow""
+    }
+  ]
+}
+```",74,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,9
+Qwen/Qwen3-8B,Very Large (>7B),12.391,7.344,Structured Extraction,"Extract tasks, durations, and categories into JSON: study Python for 2 hours, exercise for 45 minutes, and clean the kitchen for 30 minutes.",10,E3,"```json
+[
+  {
+    ""task"": ""study Python"",
+    ""duration"": ""2 hours"",
+    ""category"": ""Learning""
+  },
+  {
+    ""task"": ""exercise"",
+    ""duration"": ""45 minutes"",
+    ""category"": ""Fitness""
+  },
+  {
+    ""task"": ""clean the kitchen"",
+    ""duration"": ""30 minutes"",
+    ""category"": ""Household""
+  }
+]
+```",91,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,9
+Qwen/Qwen3-8B,Very Large (>7B),12.326,8.681,Structured Extraction,"Create a JSON task list from: Meeting at 10 AM, lunch at noon, project work at 2 PM, and dinner at 6 PM.",10,E4,"```json
+{
+  ""tasks"": [
+    {
+      ""time"": ""10:00 AM"",
+      ""description"": ""Meeting""
+    },
+    {
+      ""time"": ""12:00 PM"",
+      ""description"": ""Lunch""
+    },
+    {
+      ""time"": ""2:00 PM"",
+      ""description"": ""Project work""
+    },
+    {
+      ""time"": ""6:00 PM"",
+      ""description"": ""Dinner""
+    }
+  ]
+}
+```",107,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,9
+Qwen/Qwen3-8B,Very Large (>7B),12.252,6.856,Structured Extraction,"Extract structured task data as JSON: submit the assignment by 11:59 PM, call my parents at 7 PM, and exercise for 30 minutes.",10,E5,"```json
+{
+  ""tasks"": [
+    {
+      ""name"": ""submit the assignment"",
+      ""due_time"": ""23:59""
+    },
+    {
+      ""name"": ""call my parents"",
+      ""scheduled_time"": ""19:00""
+    },
+    {
+      ""name"": ""exercise"",
+      ""duration_minutes"": 30
+    }
+  ]
+}
+```",84,False,Transformers (Colab T4 GPU),cuda:0,4-bit NF4,256,10,10,10,9

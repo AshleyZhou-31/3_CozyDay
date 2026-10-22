@@ -1,0 +1,253 @@
+Model,Model Category,Tokens/sec,Latency,Prompt Type,Prompt,Self-Evaluation Score (1-10),Prompt ID,Response,Generated Tokens,Reached Token Limit,Backend,Device,Precision,Max New Tokens,Instruction Adherence,Accuracy,Clarity,Structure
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),4.201,1.905,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: finish project report, review lecture notes, buy groceries, and go for a run. Return one category per task.",9,C1,"Work, Study, Personal, Health",8,False,Transformers,cpu,torch.bfloat16,256,9,10,9,9
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),15.924,3.831,Task Classification,"Categorize my tasks: email my supervisor, prepare for an exam, clean my room, and attend a dental appointment.",6,C2,"1. Email Supervisor: Important to inform about upcoming tasks.
+2. Prepare for Exam: Focus on studying or reviewing material.
+3. Clean Room: Start with basic cleaning then move to more intensive tasks as needed.
+4. Attend Dental Appointment: Ensure you're ready and have all necessary items prepared.",61,False,Transformers,cpu,torch.bfloat16,256,4,5,8,6
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),15.357,3.712,Task Classification,"Classify these activities: submit homework, schedule a team meeting, call my family, and attend a yoga class.",7,C3,"1. Submit homework - Classifying as homework.
+2. Schedule a team meeting - Classifying as organizational or scheduling activity.
+3. Call my family - Classifying as communication or social interaction activity.
+4. Attend a yoga class - Classifying as physical activity or wellness activity.",57,False,Transformers,cpu,torch.bfloat16,256,6,7,8,7
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),13.508,7.699,Task Classification,"Organize these tasks by category: write a research summary, cook dinner, review class slides, and visit the gym.",6,C4,"1. **Write a Research Summary**: This task involves summarizing the content of a research paper or report.
+2. **Cook Dinner**: This is an activity that requires physical labor but does not require any specific skills or knowledge beyond basic cooking techniques.
+3. **Review Class Slides**: This task involves analyzing and understanding the content presented in class presentations or lectures.
+4. **Visit the Gym**: This is an active exercise that typically requires physical movement and coordination, which can be beneficial for overall health and fitness.",104,False,Transformers,cpu,torch.bfloat16,256,4,6,8,6
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),3.536,1.697,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: update a client spreadsheet, study Python, pay rent, and attend a medical checkup.",6,C5,"Work, Study, Health",6,False,Transformers,cpu,torch.bfloat16,256,5,5,7,5
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),17.418,7.865,Priority Ranking,"I have a report due tomorrow, groceries to buy, and a room to clean. Rank these tasks by priority and explain briefly.",6,P1,"1. **Groceries to Buy**: This is a high-priority task as it involves immediate consumption of essential items.
+2. **Room to Clean**: While this might seem urgent, it's not a high-priority task since cleaning can be done later in the day or on weekends.
+3. **Report Due Tomorrow**: This is a medium-priority task because it requires attention to detail but doesn't need immediate action.
+
+**Priority Ranking:**
+1. Grocery to Buy
+2. Room to Clean
+3. Report Due Tomorrow
+
+This ranking helps prioritize tasks based on their urgency and importance, ensuring that important tasks get done first while less critical ones can be addressed later.",137,False,Transformers,cpu,torch.bfloat16,256,6,2,8,8
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),12.303,4.227,Priority Ranking,"I have an exam tomorrow, a meeting next week, and laundry to finish. What should I prioritize today?",5,P2,"Given your commitments, you should focus on completing your laundry first. After that, tackle any remaining tasks like preparing for the exam or attending the meeting. This way, you can manage your time effectively and ensure all important tasks are completed before the upcoming events.",52,False,Transformers,cpu,torch.bfloat16,256,5,2,8,6
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),6.104,1.966,Priority Ranking,"My presentation is due tonight, my emails can wait until Friday, and I need to exercise. Rank these tasks.",6,P3,"1. Exercise
+2. Emails
+3. Presentation",12,False,Transformers,cpu,torch.bfloat16,256,6,1,9,9
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),11.543,3.465,Priority Ranking,"I must submit an assignment by 5 PM, call a friend sometime this week, and prepare dinner tonight. Rank these tasks by urgency.",6,P4,"1. Prepare dinner tonight - Urgent
+2. Call a friend sometime this week - Important but not urgent
+3. Submit an assignment by 5 PM - Not urgent but important for deadlines",40,False,Transformers,cpu,torch.bfloat16,256,6,2,8,8
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),8.917,2.692,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",9,P5,"1. Finish your group project.
+2. Organize your desk.
+3. Prepare for the quiz on Monday.",24,False,Transformers,cpu,torch.bfloat16,256,9,8,9,9
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),16.744,11.945,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",5,S1,"Here's your study schedule:
+
+**Morning:**
+- 9:00 AM - Wake up
+- 9:30 AM - Breakfast
+- 10:00 AM - Study (3 hours)
+- 12:00 PM - Lunch break
+
+**Afternoon:**
+- 1:00 PM - Break
+- 2:00 PM - Continue with morning activities
+- 4:00 PM - Study (1 hour)
+
+**Evening:**
+- 6:00 PM - Dinner
+- 7:00 PM - Exercise (1 hour)
+- 8:00 PM - Study (1 hour)
+
+**Grocery Shopping:**
+- 9:00 PM - Prepare groceries
+- 10:00 PM - Grocery shopping (1 hour)
+
+This schedule ensures you get 3 hours of study time, 1 hour of exercise, and 1 hour of grocery shopping each day.",200,False,Transformers,cpu,torch.bfloat16,256,3,2,7,6
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),15.89,9.377,Schedule Generation,"Plan my day between 8 AM and 6 PM. I have class from 10 AM to noon, need 2 hours for homework, and want 1 hour for lunch.",5,S2,"Here's your plan:
+
+9:00 AM - Wake up and get ready.
+9:30 AM - Start class at 10:00 AM.
+
+10:00 AM - Lunch break (1 hour)
+
+11:00 AM - Finish class and go back to work on homework.
+
+12:00 PM - Go home
+
+1:00 PM - Take a short walk or do some light exercise.
+
+4:00 PM - Return to work on homework.
+
+5:00 PM - End of workday.
+
+6:00 PM - Dinner with family or friends.
+
+7:00 PM - Relax before bed.
+
+8:00 PM - Bedtime.
+
+Enjoy your day!",149,False,Transformers,cpu,torch.bfloat16,256,3,2,7,6
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),10.513,3.329,Schedule Generation,"I am free from 1 PM to 9 PM. Schedule 3 hours of project work, 1 hour of exercise, and 1 hour of cooking.",6,S3,"Here is your schedule:
+
+**Project Work:** 3 hours  
+**Exercise:** 1 hour  
+**Cooking:** 1 hour
+
+Total: **7 hours**",35,False,Transformers,cpu,torch.bfloat16,256,4,4,9,6
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),16.995,15.063,Schedule Generation,"Build a realistic schedule from 9 AM to 7 PM with a meeting from 11 AM to noon, 3 hours of studying, and 2 hours of errands.",4,S4,"Here's a realistic schedule for you:
+
+**Morning:**
+- 9 AM - Wake up and get ready.
+- 9:30 AM - Start your day with a healthy breakfast.
+
+**Midday:**
+- 12 PM - Breakfast time.
+- 1:30 PM - Begin work or study session (if any).
+
+**Afternoon:**
+- 4 PM - Lunch break.
+- 5 PM - Continue work or study session if needed.
+
+**Evening:**
+- 6 PM - End of work or study session.
+- 8 PM - Relaxation period before bed.
+
+**Night:**
+- 9 PM - Bedtime.
+- 10 PM - Prepare for sleep.
+
+**Meeting:**
+- 11 AM - Schedule meeting at 11 AM.
+- 11:30 AM - Attend the meeting.
+
+**Ergonomics:**
+- 12 PM - Take a short walk or stretch.
+- 1:30 PM - Finish work or study session.
+
+**Rest:**
+- 2:30 PM - Rest period.
+- 3:30 PM - Resume work or study session.
+
+This schedule should help you manage your time effectively while ensuring that you have enough",256,True,Transformers,cpu,torch.bfloat16,256,3,2,6,4
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),15.303,7.123,Schedule Generation,"Organize my afternoon from noon to 6 PM. I need 2 hours for research, 1 hour for groceries, and 1 hour for cleaning.",7,S5,"Here's how you can organize your afternoon:
+
+**Research:**
+- Begin at 12:00 PM.
+- Spend 2 hours exploring topics related to your interests.
+
+**Groceries:**
+- Continue until 3:00 PM.
+- Purchase items that align with your research needs.
+
+**Cleaning:**
+- End at 5:00 PM.
+- Complete tasks such as sorting through your purchases or organizing your workspace.
+
+This schedule ensures you have ample time for each activity while also allowing for some flexibility in between.",109,False,Transformers,cpu,torch.bfloat16,256,7,6,8,7
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),13.359,4.941,Plan Summarization,"Summarize my day: 9 AM lecture, 11 AM library study, 2 PM grocery shopping, and 6 PM dinner with friends.",7,M1,"Here's a summary of your day:
+
+- **Morning:** Lecture at 9 AM
+- **Afternoon:** Library study from 11 AM to 3 PM
+- **Evening:** Grocery shopping from 4 PM to 6 PM with friends
+
+This schedule covers all major activities you mentioned in your request.",66,False,Transformers,cpu,torch.bfloat16,256,6,4,9,8
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),9.261,2.484,Plan Summarization,"Give me a concise summary of tomorrow: morning workout, afternoon team meeting, evening homework.",10,M2,"Tomorrow's schedule:
+- Morning: Morning workout
+- Afternoon: Team meeting
+- Evening: Evening homework",23,False,Transformers,cpu,torch.bfloat16,256,10,10,9,9
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),15.092,9.078,Plan Summarization,"Summarize this schedule and highlight key commitments: 8 AM breakfast, 10 AM exam, 1 PM lunch, 3 PM office hours.",8,M3,"Here's a summary of the provided schedule:
+
+- **Breakfast:** 8 AM
+- **Exam:** 10 AM
+- **Lunch:** 1 PM
+- **Office Hours:** 3 PM
+
+Key highlights:
+- The schedule includes an early morning breakfast from 8 AM to prepare for the day.
+- There is an examination at 10 AM that requires attention in the afternoon.
+- Afternoon office hours start at 1 PM, allowing students to continue their work or attend meetings.
+
+This schedule provides a structured approach to managing time during school days, ensuring that all important events (breakfast, exam, and office hours) are covered effectively.",137,False,Transformers,cpu,torch.bfloat16,256,8,7,8,9
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),9.719,2.778,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",9,M4,"Finish your reading assignments, send out email reminders for upcoming deadlines, clean your living space, and prepare nutritious meals for the week.",27,False,Transformers,cpu,torch.bfloat16,256,8,9,9,8
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),13.827,5.713,Plan Summarization,"Provide a short daily overview: 9 AM project work, noon lunch, 2 PM class, 5 PM gym, and 7 PM dinner.",8,M5,"Here's a brief daily overview based on your request:
+
+**Morning:**
+- Project work from 9 AM to 12 PM
+- Lunch at 12 PM
+
+**Afternoon:**
+- Class from 2 PM to 4 PM
+- Gym from 4 PM to 6 PM
+
+**Evening:**
+- Dinner from 7 PM to 8 PM",79,False,Transformers,cpu,torch.bfloat16,256,8,7,9,9
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),13.361,4.94,Structured Extraction,"Extract tasks and times as JSON from: I need to attend class at 9 AM, buy groceries at 4 PM, and study at 7 PM.",10,E1,"```json
+[
+    {
+        ""task"": ""Attend class"",
+        ""time"": ""9 AM""
+    },
+    {
+        ""task"": ""Buy groceries"",
+        ""time"": ""4 PM""
+    },
+    {
+        ""task"": ""Study"",
+        ""time"": ""7 PM""
+    }
+]
+```",66,False,Transformers,cpu,torch.bfloat16,256,10,10,10,10
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),12.965,4.165,Structured Extraction,"Convert this into JSON with task and deadline fields: Finish the report by Friday, email the professor by Wednesday, and submit homework tomorrow.",4,E2,"```json
+{
+  ""task"": {
+    ""name"": ""Finish the report"",
+    ""due_date"": ""Friday""
+  },
+  ""deadline"": ""Wednesday"",
+  ""task"": ""Email the professor"",
+  ""deadline"": ""Tomorrow""
+}
+```",54,False,Transformers,cpu,torch.bfloat16,256,4,3,6,3
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),12.314,6.09,Structured Extraction,"Extract tasks, durations, and categories into JSON: study Python for 2 hours, exercise for 45 minutes, and clean the kitchen for 30 minutes.",9,E3,"```json
+{
+  ""tasks"": [
+    {
+      ""name"": ""Study Python"",
+      ""duration"": ""2 hours""
+    },
+    {
+      ""name"": ""Exercise"",
+      ""duration"": ""45 minutes""
+    },
+    {
+      ""name"": ""Clean Kitchen"",
+      ""duration"": ""30 minutes""
+    }
+  ]
+}
+```",75,False,Transformers,cpu,torch.bfloat16,256,8,8,9,9
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),13.436,7.741,Structured Extraction,"Create a JSON task list from: Meeting at 10 AM, lunch at noon, project work at 2 PM, and dinner at 6 PM.",6,E4,"```json
+{
+  ""tasks"": [
+    {
+      ""date"": ""Monday"",
+      ""description"": ""Meeting at 10 AM""
+    },
+    {
+      ""date"": ""Tuesday"",
+      ""description"": ""Lunch at noon""
+    },
+    {
+      ""date"": ""Wednesday"",
+      ""description"": ""Project work at 2 PM""
+    },
+    {
+      ""date"": ""Thursday"",
+      ""description"": ""Dinner at 6 PM""
+    }
+  ]
+}
+```",104,False,Transformers,cpu,torch.bfloat16,256,6,3,8,7
+Qwen/Qwen2.5-0.5B-Instruct,Small (0.5B-1.5B),11.548,5.196,Structured Extraction,"Extract structured task data as JSON: submit the assignment by 11:59 PM, call my parents at 7 PM, and exercise for 30 minutes.",6,E5,"```json
+{
+  ""task"": {
+    ""date"": ""2023-04-06"",
+    ""time"": ""11:59 PM"",
+    ""call_parents"": ""7 PM"",
+    ""exercise_minutes"": ""30""
+  }
+}
+```",60,False,Transformers,cpu,torch.bfloat16,256,5,4,7,6
