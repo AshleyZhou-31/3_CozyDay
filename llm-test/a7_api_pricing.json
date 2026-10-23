@@ -63,6 +63,52 @@
       "source_url": "https://huggingface.co/inference/models?model=Qwen/Qwen3-8B",
       "checked_date": "2026-10-21",
       "comparison_note": "Same Qwen3-8B model ID; hosted precision and thinking configuration are unverified, unlike local NF4 non-thinking run."
+    },
+    "6": {
+      "model": "Qwen/Qwen3-4B-Instruct-2507",
+      "provider": "nscale",
+      "input_usd_per_million": 0.01,
+      "output_usd_per_million": 0.03,
+      "source_url": "https://huggingface.co/inference/models?model=Qwen/Qwen3-4B-Instruct-2507",
+      "checked_date": "2026-10-21",
+      "comparison_note": "Task-based 4B instruct proxy for a 135M local model (about 30x larger); same proxy Lin used for Model 1, reused unchanged per Stage 1's established reasoning; no size or quality equivalence claimed."
+    },
+    "7": {
+      "model": "Qwen/Qwen3-4B-Instruct-2507",
+      "provider": "nscale",
+      "input_usd_per_million": 0.01,
+      "output_usd_per_million": 0.03,
+      "source_url": "https://huggingface.co/inference/models?model=Qwen/Qwen3-4B-Instruct-2507",
+      "checked_date": "2026-10-21",
+      "comparison_note": "Task-based 4B instruct proxy for a 0.6B local model (about 6.7x larger); no size or quality equivalence claimed."
+    },
+    "8": {
+      "model": "Qwen/Qwen3-4B-Instruct-2507",
+      "provider": "nscale",
+      "input_usd_per_million": 0.01,
+      "output_usd_per_million": 0.03,
+      "source_url": "https://huggingface.co/inference/models?model=Qwen/Qwen3-4B-Instruct-2507",
+      "checked_date": "2026-10-21",
+      "comparison_note": "Task-based 4B instruct proxy for a ~2B local model (about 2x larger); different model family, no quality equivalence claimed."
+    },
+    "9": {
+      "model": "Qwen/Qwen3-4B-Instruct-2507",
+      "provider": "nscale",
+      "input_usd_per_million": 0.01,
+      "output_usd_per_million": 0.03,
+      "source_url": "https://huggingface.co/inference/models?model=Qwen/Qwen3-4B-Instruct-2507",
+      "checked_date": "2026-10-21",
+      "comparison_note": "Same base model and nominal parameter count (4B) as the local model, but a different instruct checkpoint (Qwen3-4B-Instruct-2507 vs. the base Qwen3-4B run locally); the closest size match of any Stage 2 proxy, though hosted precision, thinking configuration and the instruct-tuning difference remain unverified against the local run."
+    },
+    "10": {
+      "model": "Qwen/Qwen3-8B",
+      "provider": "nscale",
+      "input_usd_per_million": 0.07,
+      "output_usd_per_million": 0.18,
+      "source_url": "https://huggingface.co/inference/models?model=Qwen/Qwen3-8B",
+      "checked_date": "2026-10-22",
+      "comparison_note": "Reuses Stage 1's Very Large proxy (Qwen3-8B/nscale). This paid 8B model is actually SMALLER than the local 12B Mistral-Nemo (4-bit NF4); no size or quality equivalence claimed. Chosen because it is nscale's largest currently-verified listed model in this evidence set."
     }
-  }
+  },
+  "verification_date_stage2": "2026-10-22"
 }

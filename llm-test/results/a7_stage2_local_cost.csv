@@ -1,0 +1,31 @@
+Model Name,Daily Traffic Category,Daily Active Users,Avg Tokens per User,Total Daily Token Load,Per Machine Cost (Cloud),Machines Needed,Total Machine Cost,Cloud Throughput Assumption (tokens/sec),Cost Period
+HuggingFaceTB/SmolLM-135M-Instruct,Prototype,1000,500,500000,1.006,1,724.32,60,USD/month
+HuggingFaceTB/SmolLM-135M-Instruct,Early Startup,10000,500,5000000,1.006,2,1448.64,60,USD/month
+HuggingFaceTB/SmolLM-135M-Instruct,Growing Product,100000,500,50000000,1.006,14,10140.48,60,USD/month
+HuggingFaceTB/SmolLM-135M-Instruct,Large Platform,1000000,500,500000000,1.006,138,99956.16,60,USD/month
+HuggingFaceTB/SmolLM-135M-Instruct,Mass Consumer App,10000000,500,5000000000,1.006,1378,998112.96,60,USD/month
+HuggingFaceTB/SmolLM-135M-Instruct,Global Platform,100000000,500,50000000000,1.006,13779,9980405.28,60,USD/month
+Qwen/Qwen3-0.6B,Prototype,1000,500,500000,1.006,1,724.32,45,USD/month
+Qwen/Qwen3-0.6B,Early Startup,10000,500,5000000,1.006,2,1448.64,45,USD/month
+Qwen/Qwen3-0.6B,Growing Product,100000,500,50000000,1.006,19,13762.08,45,USD/month
+Qwen/Qwen3-0.6B,Large Platform,1000000,500,500000000,1.006,184,133274.88,45,USD/month
+Qwen/Qwen3-0.6B,Mass Consumer App,10000000,500,5000000000,1.006,1838,1331300.16,45,USD/month
+Qwen/Qwen3-0.6B,Global Platform,100000000,500,50000000000,1.006,18372,13307207.04,45,USD/month
+google/gemma-2-2b-it,Prototype,1000,500,500000,1.006,1,724.32,30,USD/month
+google/gemma-2-2b-it,Early Startup,10000,500,5000000,1.006,3,2172.96,30,USD/month
+google/gemma-2-2b-it,Growing Product,100000,500,50000000,1.006,28,20280.96,30,USD/month
+google/gemma-2-2b-it,Large Platform,1000000,500,500000000,1.006,276,199912.32,30,USD/month
+google/gemma-2-2b-it,Mass Consumer App,10000000,500,5000000000,1.006,2756,1996225.92,30,USD/month
+google/gemma-2-2b-it,Global Platform,100000000,500,50000000000,1.006,27558,19960810.56,30,USD/month
+Qwen/Qwen3-4B,Prototype,1000,500,500000,1.006,1,724.32,20,USD/month
+Qwen/Qwen3-4B,Early Startup,10000,500,5000000,1.006,5,3621.6,20,USD/month
+Qwen/Qwen3-4B,Growing Product,100000,500,50000000,1.006,42,30421.44,20,USD/month
+Qwen/Qwen3-4B,Large Platform,1000000,500,500000000,1.006,414,299868.48,20,USD/month
+Qwen/Qwen3-4B,Mass Consumer App,10000000,500,5000000000,1.006,4134,2994338.88,20,USD/month
+Qwen/Qwen3-4B,Global Platform,100000000,500,50000000000,1.006,41336,29940491.52,20,USD/month
+mistralai/Mistral-Nemo-Instruct-2407,Prototype,1000,500,500000,1.006,1,724.32,12,USD/month
+mistralai/Mistral-Nemo-Instruct-2407,Early Startup,10000,500,5000000,1.006,7,5070.24,12,USD/month
+mistralai/Mistral-Nemo-Instruct-2407,Growing Product,100000,500,50000000,1.006,69,49978.08,12,USD/month
+mistralai/Mistral-Nemo-Instruct-2407,Large Platform,1000000,500,500000000,1.006,689,499056.48,12,USD/month
+mistralai/Mistral-Nemo-Instruct-2407,Mass Consumer App,10000000,500,5000000000,1.006,6890,4990564.8,12,USD/month
+mistralai/Mistral-Nemo-Instruct-2407,Global Platform,100000000,500,50000000000,1.006,68894,49901302.08,12,USD/month

@@ -104,9 +104,9 @@ class Stage1Checks(unittest.TestCase):
             for field in ("input_usd_per_million", "output_usd_per_million"):
                 self.assertEqual(quote[field], snapshot[field])
             self.assertTrue(quote["source_url"].startswith("https://huggingface.co/inference/models"))
-            self.assertEqual(quote["checked_date"], "2026-10-21")
+            self.assertIn(quote["checked_date"], {self.pricing["verification_date"], self.pricing.get("verification_date_stage2")})
             self.assertTrue(quote["comparison_note"])
-        self.assertEqual(set(self.quotes), set(range(1, 6)))
+        self.assertTrue(set(range(1, 6)).issubset(set(self.quotes)))  # later stages add more price entries
 
     def test_shared_costs_reproduce_all_rows(self):
         local, api = shared.calculate_costs(range(1, 6), self.matrix,
@@ -224,6 +224,108 @@ class Stage1Checks(unittest.TestCase):
                 self.assertNotIn(".to_csv(", "".join(cell["source"]))
 
 
+class Stage2Checks(unittest.TestCase):
+    """Stage 2 regression validator for Rishabh's Models 6-10. Mirrors Stage1Checks's
+    structure; never runs inference or writes experiment files, and never touches
+    Stage 1's hash-pinned files or research_matrix.csv."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.nb, cls.matrix, cls.prompts = load_inputs()
+        cls.models = shared.registry(cls.matrix)
+        cls.pricing = json.loads((MODULE / "a7_api_pricing.json").read_text(encoding="utf-8"))
+        cls.quotes = {int(k): v for k, v in cls.pricing["models"].items()}
+
+    def test_stage1_files_untouched_by_stage2(self):
+        # Re-asserts the Stage 1 hash anchors independently of Stage1Checks, so this
+        # class alone catches a Stage 2 change that touched reviewed Stage 1 files.
+        for filename, expected in BASELINE.items():
+            self.assertEqual(digest(MODULE / filename), expected, filename)
+
+    def test_stage2_models_cover_five_categories(self):
+        rows = self.matrix[self.matrix["Model No."].between(6, 10)]
+        self.assertEqual(set(rows["Model No."]), set(range(6, 11)))
+        self.assertEqual(rows["Category"].nunique(), 5)
+        self.assertTrue(rows["Category"].value_counts().eq(1).all())
+
+    def test_benchmark_integrity_scores_and_summary(self):
+        frames = []
+        for number in range(6, 11):
+            raw = pd.read_csv(RESULTS / f"a7_model_{number}_benchmark.csv")
+            scored = pd.read_csv(RESULTS / f"a7_model_{number}_scored.csv")
+            shared.validate_records(scored, *self.models[number], self.prompts)
+            self.assertEqual(len(scored), 25)
+            score_cols = shared.SCORE_COLUMNS + ["Self-Evaluation Score (1-10)"]
+            pd.testing.assert_frame_equal(raw.drop(columns=score_cols), scored.drop(columns=score_cols))
+            for col in score_cols:
+                self.assertTrue(scored[col].between(1, 10).all())
+                self.assertTrue(scored[col].mod(1).eq(0).all())
+            expected = scored[shared.SCORE_COLUMNS].mean(axis=1).map(lambda x: math.floor(x + .5))
+            self.assertTrue(expected.eq(scored["Self-Evaluation Score (1-10)"]).all())
+            frames.append(scored.assign(**{"Model No.": number}))
+        combined = pd.concat(frames, ignore_index=True)
+        saved = pd.read_csv(RESULTS / "a7_stage2_all_benchmarks.csv")
+        self.assertEqual(len(combined), 125)
+        pd.testing.assert_frame_equal(combined[saved.columns], saved)
+        summary = combined.groupby(["Model No.", "Model", "Model Category"]).agg(
+            Prompts=("Prompt ID", "count"), Average_Score=("Self-Evaluation Score (1-10)", "mean"),
+            Average_Latency=("Latency", "mean"), Average_Tokens_Per_Sec=("Tokens/sec", "mean"),
+            Token_Limit_Hits=("Reached Token Limit", "sum")).reset_index().round(2)
+        pd.testing.assert_frame_equal(summary, pd.read_csv(RESULTS / "a7_stage2_summary.csv"))
+        self.assertEqual(summary.Average_Score.tolist(), [1.88, 6.16, 8.04, 8.4, 8.44])
+
+    def test_price_evidence_stage2_entries(self):
+        self.assertTrue(set(range(6, 11)).issubset(set(self.quotes)))
+        self.assertIn("verification_date_stage2", self.pricing)
+        evidence = {(x["model"], x["provider"]): x for x in self.pricing["price_evidence"]}
+        for number in range(6, 11):
+            quote = self.quotes[number]
+            snapshot = evidence[(quote["model"], quote["provider"])]
+            for field in ("input_usd_per_million", "output_usd_per_million"):
+                self.assertEqual(quote[field], snapshot[field])
+            self.assertTrue(quote["source_url"].startswith("https://huggingface.co/inference/models"))
+            # Models 6-9 reuse Lin's exact Qwen3-4B-Instruct-2507/nscale evidence from Stage 1
+            # (same date); only Model 10's Qwen3-8B/nscale quote was independently re-verified
+            # in Stage 2.
+            expected_date = (self.pricing["verification_date"] if number != 10
+                              else self.pricing["verification_date_stage2"])
+            self.assertEqual(quote["checked_date"], expected_date)
+            self.assertTrue(quote["comparison_note"])
+        # Stage 1's original five price rows must remain untouched by the Stage 2 addition.
+        for number in range(1, 6):
+            self.assertEqual(self.quotes[number]["checked_date"], self.pricing["verification_date"])
+
+    def test_shared_costs_reproduce_all_rows(self):
+        throughput = {6: 60, 7: 45, 8: 30, 9: 20, 10: 12}
+        quotes = {k: v for k, v in self.quotes.items() if k in range(6, 11)}
+        local, api = shared.calculate_costs(range(6, 11), self.matrix, throughput, quotes)
+        for frame, name in ((local, "local"), (api, "api")):
+            self.assertEqual(len(frame), 30)
+            self.assertFalse(frame.isna().any().any())
+            self.assertTrue(frame.groupby("Daily Traffic Category").size().eq(5).all())
+            pd.testing.assert_frame_equal(frame, pd.read_csv(RESULTS / f"a7_stage2_{name}_cost.csv"), check_dtype=False)
+        for _, row in local.iterrows():
+            self.assertEqual(row["Total Daily Token Load"], row["Daily Active Users"] * 500)
+            count = math.ceil(row["Total Daily Token Load"] / (row["Cloud Throughput Assumption (tokens/sec)"] * 86400 * .7))
+            self.assertEqual(row["Machines Needed"], count)
+            self.assertEqual(row["Total Machine Cost"], shared.money(count * 1.006 * 720))
+        for _, row in api.iterrows():
+            users = shared.TRAFFIC[row["Daily Traffic Category"]]
+            self.assertEqual(row["Total Daily Input Tokens"], users * 250)
+            bill = (users * 250 * row["Input USD per 1M tokens"] + users * 500 * row["Output USD per 1M tokens"]) * 30 / 1e6
+            self.assertAlmostEqual(row["Estimated API Cost"], bill, delta=.005001)
+            gateways = max(1, math.ceil(users / (86400 * 100)))
+            self.assertEqual(row["Machines Required (API infrastructure)"], gateways)
+            self.assertEqual(row["API Gateway Cost"], gateways * 36)
+            self.assertEqual(row["Total Cost"], shared.money(row["Estimated API Cost"] + row["API Gateway Cost"]))
+
+    def test_default_inference_and_completed_history_are_safe(self):
+        with patch.object(shared, "load_model", side_effect=AssertionError("Model loading forbidden")):
+            data = shared.run_models(range(6, 11), self.matrix, self.prompts, RESULTS,
+                                     execute=True, backend="cpu", precision="float32")
+            self.assertEqual(len(data), 5)  # No torch import needed for completed historical runs.
+
+
 def execute_notebook():
     """Execute real cells with in-process IPython (no kernel sockets required).
 
@@ -312,7 +414,10 @@ if __name__ == "__main__":
     parser.add_argument("--execute-notebook", action="store_true")
     parser.add_argument("--check-live-prices", action="store_true")
     args = parser.parse_args()
-    result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(Stage1Checks))
+    loader = unittest.defaultTestLoader
+    suite = unittest.TestSuite([loader.loadTestsFromTestCase(Stage1Checks),
+                                 loader.loadTestsFromTestCase(Stage2Checks)])
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
     if not result.wasSuccessful():
         sys.exit(1)
     if args.execute_notebook:

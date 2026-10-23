@@ -1,0 +1,6 @@
+Model No.,Model,Model Category,Prompts,Average_Score,Average_Latency,Average_Tokens_Per_Sec,Token_Limit_Hits
+6,HuggingFaceTB/SmolLM-135M-Instruct,Tiny (<0.5B),25,1.88,2.77,85.79,22
+7,Qwen/Qwen3-0.6B,Small (0.5B-1.5B),25,6.16,2.02,21.86,0
+8,google/gemma-2-2b-it,Medium (>1.5B-3B),25,8.04,615.87,0.16,0
+9,Qwen/Qwen3-4B,Large (>3B-7B),25,8.4,4.3,18.02,1
+10,mistralai/Mistral-Nemo-Instruct-2407,Very Large (>7B),25,8.44,5.51,12.46,0
