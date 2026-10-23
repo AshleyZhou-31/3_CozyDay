@@ -284,7 +284,12 @@ class Stage2Checks(unittest.TestCase):
             for field in ("input_usd_per_million", "output_usd_per_million"):
                 self.assertEqual(quote[field], snapshot[field])
             self.assertTrue(quote["source_url"].startswith("https://huggingface.co/inference/models"))
-            self.assertEqual(quote["checked_date"], self.pricing["verification_date_stage2"])
+            # Models 6-9 reuse Lin's exact Qwen3-4B-Instruct-2507/nscale evidence from Stage 1
+            # (same date); only Model 10's Qwen3-8B/nscale quote was independently re-verified
+            # in Stage 2.
+            expected_date = (self.pricing["verification_date"] if number != 10
+                              else self.pricing["verification_date_stage2"])
+            self.assertEqual(quote["checked_date"], expected_date)
             self.assertTrue(quote["comparison_note"])
         # Stage 1's original five price rows must remain untouched by the Stage 2 addition.
         for number in range(1, 6):
