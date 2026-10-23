@@ -1,0 +1,13 @@
+Experiment,Embedding,Heads,Layers,FF,Parameters,Final Loss (last step),Final Loss (avg last 100),Training Time (s),Generated Text
+baseline,48,2,1,192,32523,0.1269,0.1355,121.8,"students experiment with language models.
+artificial intelligence can"
+exp1,24,2,1,96,9363,0.1392,0.1462,124.4,"students experiment with language models can run on local computers.
+"
+exp2,48,2,1,192,32523,0.128,0.1354,119.4,"students experiment with language models.
+artificial intelligence can"
+exp3,48,4,1,192,32523,0.1249,0.1337,120.1,"students experiment with language models.
+artificial intelligence can"
+exp4,48,2,2,192,60795,0.1232,0.129,158.6,"students experiment with language models.
+artificial intelligence can"
+exp5,96,4,2,384,232155,0.1266,0.1259,170.1,"students experiment with language models.
+artificial intelligence can"
