@@ -117,6 +117,115 @@ Consistent with this document's convention of not collapsing unlike measurements
 
 Final cross-scenario and cross-model routing conclusions, including whether this scenario should extend to other tiers or categories, belong to Ashley's all-model integration, consistent with the scoping already stated in "Stage 1 scope and evidence" and "Cost limitations" above.
 
+## Stage 3 benchmarks, hardware and failed runs
+
+Stage 3 adds Models 11–15 (Shivani): 125 new benchmark records on the same unchanged 25 prompts, scored with the same rubric as Stages 1 and 2, plus 30 local and 30 paid API cost rows. Models 1–10, their scored files and the earlier routing sections are unchanged.
+
+| Model | Category | Mean score | Mean latency seconds | Mean output tokens per second | Token cap hits |
+|---|---|---:|---:|---:|---:|
+| SmolLM2-360M-Instruct | Tiny | 5.16 | 1.35 | 36.53 | 2 |
+| Qwen2.5-1.5B-Instruct | Small | 7.08 | 6.10 | 13.01 | 2 |
+| Qwen2.5-3B-Instruct | Medium | 7.80 | 3.87 | 23.15 | 1 |
+| Qwen2.5-7B-Instruct | Large | 8.60 | 6.94 | 10.68 | 1 |
+| Qwen2.5-14B-Instruct | Very Large | 8.96 | 13.90 | 5.26 | 0 |
+
+Scores are subjective manual evaluations of the saved responses and single-run measurements, as in Stages 1 and 2. Mean latency for different models is not a controlled comparison, because the models ran on different hardware and precision (below).
+
+| Model | Hardware | Precision and loading | Notes |
+|---|---|---|---|
+| 11, 12 | Apple Silicon Mac, CPU only (macOS 15.6.1 arm64, 4 CPU threads, torch 2.14.1, Python 3.12.13) | `backend="cpu"`, bfloat16 through `a7_shared.run_models`; no MPS path | Same CPU convention as Stage 1 and Stage 2 |
+| 13 | Kaggle notebook, Tesla T4 (15,360 MiB; 2 CPU threads; torch 2.11.0+cu128, Python 3.13.15) | `backend="cuda"`, fp16 through `a7_shared.run_models`, eager attention | No quantization |
+| 14 | Kaggle, Tesla T4 | 4-bit NF4 with double quantization, **fp32 compute dtype and fp32 non-quantized layers**, eager attention | Loader overridden for this run; see failed runs |
+| 15 | Kaggle, Tesla T4 | 4-bit NF4 with double quantization, **bfloat16 compute dtype and bfloat16 non-quantized layers**, eager attention | Loader overridden for this run |
+
+Latency is the `generate` call only, as in earlier stages: greedy decoding (`do_sample=False`), 256 new tokens maximum, CUDA synchronization before and after on GPU runs, no warm-up pass and no repeated runs. Model loading, tokenization and decoding are excluded. torch reported 4 CPU threads on the Mac and 2 on the Kaggle machine. Transformers, bitsandbytes and accelerate versions were not recorded in the CSV runtime field, and exact model revisions were not pinned.
+
+### Deviation from the shared NF4 convention (Models 14 and 15)
+
+The shared helper loads NF4 models with an fp16 compute dtype. Both Stage 3 NF4 models are Qwen2.5 models; fp16 activations can overflow in some Qwen2.5 configurations, and Model 14's first run below matches that failure pattern. The shared loader was not modified. Instead, Models 14 and 15 were run through small loader overrides that replaced `a7_shared.load_model` for the run only and then called the unchanged `run_models`. Their `Precision` column still reads `nf4`, and their protocol IDs still come from the shared helper's configuration hash, which names `nf4_compute: fp16`. The protocol ID therefore does **not** capture the actual compute dtype for Models 14 and 15. The compute dtypes in the table above are authoritative, and the override scripts are not committed.
+
+Model 14 had two failed attempts. Both are reported here and neither is used in any results file.
+
+1. **fp16 compute (shared helper unchanged).** 25 records generated, 19 of 25 reached the 256-token cap, mean latency 11.49 s. The responses were corrupted: repeated `!` characters in place of text (for example `!finish!!!!! finish!!!!!!!!!!! project!!! report! !!`). This is consistent with an fp16 overflow. Discarded as an invalid run, not scored.
+2. **bfloat16 compute.** 25 coherent records, mean latency 7.38 s, one cap hit. The text contained corrupted digits (for example `99 AM`, `90:30 AM`, `10:8 AM`, `p PM`, `15:00 PM`). A draft scoring gave 171 of 250. Because corrupted digits made the schedule outputs unusable, this run was replaced by attempt 3 rather than reported as a measurement.
+3. **fp32 compute with fp32 non-quantized layers.** Clean, coherent records. This is the run in `a7_model_14_benchmark.csv`.
+
+Model 15 was run with bfloat16 compute and produced clean output with no digit corruption. fp32 non-quantized layers were not tested for Model 15 because the embedding and output layers alone would need roughly 6 GB in fp32 on top of the 4-bit weights, which was not expected to fit in 15 GB.
+
+Two further execution notes. First, Model 13 was first run on a Colab T4 (mean latency 3.91 s); that CSV was lost when the session reset and Colab then refused further GPU sessions. It was re-run on Kaggle, producing the same generated-token counts and a mean latency of 3.87 s, and only the Kaggle record is committed. Second, the quality ordering is monotonic by size for these Qwen2.5 models, but NF4 quality is not identical to full-precision quality and Model 14's and 15's different compute dtypes may affect both quality and speed.
+
+### Observations carried into routing
+
+Mean score by prompt type, from the saved scored files (five prompts per cell, single run):
+
+| Model | Task Classification | Structured Extraction | Plan Summarization | Priority Ranking | Schedule Generation |
+|---|---:|---:|---:|---:|---:|
+| 11 (360M) | 5.4 | 5.0 | 7.0 | 5.2 | 3.2 |
+| 12 (1.5B) | 8.0 | 8.8 | 8.0 | 6.0 | 4.6 |
+| 13 (3B) | 9.0 | 8.6 | 8.8 | 6.0 | 6.6 |
+| 14 (7B) | 9.0 | 9.0 | 8.8 | 8.4 | 7.8 |
+| 15 (14B) | 9.0 | 9.0 | 8.2 | 9.2 | 9.4 |
+
+Single-constraint tasks (classification, extraction, summarization) are handled nearly as well by the 3B model as by the 14B model. Multi-constraint tasks (priority ranking with explicit deadlines, schedule generation with durations and fixed windows) separate the models sharply. Priority Ranking exposed the same weakness noted in Stage 2: Models 11, 12, 13 and 14 each ranked laundry above an exam due tomorrow (P2), and Models 12 and 13 ranked groceries above a report due tomorrow (P1). These two observations motivate the two routing scenarios below.
+
+## High-Complexity Queries routing scenario
+
+Stage 3 adds two routing scenarios. This first one covers high-complexity queries. Like the Peak Usage Hours scenario above, it reuses the shared traffic tiers, throughput assumptions (Very Large 12, Large 20 and Medium 30 tokens/second at 70% utilization) and cost model, and adds only the explicitly labeled planning assumptions stated below. Numbers are illustrations at the 100,000 DAU tier, not measured production savings.
+
+### Trigger
+
+A request is routed as high-complexity when it is a Schedule Generation or Priority Ranking request that contains at least one of: two or more fixed time windows, an explicit deadline, or total required durations that must fit a stated window. A lightweight rule-based check on the request text (counting time expressions, durations and deadline words) is sufficient for the illustration; the classifier's accuracy has not been measured here. These are the two prompt types where the benchmark shows the largest quality gaps between model sizes.
+
+**Planning assumption (not measured traffic):** 40% of requests are high-complexity, because two of the five benchmark prompt types are Schedule Generation or Priority Ranking and the benchmark weights the five types equally. Real traffic mix must be measured before relying on this.
+
+### Selected models
+
+- **Primary local model: Model 15, `Qwen/Qwen2.5-14B-Instruct` (Very Large, NF4).** It scored 9.4 on Schedule Generation and 9.2 on Priority Ranking, versus 7.8 and 8.4 for Model 14 and 6.6 and 6.0 for Model 13.
+- **Local fallback: Model 14, `Qwen/Qwen2.5-7B-Instruct` (Large, NF4).** Faster and cheaper, with lower complex-task quality.
+- **API fallback: `Qwen/Qwen3-14B` on `nscale`,** USD 0.07 input and 0.20 output per million tokens, read from the official Hugging Face provider listing on 2026-10-24 (entry 15 in `llm-test/a7_api_pricing.json`). Same nominal size as Model 15 but a different generation; its task quality on these prompts has not been benchmarked here.
+
+### Fallback behavior
+
+High-complexity requests go first to the Model 15 fleet. If the queue exceeds the latency budget, they go to the Model 14 fleet, and if that is also saturated, to the `Qwen3-14B`/nscale API. If a response fails a format check (for example a schedule whose listed durations do not sum to the requested amounts, or unparseable JSON), the request is retried once on the next tier and the event is logged. No fallback substitutes a cached or fabricated response.
+
+### Expected benefit
+
+The benefit is quality on the requests where small models fail. On the 25 benchmark prompts, moving Schedule Generation from Model 13 to Model 15 raised the mean score from 6.6 to 9.4, and Priority Ranking from 6.0 to 9.2. At 100,000 DAU, 40,000 complex requests per day produce 20,000,000 output tokens per day. Serving them on Model 15 needs ceiling(20,000,000 / (12 × 86,400 × 0.7)) = 28 machines, USD 20,280.96/month. Serving the same traffic on Model 14 needs 17 machines (USD 12,313.44/month), so the quality premium of Model 15 over Model 14 on these prompts (+1.6 on Schedule Generation, +0.8 on Priority Ranking) costs about USD 7,967.52/month at this tier under the shared cost model. Serving the same complex traffic through the `Qwen3-14B` API would cost 30 × (10,000,000 × 0.07 + 20,000,000 × 0.20) / 1,000,000 = USD 141.00/month in provider charges plus USD 36.00/month for one gateway, USD 177.00/month, but that price rests on an unbenchmarked proxy and an unmeasured latency.
+
+### Latency, cost and quality, evaluated separately
+
+- **Latency.** Model 15 measured 23.60 seconds mean on Schedule Generation and 15.63 seconds on Priority Ranking (Kaggle T4, NF4, bfloat16 compute). Model 14 measured 13.45 and 6.63 seconds (T4, NF4, fp32 compute); Model 13 measured 6.24 and 5.33 seconds (T4, fp16). The environments differ and the assumed A10G reference machine was not used, so these are directional. Model 15's measured throughput of 5.26 tokens/second on the T4 is below the shared 12 tokens/second assumption, which means the machine counts above may understate the fleet needed on T4-class hardware. API latency was not measured.
+- **Cost.** Local figures above come from the shared cost model; API figures use the sourced prices and the shared gateway assumption. Neither includes queue or peak-load headroom.
+- **Quality.** Scores are the single-run manual scores in the table above. The API proxy's quality is unmeasured, and the router's classification accuracy is unmeasured: a complex request misrouted to Model 13 would be expected to score closer to 6 than 9.
+
+## Cost Optimization routing scenario
+
+### Trigger
+
+A request is routed as simple when it is a single-constraint Task Classification, Structured Extraction or Plan Summarization request, that is, the request does not match the high-complexity rule above. The trigger is the complement of the high-complexity rule, so each request has exactly one primary route. The same 40% complex and 60% simple traffic-mix planning assumption applies.
+
+### Selected models
+
+- **Primary local model: Model 13, `Qwen/Qwen2.5-3B-Instruct` (Medium, fp16).** It scored 9.0 on Task Classification, 8.6 on Structured Extraction and 8.8 on Plan Summarization, against 9.0, 9.0 and 8.2 for Model 15.
+- **Escalation model: Model 15** (the high-complexity primary) for any simple request whose output fails validation.
+- **API option for simple traffic: `Qwen/Qwen3-4B-Instruct-2507` on `nscale`,** USD 0.01 input and 0.03 output per million tokens, re-read from the official listing on 2026-10-24 (entry 13 in `llm-test/a7_api_pricing.json`). It is about 1.3 times larger than Model 13 and of a different generation.
+
+### Fallback behavior
+
+Simple requests go to the Model 13 fleet. A response is validated cheaply: JSON must parse, every task named in a classification request must receive a category, and a requested sentence count must match. A response that fails validation is re-run once on Model 15 and logged as an escalation. If the Model 13 fleet is saturated, simple requests overflow to the `Qwen3-4B-Instruct-2507` API instead of waiting. No fallback fabricates a response.
+
+### Expected benefit
+
+At 100,000 DAU, 60,000 simple requests per day produce 30,000,000 output tokens per day. On Model 13 (30 tokens/second assumption) this needs ceiling(30,000,000 / (30 × 86,400 × 0.7)) = 17 machines, USD 12,313.44/month. The 40% complex traffic stays on Model 15 at 28 machines, USD 20,280.96/month. The routed total is USD 32,594.40/month, against USD 49,978.08/month (69 machines) for sending all traffic to Model 15. The planning saving is USD 17,383.68/month, 34.8%, at this tier. Weighting the measured per-type means by the assumed mix gives a blended score of 0.6 × 8.8 + 0.4 × 9.3 = 9.0 for the routed system, against 8.96 for Model 15 alone, a difference well inside single-run, manual-scoring noise. An all-API alternative for simple traffic (`Qwen3-4B-Instruct-2507`) would cost USD 31.50/month in provider charges at this tier before the gateway.
+
+### Latency, cost and quality, evaluated separately
+
+- **Latency.** On the benchmark prompts the 3B model averaged 2.59 seconds across the three simple types (Task Classification 2.80, Structured Extraction 3.14, Plan Summarization 1.82) against 10.10 seconds for the 14B model (6.65, 14.72, 8.92). Both ran on the Kaggle T4, but with different precision settings and compute dtypes, so the ratio is directional.
+- **Cost.** USD 32,594.40/month routed versus USD 49,978.08/month all-14B under the shared assumptions; escalations from Model 13 to Model 15 add Model 15 load that is not modeled here (a 10% escalation rate would add about 3,000,000 output tokens/day).
+- **Quality.** Model 13 and Model 15 differ by at most 0.6 on any simple type in this single run, in either direction. The routed blended score assumes the router sends every request to the correct tier; misrouting complex requests to Model 13 is the main quality risk.
+
+Final cross-scenario and cross-model routing conclusions, including whether these scenarios extend to other tiers or categories, belong to Ashley's all-model integration, consistent with the scoping stated earlier in this document.
+
 ## Team handoff and safe execution
 
 The notebook resolves paths from either repository root or `llm-test` and displays all Stage 1 benchmark and cost rows. Run All imports no model inference libraries, downloads no weights and writes no authoritative CSVs. Results-only dependencies and the environment used to execute saved outputs are documented in `llm-test/a7-results-requirements.txt`. Full inference requires separately tested torch/Transformers/accelerate and bitsandbytes installations.
