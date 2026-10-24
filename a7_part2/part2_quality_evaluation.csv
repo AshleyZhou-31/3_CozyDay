@@ -1,0 +1,117 @@
+method,question_id,question,expected_answer,top_k,retrieved_ids,actual_context,context_length,response,historical_quality_score,answer_visible_in_context,factual_accuracy_0_3,relevance_0_3,retrieved_support_0_3,quality_score,accuracy_reason,relevance_reason,support_reason,experiment_version,prompt_document_ids,full_prompt,full_prompt_length,top_document_fully_visible,seed,temperature,max_new_tokens,answer_found
+No-RAG matched-format,Q1,what does mia like,apples,0,,what does mia like ,19,"intelligence.
+students create ",2.0,False,0,0,,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,Not applicable: no retrieved information supplied.,,,,,,,,,
+No-RAG matched-format,Q2,what does sam like,music,0,,what does sam like ,19,"systems.
+language models can r",2.0,False,0,0,,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,Not applicable: no retrieved information supplied.,,,,,,,,,
+No-RAG matched-format,Q3,what does tom like,swimming,0,,what does tom like ,19,"s.
+attention helps models use ",2.0,False,0,0,,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,Not applicable: no retrieved information supplied.,,,,,,,,,
+No-RAG matched-format,Q4,what does anna like,painting,0,,what does anna like ,20,"intelligence.
+students create ",2.0,False,0,0,,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,Not applicable: no retrieved information supplied.,,,,,,,,,
+No-RAG matched-format,Q5,what does lily like,reading,0,,what does lily like ,20,helps models use contextual in,2.0,False,0,0,,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,Not applicable: no retrieved information supplied.,,,,,,,,,
+Top-1 RAG revised,Q1,what does mia like,apples,1,D1,"likes apples
+what does mia like ",32,"intelligence.
+students create ",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,D1,"mia likes apples
+what does mia like ",36.0,False,42.0,1.0,30.0,False
+Top-2 RAG revised,Q1,what does mia like,apples,2,"D1,D2","likes apples
+what does mia like ",32,"intelligence.
+students create ",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D2,D1","sam likes music
+mia likes apples
+what does mia like ",52.0,False,42.0,1.0,30.0,False
+Top-3 RAG revised,Q1,what does mia like,apples,3,"D1,D2,D3","likes apples
+what does mia like ",32,"intelligence.
+students create ",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D3,D2,D1","tom likes swimming
+sam likes music
+mia likes apples
+what does mia like ",71.0,False,42.0,1.0,30.0,False
+Top-5 RAG revised,Q1,what does mia like,apples,5,"D1,D2,D3,D4,D5","likes apples
+what does mia like ",32,"intelligence.
+students create ",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D5,D4,D3,D2,D1","lily likes reading
+anna likes painting
+tom likes swimming
+sam likes music
+mia likes apples
+what does mia like ",110.0,False,42.0,1.0,30.0,False
+Top-1 RAG revised,Q2,what does sam like,music,1,D2," likes music
+what does sam like ",32,s useful for machine learning ,,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,D2,"sam likes music
+what does sam like ",35.0,False,42.0,1.0,30.0,False
+Top-2 RAG revised,Q2,what does sam like,music,2,"D2,D1"," likes music
+what does sam like ",32,s useful for machine learning ,,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D1,D2","mia likes apples
+sam likes music
+what does sam like ",52.0,False,42.0,1.0,30.0,False
+Top-3 RAG revised,Q2,what does sam like,music,3,"D2,D1,D3"," likes music
+what does sam like ",32,s useful for machine learning ,,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D3,D1,D2","tom likes swimming
+mia likes apples
+sam likes music
+what does sam like ",71.0,False,42.0,1.0,30.0,False
+Top-5 RAG revised,Q2,what does sam like,music,5,"D2,D1,D3,D4,D5"," likes music
+what does sam like ",32,s useful for machine learning ,,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D5,D4,D3,D1,D2","lily likes reading
+anna likes painting
+tom likes swimming
+mia likes apples
+sam likes music
+what does sam like ",110.0,False,42.0,1.0,30.0,False
+Top-1 RAG revised,Q3,what does tom like,swimming,1,D3,"kes swimming
+what does tom like ",32,"s can run on local computers.
+",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,D3,"tom likes swimming
+what does tom like ",38.0,False,42.0,1.0,30.0,False
+Top-2 RAG revised,Q3,what does tom like,swimming,2,"D3,D1","kes swimming
+what does tom like ",32,"s can run on local computers.
+",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D1,D3","mia likes apples
+tom likes swimming
+what does tom like ",55.0,False,42.0,1.0,30.0,False
+Top-3 RAG revised,Q3,what does tom like,swimming,3,"D3,D1,D2","kes swimming
+what does tom like ",32,"s can run on local computers.
+",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D2,D1,D3","sam likes music
+mia likes apples
+tom likes swimming
+what does tom like ",71.0,False,42.0,1.0,30.0,False
+Top-5 RAG revised,Q3,what does tom like,swimming,5,"D3,D1,D2,D4,D5","kes swimming
+what does tom like ",32,"s can run on local computers.
+",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D5,D4,D2,D1,D3","lily likes reading
+anna likes painting
+sam likes music
+mia likes apples
+tom likes swimming
+what does tom like ",110.0,False,42.0,1.0,30.0,False
+Top-1 RAG revised,Q4,what does anna like,painting,1,D4,"es painting
+what does anna like ",32,learning models contain parame,,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,D4,"anna likes painting
+what does anna like ",40.0,False,42.0,1.0,30.0,False
+Top-2 RAG revised,Q4,what does anna like,painting,2,"D4,D1","es painting
+what does anna like ",32,learning models contain parame,,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D1,D4","mia likes apples
+anna likes painting
+what does anna like ",57.0,False,42.0,1.0,30.0,False
+Top-3 RAG revised,Q4,what does anna like,painting,3,"D4,D1,D2","es painting
+what does anna like ",32,learning models contain parame,,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D2,D1,D4","sam likes music
+mia likes apples
+anna likes painting
+what does anna like ",73.0,False,42.0,1.0,30.0,False
+Top-5 RAG revised,Q4,what does anna like,painting,5,"D4,D1,D2,D3,D5","es painting
+what does anna like ",32,learning models contain parame,,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D5,D3,D2,D1,D4","lily likes reading
+tom likes swimming
+sam likes music
+mia likes apples
+anna likes painting
+what does anna like ",111.0,False,42.0,1.0,30.0,False
+Top-1 RAG revised,Q5,what does lily like,reading,1,D5,"kes reading
+what does lily like ",32,"sfformaties.
+attention helps m",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,D5,"lily likes reading
+what does lily like ",39.0,False,42.0,1.0,30.0,False
+Top-2 RAG revised,Q5,what does lily like,reading,2,"D5,D1","kes reading
+what does lily like ",32,"sfformaties.
+attention helps m",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D1,D5","mia likes apples
+lily likes reading
+what does lily like ",56.0,False,42.0,1.0,30.0,False
+Top-3 RAG revised,Q5,what does lily like,reading,3,"D5,D1,D2","kes reading
+what does lily like ",32,"sfformaties.
+attention helps m",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D2,D1,D5","sam likes music
+mia likes apples
+lily likes reading
+what does lily like ",72.0,False,42.0,1.0,30.0,False
+Top-5 RAG revised,Q5,what does lily like,reading,5,"D5,D1,D2,D3,D4","kes reading
+what does lily like ",32,"sfformaties.
+attention helps m",,True,0,0,0,1.0,Does not provide a complete accepted answer to the question.,Off-topic or fragmented continuation; does not address the subject preference.,No correct task answer grounded in visible retrieved evidence.,rank_near_question_v2,"D4,D3,D2,D1,D5","anna likes painting
+tom likes swimming
+sam likes music
+mia likes apples
+lily likes reading
+what does lily like ",111.0,False,42.0,1.0,30.0,False
