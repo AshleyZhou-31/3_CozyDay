@@ -1,0 +1,61 @@
+method,question_id,question,expected_answer,top_k,retrieved_ids,actual_context,context_length,response,quality_score,answer_visible_in_context
+No-RAG,Q1,what does mia like,apples,0,,what does mia like,18,"n.
+transformers use attention ",2,False
+No-RAG,Q2,what does sam like,music,0,,what does sam like,18,"n.
+transformers use attention ",2,False
+No-RAG,Q3,what does tom like,swimming,0,,what does tom like,18,"n.
+transformers use attention ",2,False
+No-RAG,Q4,what does anna like,painting,0,,what does anna like,19,"n.
+transformers use attention ",2,False
+No-RAG,Q5,what does lily like,reading,0,,what does lily like,19,slanguage models can run on lo,2,False
+Top-1 RAG,Q1,what does mia like,apples,1,D1,"likes apples
+what does mia like ",32,"intelligence.
+students create ",2,True
+Top-2 RAG,Q1,what does mia like,apples,2,"D1,D2"," likes music
+what does mia like ",32,"intelligence.
+students create ",2,False
+Top-3 RAG,Q1,what does mia like,apples,3,"D1,D2,D3","kes swimming
+what does mia like ",32,"intelligence.
+students create ",2,False
+Top-5 RAG,Q1,what does mia like,apples,5,"D1,D2,D3,D4,D5","ikes reading
+what does mia like ",32,"intelligence.
+students create ",2,False
+Top-1 RAG,Q2,what does sam like,music,1,D2," likes music
+what does sam like ",32,s useful for machine learning ,2,True
+Top-2 RAG,Q2,what does sam like,music,2,"D2,D1","likes apples
+what does sam like ",32,s useful for machine learning ,2,False
+Top-3 RAG,Q2,what does sam like,music,3,"D2,D1,D3","kes swimming
+what does sam like ",32,s useful for machine learning ,2,False
+Top-5 RAG,Q2,what does sam like,music,5,"D2,D1,D3,D4,D5","ikes reading
+what does sam like ",32,s useful for machine learning ,2,False
+Top-1 RAG,Q3,what does tom like,swimming,1,D3,"kes swimming
+what does tom like ",32,"s can run on local computers.
+",2,True
+Top-2 RAG,Q3,what does tom like,swimming,2,"D3,D1","likes apples
+what does tom like ",32,"s can run on local computers.
+",2,False
+Top-3 RAG,Q3,what does tom like,swimming,3,"D3,D1,D2"," likes music
+what does tom like ",32,s useful for machine learning ,2,False
+Top-5 RAG,Q3,what does tom like,swimming,5,"D3,D1,D2,D4,D5","ikes reading
+what does tom like ",32,"s can run on local computers.
+",2,False
+Top-1 RAG,Q4,what does anna like,painting,1,D4,"es painting
+what does anna like ",32,learning models contain parame,2,True
+Top-2 RAG,Q4,what does anna like,painting,2,"D4,D1","ikes apples
+what does anna like ",32,learning models contain parame,2,False
+Top-3 RAG,Q4,what does anna like,painting,3,"D4,D1,D2","likes music
+what does anna like ",32,learning models contain parame,2,False
+Top-5 RAG,Q4,what does anna like,painting,5,"D4,D1,D2,D3,D5","kes reading
+what does anna like ",32,learning models contain parame,2,False
+Top-1 RAG,Q5,what does lily like,reading,1,D5,"kes reading
+what does lily like ",32,"sfformaties.
+attention helps m",2,True
+Top-2 RAG,Q5,what does lily like,reading,2,"D5,D1","ikes apples
+what does lily like ",32,"sfformaties.
+attention helps m",2,False
+Top-3 RAG,Q5,what does lily like,reading,3,"D5,D1,D2","likes music
+what does lily like ",32,"sfformaties.
+attention helps m",2,False
+Top-5 RAG,Q5,what does lily like,reading,5,"D5,D1,D2,D3,D4","es painting
+what does lily like ",32,"sfformaties.
+attention helps m",2,False

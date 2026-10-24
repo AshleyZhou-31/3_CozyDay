@@ -1,0 +1,10 @@
+method,question_id,question,expected_answer,top_k,retrieved_ids,actual_context,context_length,response,quality_score,answer_visible_in_context
+No-RAG matched-format,Q1,what does mia like,apples,0,,what does mia like ,19,"intelligence.
+students create ",2,False
+No-RAG matched-format,Q2,what does sam like,music,0,,what does sam like ,19,"systems.
+language models can r",2,False
+No-RAG matched-format,Q3,what does tom like,swimming,0,,what does tom like ,19,"s.
+attention helps models use ",2,False
+No-RAG matched-format,Q4,what does anna like,painting,0,,what does anna like ,20,"intelligence.
+students create ",2,False
+No-RAG matched-format,Q5,what does lily like,reading,0,,what does lily like ,20,helps models use contextual in,2,False
