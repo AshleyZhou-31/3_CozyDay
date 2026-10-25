@@ -1,0 +1,200 @@
+Model,Model Category,Tokens/sec,Latency,Prompt Type,Prompt,Self-Evaluation Score (1-10),Prompt ID,Response,Generated Tokens,Reached Token Limit,Backend,Device,Precision,Max New Tokens,Protocol ID,Runtime,Instruction Adherence,Accuracy,Clarity,Structure
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),14.833,1.618,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: finish project report, review lecture notes, buy groceries, and go for a run. Return one category per task.",,C1,"Work: finish project report
+Study: review lecture notes
+Personal: buy groceries
+Health: go for a run",24,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),34.408,0.756,Task Classification,"Categorize my tasks: email my supervisor, prepare for an exam, clean my room, and attend a dental appointment.",,C2,"1. Email my supervisor
+2. Prepare for an exam
+3. Clean my room
+4. Attend a dental appointment",26,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),34.644,0.722,Task Classification,"Classify these activities: submit homework, schedule a team meeting, call my family, and attend a yoga class.",,C3,"1. Submit homework
+2. Schedule a team meeting
+3. Call my family
+4. Attend a yoga class",25,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),34.131,0.703,Task Classification,"Organize these tasks by category: write a research summary, cook dinner, review class slides, and visit the gym.",,C4,"1. Write a research summary
+2. Cook dinner
+3. Review class slides
+4. Visit the gym",24,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),32.24,0.744,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: update a client spreadsheet, study Python, pay rent, and attend a medical checkup.",,C5,"Work: update a client spreadsheet
+Study: Python
+Personal: pay rent
+Health: attend a medical checkup",24,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),30.503,0.656,Priority Ranking,"I have a report due tomorrow, groceries to buy, and a room to clean. Rank these tasks by priority and explain briefly.",,P1,"1. Report due tomorrow
+2. Groceries to buy
+3. Room to clean",20,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),16.653,0.42,Priority Ranking,"I have an exam tomorrow, a meeting next week, and laundry to finish. What should I prioritize today?",,P2,Prioritize your laundry today.,7,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),37.118,0.916,Priority Ranking,"My presentation is due tonight, my emails can wait until Friday, and I need to exercise. Rank these tasks.",,P3,"1. Presentations due tonight
+2. Email can wait until Friday
+3. Exercise needs to be done before presentation
+4. My emails can wait until Friday",34,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),33.252,0.722,Priority Ranking,"I must submit an assignment by 5 PM, call a friend sometime this week, and prepare dinner tonight. Rank these tasks by urgency.",,P4,"1. Submit an assignment by 5 PM
+2. Call a friend this week
+3. Prepare dinner tonight",24,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),25.871,0.58,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",,P5,"1. Organize your desk
+2. Prepare for the quiz next Monday",15,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),53.771,4.761,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",,S1,"Here's a suggested schedule for your daily routine:
+
+**9 AM - 10 AM: Study 3 hours**
+
+* Wake up and get ready for the day
+* Start your study session
+* Focus on your work or reading
+
+**10 AM - 11 AM: Exercise 1 hour**
+
+* Engage in a short workout to get your blood flowing
+* Use this time to stretch or do some light stretching
+
+**11 AM - 12 PM: Grocery Shopping 1 hour**
+
+* Plan out your shopping list and go to the store
+* Use this time to rest and recharge
+
+**12 PM - 1 PM: Study 3 hours**
+
+* Continue your study session
+* Stay focused and productive
+
+**1 PM - 2 PM: Exercise 1 hour**
+
+* Engage in a short workout to keep your energy levels up
+* Use this time to rest and relax
+
+**2 PM - 3 PM: Grocery Shopping 1 hour**
+
+* Plan out your shopping list and go to the store
+* Use this time to rest and relax
+
+**3 PM - 4 PM: Study 3 hours**
+",256,True,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),51.201,5.0,Schedule Generation,"Plan my day between 8 AM and 6 PM. I have class from 10 AM to noon, need 2 hours for homework, and want 1 hour for lunch.",,S2,"Here's a suggested plan for your day:
+
+1. 8 AM: Wake up and get ready for class.
+
+2. 10 AM: Attend class from 10 AM to noon.
+
+3. 12 PM: Finish homework for the day.
+
+4. 1 PM: Have lunch.
+
+5. 2 PM: Attend class from 2 PM to noon.
+
+6. 3 PM: Finish homework for the day.
+
+7. 4 PM: Have lunch.
+
+8. 5 PM: Attend class from 5 PM to noon.
+
+9. 6 PM: Finish homework for the day.
+
+10. 7 PM: Have lunch.
+
+11. 8 PM: Attend class from 8 PM to 10 PM.
+
+12. 9 PM: Finish homework for the day.
+
+13. 10 PM: Have lunch.
+
+14. 11 PM: Attend class from 11 PM to 10 PM.
+
+15. 12 AM: Have lunch.
+
+16. 1 AM: Attend class from 1 AM to 2 AM.
+
+17. 2 AM: Finish homework for the",256,True,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),34.689,0.98,Schedule Generation,"I am free from 1 PM to 9 PM. Schedule 3 hours of project work, 1 hour of exercise, and 1 hour of cooking.",,S3,"I am free from 1 PM to 9 PM. Schedule 3 hours of project work, 1 hour of exercise, and 1 hour of cooking.",34,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),49.244,2.295,Schedule Generation,"Build a realistic schedule from 9 AM to 7 PM with a meeting from 11 AM to noon, 3 hours of studying, and 2 hours of errands.",,S4,"1. Wake up at 9 AM
+2. Work from 11 AM to 12 PM
+3. Study from 12 PM to 2 PM
+4. Go to the gym from 2 PM to 3 PM
+5. Take a 3-hour break from studying
+6. Go to the grocery store from 3 PM to 4 PM
+7. Work from 4 PM to 5 PM
+8. Study from 5 PM to 6 PM
+9. Go to bed at 7 PM",113,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),42.869,1.236,Schedule Generation,"Organize my afternoon from noon to 6 PM. I need 2 hours for research, 1 hour for groceries, and 1 hour for cleaning.",,S5,"Here's a suggested plan for your afternoon:
+
+1. Research: 2 hours
+2. Groceries: 1 hour
+3. Cleaning: 1 hour
+
+This plan allows you to complete all your tasks in a reasonable time frame.",53,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),38.722,0.981,Plan Summarization,"Summarize my day: 9 AM lecture, 11 AM library study, 2 PM grocery shopping, and 6 PM dinner with friends.",,M1,"Your day was busy with a 9 AM lecture, followed by a 11 AM library study, a 2 PM grocery shopping, and a 6 PM dinner with friends.",38,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),24.891,0.482,Plan Summarization,"Give me a concise summary of tomorrow: morning workout, afternoon team meeting, evening homework.",,M2,"Morning workout, afternoon team meeting, evening homework.",12,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),39.984,1.025,Plan Summarization,"Summarize this schedule and highlight key commitments: 8 AM breakfast, 10 AM exam, 1 PM lunch, 3 PM office hours.",,M3,"This schedule highlights key commitments:
+
+1. Breakfast: 8 AM
+2. Exam: 10 AM
+3. Lunch: 1 PM
+4. Office hours: 3 PM",41,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),24.918,0.522,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",,M4,"Finish reading, send emails, and clean the apartment.",13,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),46.17,1.494,Plan Summarization,"Provide a short daily overview: 9 AM project work, noon lunch, 2 PM class, 5 PM gym, and 7 PM dinner.",,M5,"Here's a daily overview:
+
+9 AM: Project work
+10 AM: Lunch
+11 AM: Class
+12 PM: Gym
+1 PM: Dinner
+2 PM: Homework and study
+3 PM: Dinner
+4 PM: Homework and study
+5 PM: Dinner
+7 PM: Dinner",69,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),35.807,0.866,Structured Extraction,"Extract tasks and times as JSON from: I need to attend class at 9 AM, buy groceries at 4 PM, and study at 7 PM.",,E1,"{
+  ""class"": ""9 AM"",
+  ""groceries"": ""4 PM"",
+  ""study"": ""7 PM""
+}",31,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),42.256,1.065,Structured Extraction,"Convert this into JSON with task and deadline fields: Finish the report by Friday, email the professor by Wednesday, and submit homework tomorrow.",,E2,"{
+  ""task"": ""Finish the report by Friday"",
+  ""deadline"": ""Wednesday"",
+  ""email_to"": ""Professor Smith"",
+  ""submit_homework"": ""Tomorrow""
+}",45,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),45.326,1.919,Structured Extraction,"Extract tasks, durations, and categories into JSON: study Python for 2 hours, exercise for 45 minutes, and clean the kitchen for 30 minutes.",,E3,"{
+  ""tasks"": [
+    {
+      ""category"": ""Study"",
+      ""duration"": 2,
+      ""tasks"": [
+        {
+          ""category"": ""Exercise"",
+          ""duration"": 45,
+          ""tasks"": [
+            {
+              ""category"": ""Cleaning"",
+              ""duration"": 30,
+              ""tasks"": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}",87,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),48.813,2.11,Structured Extraction,"Create a JSON task list from: Meeting at 10 AM, lunch at noon, project work at 2 PM, and dinner at 6 PM.",,E4,"{
+  ""meeting"": {
+    ""time"": ""10 AM"",
+    ""location"": ""Meeting Room""
+  },
+  ""lunch"": {
+    ""time"": ""noon"",
+    ""location"": ""Lunch Table""
+  },
+  ""project_work"": {
+    ""time"": ""2 PM"",
+    ""location"": ""Project Office""
+  },
+  ""dinner"": {
+    ""time"": ""6 PM"",
+    ""location"": ""Dining Room""
+  }",103,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,
+HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),40.866,1.248,Structured Extraction,"Extract structured task data as JSON: submit the assignment by 11:59 PM, call my parents at 7 PM, and exercise for 30 minutes.",,E5,"{
+  ""submit_assignment"": {
+    ""time"": ""11:59 PM"",
+    ""call_parents"": ""7 PM""
+  },
+  ""exercise"": {
+    ""time"": ""30 minutes""
+  }
+}",51,False,Transformers,cpu,bfloat16,256,26479f838793026f1769666443e95c253241a88bd8164e8ec9f1e17eff2cd3f5,"{""cpu"": ""arm"", ""cpu_threads"": 4, ""gpu"": null, ""platform"": ""macOS-15.6.1-arm64-arm-64bit"", ""python"": ""3.12.13 | packaged by Anaconda, Inc. | (main, Jul  9 2026, 14:29:01) [Clang 20.1.8 ]"", ""torch"": ""2.14.1""}",,,,

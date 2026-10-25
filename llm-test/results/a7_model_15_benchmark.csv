@@ -1,0 +1,201 @@
+Model,Model Category,Tokens/sec,Latency,Prompt Type,Prompt,Self-Evaluation Score (1-10),Prompt ID,Response,Generated Tokens,Reached Token Limit,Backend,Device,Precision,Max New Tokens,Protocol ID,Runtime,Instruction Adherence,Accuracy,Clarity,Structure
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),4.603,6.083,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: finish project report, review lecture notes, buy groceries, and go for a run. Return one category per task.",,C1,"- finish project report: Work
+- review lecture notes: Study
+- buy groceries: Personal
+- go for a run: Health",28,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.486,7.109,Task Classification,"Categorize my tasks: email my supervisor, prepare for an exam, clean my room, and attend a dental appointment.",,C2,"Here is your categorized list of tasks:
+
+Professional:
+- Email my supervisor
+
+Academic:
+- Prepare for an exam
+
+Personal:
+- Clean my room
+
+Health:
+- Attend a dental appointment",39,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.466,7.135,Task Classification,"Classify these activities: submit homework, schedule a team meeting, call my family, and attend a yoga class.",,C3,"1. Submit homework - Academic activity
+2. Schedule a team meeting - Professional activity
+3. Call my family - Personal activity
+4. Attend a yoga class - Health and wellness activity",39,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.43,7.183,Task Classification,"Organize these tasks by category: write a research summary, cook dinner, review class slides, and visit the gym.",,C4,"Here's your organized list of tasks by category:
+
+- Research: Write a research summary
+- Cooking: Cook dinner
+- Academics: Review class slides
+- Fitness: Visit the gym",39,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.066,5.724,Task Classification,"Classify these tasks as Work, Study, Personal, or Health: update a client spreadsheet, study Python, pay rent, and attend a medical checkup.",,C5,"- Update a client spreadsheet: Work
+- Study Python: Study
+- Pay rent: Personal
+- Attend a medical checkup: Health",29,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),6.102,25.565,Priority Ranking,"I have a report due tomorrow, groceries to buy, and a room to clean. Rank these tasks by priority and explain briefly.",,P1,"Here's a suggested ranking of your tasks based on urgency and importance:
+
+1. **Report Due Tomorrow**: This should be your top priority because it has an immediate deadline. Completing this task ensures you meet your academic or professional obligations without delay.
+
+2. **Room to Clean**: While important for maintaining a tidy living space, cleaning can likely be done after the report is submitted. It’s less urgent than the report but still necessary for a comfortable environment.
+
+3. **Groceries to Buy**: Although essential for daily needs, buying groceries can usually wait until after more pressing deadlines are met. You might even consider doing this task first thing in the morning or after completing your report if time allows.
+
+This order helps manage your time effectively while ensuring that critical tasks are completed first.",156,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.951,23.693,Priority Ranking,"I have an exam tomorrow, a meeting next week, and laundry to finish. What should I prioritize today?",,P2,"Given your tasks, you should prioritize as follows:
+
+1. **Exam Preparation**: Since your exam is tomorrow, this should be your top priority. Allocate most of your time to studying for the exam.
+2. **Laundry**: Do your laundry today so it's out of the way before the exam. This will ensure you don't have to worry about it during your study time or after the exam.
+3. **Meeting Preparation**: While the meeting is next week, briefly review any materials related to the meeting if you have time left over after studying and doing laundry. This ensures you're not neglecting it entirely.
+
+This order helps manage stress from immediate deadlines while keeping longer-term responsibilities in mind.",141,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),4.464,4.705,Priority Ranking,"My presentation is due tonight, my emails can wait until Friday, and I need to exercise. Rank these tasks.",,P3,"1. Presentation (due tonight)
+2. Exercise
+3. Emails (can wait until Friday)",21,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.048,7.33,Priority Ranking,"I must submit an assignment by 5 PM, call a friend sometime this week, and prepare dinner tonight. Rank these tasks by urgency.",,P4,"1. Submit the assignment by 5 PM (urgent deadline)
+2. Prepare dinner tonight (necessary for the day)
+3. Call a friend this week (less time-sensitive)",37,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.699,16.846,Priority Ranking,"I need to finish a group project due tomorrow, organize my desk, and prepare for a quiz next Monday. Give me a priority order.",,P5,"Given your tasks, here's a suggested priority order:
+
+1. Finish the group project due tomorrow - This should be your top priority as it has an immediate deadline.
+2. Prepare for the quiz next Monday - Start studying or reviewing material related to the quiz, but ensure you have enough time to also organize your desk.
+3. Organize your desk - While important for productivity, this can be done during breaks from your more urgent tasks or after completing them if time allows.",96,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.866,42.621,Schedule Generation,"Create a schedule from 9 AM to 5 PM for studying 3 hours, exercising 1 hour, and grocery shopping 1 hour. Include breaks.",,S1,"Here's a structured schedule from 9 AM to 5 PM that includes 3 hours of study time, 1 hour of exercise, and 1 hour of grocery shopping, with appropriate breaks:
+
+- **9:00 AM - 10:00 AM:** Study Session 1
+- **10:00 AM - 10:15 AM:** Break (15 minutes)
+- **10:15 AM - 11:15 AM:** Study Session 2
+- **11:15 AM - 11:30 AM:** Break (15 minutes)
+- **11:30 AM - 12:30 PM:** Study Session 3
+- **12:30 PM - 1:30 PM:** Lunch Break (1 hour)
+- **1:30 PM - 2:30 PM:** Exercise
+- **2:30 PM - 3:00 PM:** Break (30 minutes)
+- **3:00 PM - 4:00 PM:** Grocery Shopping
+- **4:00 PM - 5:00 PM:** Free Time or Relaxation",250,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.615,22.082,Schedule Generation,"Plan my day between 8 AM and 6 PM. I have class from 10 AM to noon, need 2 hours for homework, and want 1 hour for lunch.",,S2,"Here's your planned day from 8 AM to 6 PM:
+
+- **8:00 AM - 10:00 AM**: Free time (e.g., breakfast, relaxation)
+- **10:00 AM - 12:00 PM**: Class
+- **12:00 PM - 1:00 PM**: Lunch
+- **1:00 PM - 3:00 PM**: Homework
+- **3:00 PM - 6:00 PM**: Free time (e.g., leisure activities, exercise, additional study)",124,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.201,10.96,Schedule Generation,"I am free from 1 PM to 9 PM. Schedule 3 hours of project work, 1 hour of exercise, and 1 hour of cooking.",,S3,"Here's your schedule for today:
+
+- Project Work: 1 PM - 4 PM
+- Exercise: 4 PM - 5 PM
+- Cooking: 5 PM - 6 PM
+
+This leaves you with free time from 6 PM to 9 PM.",57,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.631,30.366,Schedule Generation,"Build a realistic schedule from 9 AM to 7 PM with a meeting from 11 AM to noon, 3 hours of studying, and 2 hours of errands.",,S4,"Here's a realistic schedule from 9 AM to 7 PM, including your specified activities:
+
+- **9:00 AM - 11:00 AM**: Study (2 hours)
+- **11:00 AM - 12:00 PM**: Meeting
+- **12:00 PM - 1:00 PM**: Lunch Break
+- **1:00 PM - 4:00 PM**: Study (3 hours)
+- **4:00 PM - 6:00 PM**: Errands (2 hours)
+- **6:00 PM - 7:00 PM**: Free Time / Relaxation
+
+This schedule allows for a balanced day with sufficient time allocated for each activity, including a lunch break and some free time at the end of the day.",171,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.185,11.958,Schedule Generation,"Organize my afternoon from noon to 6 PM. I need 2 hours for research, 1 hour for groceries, and 1 hour for cleaning.",,S5,"Here's your afternoon schedule from noon to 6 PM:
+
+- Noon - 2 PM: Research
+- 2 PM - 3 PM: Groceries
+- 3 PM - 4 PM: Cleaning
+- 4 PM - 6 PM: Free time for any additional tasks or relaxation",62,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.191,12.329,Plan Summarization,"Summarize my day: 9 AM lecture, 11 AM library study, 2 PM grocery shopping, and 6 PM dinner with friends.",,M1,"Your day includes a morning lecture from 9 AM to likely around 10 or 11 AM, followed by study time in the library from 11 AM onwards. After that, you have grocery shopping scheduled for 2 PM. Finally, you'll be having dinner with friends at 6 PM.",64,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),4.762,4.41,Plan Summarization,"Give me a concise summary of tomorrow: morning workout, afternoon team meeting, evening homework.",,M2,"Tomorrow's schedule:
+- Morning: Workout
+- Afternoon: Team Meeting
+- Evening: Homework",21,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.272,14.227,Plan Summarization,"Summarize this schedule and highlight key commitments: 8 AM breakfast, 10 AM exam, 1 PM lunch, 3 PM office hours.",,M3,"Schedule Summary:
+- 8 AM: Breakfast
+- 10 AM - 12 PM: Exam
+- 1 PM: Lunch
+- 3 PM - (time not specified): Office hours
+
+Key Commitments:
+- Attend an exam from 10 AM to 12 PM.
+- Participate in office hours starting at 3 PM.",75,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),4.291,5.36,Plan Summarization,"Summarize my tasks in two sentences: finish readings, send emails, clean the apartment, and prepare meals.",,M4,"Your tasks for today include finishing your readings and sending emails, as well as cleaning the apartment and preparing meals.",23,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),4.838,8.269,Plan Summarization,"Provide a short daily overview: 9 AM project work, noon lunch, 2 PM class, 5 PM gym, and 7 PM dinner.",,M5,"Here's your daily overview:
+
+- 9 AM: Project work
+- Noon: Lunch
+- 2 PM: Class
+- 5 PM: Gym
+- 7 PM: Dinner",40,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.071,10.649,Structured Extraction,"Extract tasks and times as JSON from: I need to attend class at 9 AM, buy groceries at 4 PM, and study at 7 PM.",,E1,"{
+  ""tasks"": [
+    {""task"": ""attend class"", ""time"": ""9 AM""},
+    {""task"": ""buy groceries"", ""time"": ""4 PM""},
+    {""task"": ""study"", ""time"": ""7 PM""}
+  ]
+}",54,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.233,13.186,Structured Extraction,"Convert this into JSON with task and deadline fields: Finish the report by Friday, email the professor by Wednesday, and submit homework tomorrow.",,E2,"{
+  ""tasks"": [
+    {
+      ""task"": ""Finish the report"",
+      ""deadline"": ""Friday""
+    },
+    {
+      ""task"": ""Email the professor"",
+      ""deadline"": ""Wednesday""
+    },
+    {
+      ""task"": ""Submit homework"",
+      ""deadline"": ""Tomorrow""
+    }
+  ]
+}",69,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.389,17.628,Structured Extraction,"Extract tasks, durations, and categories into JSON: study Python for 2 hours, exercise for 45 minutes, and clean the kitchen for 30 minutes.",,E3,"{
+  ""tasks"": [
+    {
+      ""name"": ""study Python"",
+      ""duration"": ""2 hours"",
+      ""category"": ""learning""
+    },
+    {
+      ""name"": ""exercise"",
+      ""duration"": ""45 minutes"",
+      ""category"": ""fitness""
+    },
+    {
+      ""name"": ""clean the kitchen"",
+      ""duration"": ""30 minutes"",
+      ""category"": ""household chores""
+    }
+  ]
+}",95,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.372,16.754,Structured Extraction,"Create a JSON task list from: Meeting at 10 AM, lunch at noon, project work at 2 PM, and dinner at 6 PM.",,E4,"{
+  ""tasks"": [
+    {
+      ""description"": ""Meeting"",
+      ""time"": ""10 AM""
+    },
+    {
+      ""description"": ""Lunch"",
+      ""time"": ""Noon""
+    },
+    {
+      ""description"": ""Project Work"",
+      ""time"": ""2 PM""
+    },
+    {
+      ""description"": ""Dinner"",
+      ""time"": ""6 PM""
+    }
+  ]
+}",90,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,
+Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),5.33,15.384,Structured Extraction,"Extract structured task data as JSON: submit the assignment by 11:59 PM, call my parents at 7 PM, and exercise for 30 minutes.",,E5,"{
+  ""tasks"": [
+    {
+      ""description"": ""submit the assignment"",
+      ""dueTime"": ""11:59 PM""
+    },
+    {
+      ""description"": ""call my parents"",
+      ""startTime"": ""7 PM""
+    },
+    {
+      ""description"": ""exercise for 30 minutes"",
+      ""duration"": ""30 minutes""
+    }
+  ]
+}",82,False,Transformers,cuda:0,nf4,256,7f36810a46362542bc8d896049249ace53cacd350b66fecd25aa05f2d8b1c424,"{""cpu"": ""x86_64"", ""cpu_threads"": 2, ""gpu"": ""Tesla T4"", ""platform"": ""Linux-6.18.55+-x86_64-with-glibc2.39"", ""python"": ""3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]"", ""torch"": ""2.11.0+cu128"", ""nf4_compute"": ""bf16"", ""torch_dtype"": ""bfloat16"", ""loader"": ""llm-test/a7_stage3_nf4.py""}",,,,

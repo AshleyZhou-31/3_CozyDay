@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parent.parent
 MODULE = ROOT / "llm-test"
 sys.path.insert(0, str(MODULE))
 import a7_shared as shared
+import a7_stage3_nf4 as nf4
 RESULTS = MODULE / "results"
 
 # SHA256 anchors from reviewed commit 36a2e4c; raw files also match dd681be.
@@ -104,7 +105,8 @@ class Stage1Checks(unittest.TestCase):
             for field in ("input_usd_per_million", "output_usd_per_million"):
                 self.assertEqual(quote[field], snapshot[field])
             self.assertTrue(quote["source_url"].startswith("https://huggingface.co/inference/models"))
-            self.assertIn(quote["checked_date"], {self.pricing["verification_date"], self.pricing.get("verification_date_stage2")})
+            self.assertIn(quote["checked_date"], {self.pricing["verification_date"], self.pricing.get("verification_date_stage2"),
+                                                     self.pricing.get("verification_date_stage3")})
             self.assertTrue(quote["comparison_note"])
         self.assertTrue(set(range(1, 6)).issubset(set(self.quotes)))  # later stages add more price entries
 
@@ -326,6 +328,222 @@ class Stage2Checks(unittest.TestCase):
             self.assertEqual(len(data), 5)  # No torch import needed for completed historical runs.
 
 
+class Stage3Checks(unittest.TestCase):
+    """Stage 3 regression validator for Shivani's Models 11-15. Never runs inference,
+    never writes experiment files, and never touches Stage 1/2 hash-pinned files."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.nb, cls.matrix, cls.prompts = load_inputs()
+        cls.models = shared.registry(cls.matrix)
+        cls.pricing = json.loads((MODULE / "a7_api_pricing.json").read_text(encoding="utf-8"))
+        cls.quotes = {int(k): v for k, v in cls.pricing["models"].items()}
+
+    def test_stage1_files_untouched_by_stage3(self):
+        for filename, expected in BASELINE.items():
+            self.assertEqual(digest(MODULE / filename), expected, filename)
+
+    def test_stage3_models_cover_five_categories(self):
+        rows = self.matrix[self.matrix["Model No."].between(11, 15)]
+        self.assertEqual(set(rows["Model No."]), set(range(11, 16)))
+        self.assertEqual(rows["Category"].nunique(), 5)
+        self.assertTrue(rows["Category"].value_counts().eq(1).all())
+
+    def test_benchmark_integrity_scores_and_summary(self):
+        frames = []
+        for number in range(11, 16):
+            raw = pd.read_csv(RESULTS / f"a7_model_{number}_benchmark.csv")
+            scored = pd.read_csv(RESULTS / f"a7_model_{number}_scored.csv")
+            shared.validate_records(scored, *self.models[number], self.prompts)
+            self.assertEqual(len(scored), 25)
+            score_cols = shared.SCORE_COLUMNS + ["Self-Evaluation Score (1-10)"]
+            pd.testing.assert_frame_equal(raw.drop(columns=score_cols), scored.drop(columns=score_cols))
+            self.assertTrue(raw[score_cols].isna().all().all())
+            for col in score_cols:
+                self.assertTrue(scored[col].between(1, 10).all())
+                self.assertTrue(scored[col].mod(1).eq(0).all())
+            expected = scored[shared.SCORE_COLUMNS].mean(axis=1).map(lambda x: math.floor(x + .5))
+            self.assertTrue(expected.eq(scored["Self-Evaluation Score (1-10)"]).all())
+            self.assertTrue(scored["Protocol ID"].nunique() == 1)
+            frames.append(scored.assign(**{"Model No.": number}))
+        combined = pd.concat(frames, ignore_index=True)
+        saved = pd.read_csv(RESULTS / "a7_stage3_all_benchmarks.csv")
+        self.assertEqual(len(combined), 125)
+        pd.testing.assert_frame_equal(combined[saved.columns], saved)
+        summary = combined.groupby(["Model No.", "Model", "Model Category"]).agg(
+            Prompts=("Prompt ID", "count"), Average_Score=("Self-Evaluation Score (1-10)", "mean"),
+            Average_Latency=("Latency", "mean"), Average_Tokens_Per_Sec=("Tokens/sec", "mean"),
+            Token_Limit_Hits=("Reached Token Limit", "sum")).reset_index().round(2)
+        pd.testing.assert_frame_equal(summary, pd.read_csv(RESULTS / "a7_stage3_summary.csv"))
+        self.assertEqual(summary.Average_Score.tolist(), [5.16, 7.08, 7.8, 8.6, 8.96])
+
+    def test_hardware_metadata_recorded(self):
+        expected = {11: ("cpu", "bfloat16"), 12: ("cpu", "bfloat16"), 13: ("cuda:0", "fp16"),
+                    14: ("cuda:0", "nf4"), 15: ("cuda:0", "nf4")}
+        for number, (device, precision) in expected.items():
+            frame = pd.read_csv(RESULTS / f"a7_model_{number}_scored.csv")
+            self.assertTrue(frame["Device"].eq(device).all())
+            self.assertTrue(frame["Precision"].map(shared.normalize_precision).eq(shared.normalize_precision(precision)).all())
+            runtime = json.loads(frame["Runtime"].iloc[0])
+            self.assertTrue(frame["Runtime"].eq(frame["Runtime"].iloc[0]).all())
+            self.assertEqual(runtime["gpu"], "Tesla T4" if device.startswith("cuda") else None)
+
+    def test_price_evidence_stage3_entries(self):
+        self.assertTrue(set(range(11, 16)).issubset(set(self.quotes)))
+        self.assertEqual(self.pricing["verification_date_stage3"], "2026-10-24")
+        evidence = {(x["model"], x["provider"]): x for x in self.pricing["price_evidence"]}
+        for number in range(11, 16):
+            quote = self.quotes[number]
+            snapshot = evidence[(quote["model"], quote["provider"])]
+            for field in ("input_usd_per_million", "output_usd_per_million"):
+                self.assertEqual(quote[field], snapshot[field])
+            self.assertTrue(quote["source_url"].startswith("https://huggingface.co/inference/models"))
+            self.assertTrue(quote["comparison_note"])
+        for number in (11, 12, 13, 15):
+            self.assertEqual(self.quotes[number]["checked_date"], self.pricing["verification_date_stage3"])
+        # Model 14 reuses the already-recorded Qwen3-8B/nscale quote; its date is not refreshed.
+        self.assertEqual(self.quotes[14]["checked_date"], self.pricing["verification_date_stage2"])
+        for number in range(1, 11):
+            self.assertIn(self.quotes[number]["checked_date"],
+                          {self.pricing["verification_date"], self.pricing["verification_date_stage2"]})
+
+    def test_shared_costs_reproduce_all_rows(self):
+        throughput = {11: 60, 12: 45, 13: 30, 14: 20, 15: 12}
+        quotes = {k: v for k, v in self.quotes.items() if k in range(11, 16)}
+        local, api = shared.calculate_costs(range(11, 16), self.matrix, throughput, quotes)
+        for frame, name in ((local, "local"), (api, "api")):
+            self.assertEqual(len(frame), 30)
+            self.assertFalse(frame.isna().any().any())
+            self.assertTrue(frame.groupby("Daily Traffic Category").size().eq(5).all())
+            pd.testing.assert_frame_equal(frame, pd.read_csv(RESULTS / f"a7_stage3_{name}_cost.csv"), check_dtype=False)
+        for _, row in api.iterrows():
+            users = shared.TRAFFIC[row["Daily Traffic Category"]]
+            bill = (users * 250 * row["Input USD per 1M tokens"] + users * 500 * row["Output USD per 1M tokens"]) * 30 / 1e6
+            self.assertAlmostEqual(row["Estimated API Cost"], bill, delta=.005001)
+            self.assertEqual(row["Total Cost"], shared.money(row["Estimated API Cost"] + row["API Gateway Cost"]))
+
+    def test_combined_fifteen_model_totals(self):
+        combined = pd.concat([pd.read_csv(RESULTS / f"a7_stage{i}_all_benchmarks.csv") for i in (1, 2, 3)],
+                             ignore_index=True)
+        self.assertEqual(len(combined), 375)
+        self.assertEqual(sorted(combined["Model No."].unique()), list(range(1, 16)))
+        self.assertTrue(combined.groupby("Model No.").size().eq(25).all())
+        costs = [pd.read_csv(RESULTS / f"a7_stage{i}_{kind}_cost.csv") for i in (1, 2, 3) for kind in ("local", "api")]
+        self.assertEqual(sum(len(frame) for frame in costs), 180)
+
+    def test_routing_scenarios_present_and_stage_sections_unchanged(self):
+        text = (ROOT / "system_design.md").read_text(encoding="utf-8")
+        for heading in ("## High-Complexity Queries routing scenario", "## Cost Optimization routing scenario",
+                        "## Peak Usage Hours routing scenario"):
+            self.assertEqual(text.count(heading), 1, heading)
+        for part in (text.split("## High-Complexity Queries routing scenario")[1],
+                     text.split("## Cost Optimization routing scenario")[1]):
+            for label in ("### Trigger", "### Fallback behavior", "### Expected benefit",
+                          "### Latency, cost and quality, evaluated separately"):
+                self.assertIn(label, part)
+
+    def test_nf4_protocol_ids_and_runtime_match_actual_loading_configuration(self):
+        """Every NF4 result must record the compute dtype it was really run with, and its
+        protocol ID must be the hash of that configuration, not the shared fp16 default."""
+        self.assertEqual(set(nf4.NF4_RUNS), {14, 15})
+        for number in range(11, 16):
+            model_id = self.models[number][0]
+            for name in (f"a7_model_{number}_benchmark.csv", f"a7_model_{number}_scored.csv"):
+                frame = pd.read_csv(RESULTS / name)
+                self.assertEqual(frame["Protocol ID"].nunique(), 1, name)
+                self.assertEqual(frame["Runtime"].nunique(), 1, name)
+                runtime = json.loads(frame["Runtime"].iloc[0])
+                stored = frame["Protocol ID"].iloc[0]
+                backend = frame["Device"].iloc[0].split(":")[0]  # "Backend" column holds "Transformers"
+                default = shared.protocol_id(model_id, self.prompts, backend,
+                                             frame["Precision"].iloc[0])
+                if shared.normalize_precision(frame["Precision"].iloc[0]) != "nf4":
+                    self.assertEqual(stored, default, name)
+                    self.assertNotIn("nf4_compute", runtime, name)
+                    continue
+                run = nf4.NF4_RUNS[number]
+                self.assertEqual(model_id, run["model"])
+                self.assertEqual((runtime["nf4_compute"], runtime["torch_dtype"], runtime["loader"]),
+                                 (run["compute_dtype"], run["torch_dtype"], nf4.LOADER), name)
+                self.assertEqual(stored, nf4.protocol_id_nf4(
+                    model_id, self.prompts, backend, frame["Precision"].iloc[0],
+                    runtime["nf4_compute"]), name)
+                if runtime["nf4_compute"] != "fp16":
+                    # A hash of the shared fp16-compute default would misdescribe this run.
+                    self.assertNotEqual(stored, default, name)
+        self.assertEqual({14: "fp32", 15: "bf16"}, {n: r["compute_dtype"] for n, r in nf4.NF4_RUNS.items()})
+        self.assertTrue((MODULE / "a7_stage3_nf4.py").is_file())
+        combined = pd.read_csv(RESULTS / "a7_stage3_all_benchmarks.csv")
+        for number in range(11, 16):
+            scored = pd.read_csv(RESULTS / f"a7_model_{number}_scored.csv")
+            rows = combined[combined["Model No."] == number]
+            self.assertEqual(set(rows["Protocol ID"]), set(scored["Protocol ID"]))
+            self.assertEqual(set(rows["Runtime"]), set(scored["Runtime"]))
+
+    def test_nf4_override_module_agrees_with_shared_defaults_and_detects_mismatch(self):
+        for number, run in nf4.NF4_RUNS.items():
+            args = (run["model"], self.prompts, run["backend"], run["precision"])
+            self.assertEqual(nf4.protocol_id_nf4(*args, "fp16"), shared.protocol_id(*args))
+            ids = {c: nf4.protocol_id_nf4(*args, c) for c in nf4.TORCH_NAMES}
+            self.assertEqual(len(set(ids.values())), 3)
+            self.assertNotEqual(ids[run["compute_dtype"]], shared.protocol_id(*args))
+        with self.assertRaises(ValueError):
+            nf4.protocol_id_nf4("m", self.prompts, "cuda", "nf4", "int8")
+        # A resume with the shared (fp16-compute) protocol ID would be refused for these runs.
+        args14 = (nf4.NF4_RUNS[14]["model"], self.prompts, "cuda", "nf4")
+        self.assertNotEqual(nf4.protocol_id_nf4(*args14, "fp32"), shared.protocol_id(*args14))
+
+    def test_nf4_loader_configuration_without_weights(self):
+        captured = {}
+        class Tokenizer:
+            @staticmethod
+            def from_pretrained(model_id, **kwargs):
+                return object()
+        class Model:
+            @staticmethod
+            def from_pretrained(model_id, **kwargs):
+                captured.update(kwargs)
+                return types.SimpleNamespace(eval=lambda: None)
+        class Quantization:
+            def __init__(self, **kwargs):
+                self.settings = kwargs
+        fake_torch = types.SimpleNamespace(float16="FP16", float32="FP32", bfloat16="BF16",
+                                            cuda=types.SimpleNamespace(is_available=lambda: True))
+        fake_transformers = types.SimpleNamespace(AutoTokenizer=Tokenizer, AutoModelForCausalLM=Model,
+                                                  BitsAndBytesConfig=Quantization)
+        expected = {14: ("FP32", "FP32"), 15: ("BF16", "BF16")}
+        with patch.dict(sys.modules, {"torch": fake_torch, "transformers": fake_transformers}):
+            for number, run in nf4.NF4_RUNS.items():
+                nf4.load_model_nf4(run["model"], compute_dtype=run["compute_dtype"],
+                                   torch_dtype=run["torch_dtype"])
+                compute, dtype = expected[number]
+                self.assertEqual(captured["torch_dtype"], dtype)
+                self.assertEqual(captured["quantization_config"].settings,
+                                 {"load_in_4bit": True, "bnb_4bit_quant_type": "nf4",
+                                  "bnb_4bit_compute_dtype": compute, "bnb_4bit_use_double_quant": True})
+                self.assertEqual(captured["device_map"], {"": 0})
+                self.assertEqual(captured["attn_implementation"], "eager")
+                self.assertFalse(captured["trust_remote_code"])
+            with self.assertRaises(KeyError):
+                nf4.load_model_nf4("m", compute_dtype="int8", torch_dtype="float32")
+
+    def test_nf4_override_documented_in_notebook_and_design(self):
+        text = "\n".join("".join(c["source"]) for c in self.nb["cells"])
+        for needle in ("a7_stage3_nf4", "nf4_compute", "protocol_id_nf4"):
+            self.assertIn(needle, text)
+        self.assertNotIn("override scripts are not committed", text)
+        design = (ROOT / "system_design.md").read_text(encoding="utf-8")
+        self.assertIn("llm-test/a7_stage3_nf4.py", design)
+        self.assertNotIn("the override scripts are not committed", design)
+        self.assertNotIn("does **not** capture the actual compute dtype", design)
+
+    def test_default_inference_and_completed_history_are_safe(self):
+        with patch.object(shared, "load_model", side_effect=AssertionError("Model loading forbidden")):
+            data = shared.run_models(range(11, 16), self.matrix, self.prompts, RESULTS,
+                                     execute=True, backend="cpu", precision="float32")
+            self.assertEqual(len(data), 5)
+
+
 def execute_notebook():
     """Execute real cells with in-process IPython (no kernel sockets required).
 
@@ -416,7 +634,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     loader = unittest.defaultTestLoader
     suite = unittest.TestSuite([loader.loadTestsFromTestCase(Stage1Checks),
-                                 loader.loadTestsFromTestCase(Stage2Checks)])
+                                 loader.loadTestsFromTestCase(Stage2Checks),
+                                 loader.loadTestsFromTestCase(Stage3Checks)])
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if not result.wasSuccessful():
         sys.exit(1)
