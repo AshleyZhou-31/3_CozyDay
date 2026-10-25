@@ -1,0 +1,10 @@
+question,response,trained_answers_in_response,unsupported_answer_given
+what does ben like,"swimming
+s ap lic
+django apple",swimming,True
+what does eva like,"apples
+artikke apples
+students",apples,True
+what does max like,"swimming
+p
+the mia like system",swimming,True

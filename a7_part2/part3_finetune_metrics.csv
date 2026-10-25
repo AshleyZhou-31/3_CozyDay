@@ -1,0 +1,27 @@
+metric,value
+checkpoint_sha256,408c27aa60346f00a41b1cef451e434c277493fc8329061ddaec060043e78a1f
+parameters,232155
+fine_tuning_examples,15
+steps,1000
+learning_rate,0.001
+batch_size_examples,16
+optimizer,"AdamW (PyTorch defaults, weight_decay 0.01)"
+seed,42
+training_seconds,4.767
+initial_loss_example_set,8.361411
+final_loss_example_set,0.072468
+first_minibatch_loss,8.264273
+last_minibatch_loss,0.077025
+validation_loss_before,0.123956
+validation_loss_after,0.834695
+validation_loss_change,0.710739
+validation_windows,282
+tensors_changed,30 of 30
+l2_distance_from_original,9.542373
+original_checkpoint_unchanged_on_disk,True
+answer_found_before,0
+answer_found_after,5
+first_line_exact_before,0
+first_line_exact_after,5
+unseen_probe_unsupported_answers,3
+python_torch,2.14.1

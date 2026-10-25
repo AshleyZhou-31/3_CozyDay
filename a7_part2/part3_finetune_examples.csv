@@ -1,0 +1,31 @@
+type,text
+statement,"mia likes apples
+"
+statement,"sam likes music
+"
+statement,"tom likes swimming
+"
+statement,"anna likes painting
+"
+statement,"lily likes reading
+"
+question_answer,"what does mia like apples
+"
+question_answer,"what does sam like music
+"
+question_answer,"what does tom like swimming
+"
+question_answer,"what does anna like painting
+"
+question_answer,"what does lily like reading
+"
+reworded_question,"what mia likes apples
+"
+reworded_question,"what sam likes music
+"
+reworded_question,"what tom likes swimming
+"
+reworded_question,"what anna likes painting
+"
+reworded_question,"what lily likes reading
+"

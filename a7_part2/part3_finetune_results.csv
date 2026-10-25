@@ -1,0 +1,20 @@
+question_id,question,expected_answer,before_response,after_response,before_answer_found,after_answer_found,after_starts_with_answer,before_first_line_exact,after_first_line_exact,seed,temperature,max_new_tokens
+Q1,what does mia like,apples,"intelligence.
+students create ","apples
+artim ing
+predic
+smalli",False,True,True,False,True,42,1.0,30
+Q2,what does sam like,music,"systems.
+language models can r","music
+sam likes c
+artike apple",False,True,True,False,True,42,1.0,30
+Q3,what does tom like,swimming,"s.
+attention helps models use ","swimming
+s ap lic
+django apple",False,True,True,False,True,42,1.0,30
+Q4,what does anna like,painting,"intelligence.
+students create ","painting
+p apneural neetworkad",False,True,True,False,True,42,1.0,30
+Q5,what does lily like,reading,helps models use contextual in,"reading
+snear music
+django app",False,True,True,False,True,42,1.0,30
