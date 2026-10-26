@@ -1,0 +1,4 @@
+condition,factual_accuracy,relevance,response_consistency,unsupported_or_invented_information
+Baseline SLM,0/5,0/5 directly answer the question,Low: deterministic but incomplete corpus fragments; Q1 and Q4 are identical,5/5 contain unrelated corpus text
+SLM + Top-1 RAG,0/5,0/5 directly answer the question,"Low: correct documents retrieved, but all outputs remain unrelated fragments",5/5 fail to use the retrieved fact
+Fine-Tuned SLM,5/5 first lines exactly match the expected answers,5/5 begin with a direct answer,High for the answer-first format; low for the remaining generated text,5/5 have unsupported tails; 3/3 unseen-person probes invent a trained fact

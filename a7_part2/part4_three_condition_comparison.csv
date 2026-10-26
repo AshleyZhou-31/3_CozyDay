@@ -1,0 +1,23 @@
+question_id,question,expected_answer,baseline_slm,slm_plus_rag_top1,fine_tuned_slm,baseline_correct,rag_correct,fine_tuned_correct
+Q1,what does mia like,apples,"intelligence.
+students create ","intelligence.
+students create ","apples
+artim ing
+predic
+smalli",False,False,True
+Q2,what does sam like,music,"systems.
+language models can r",s useful for machine learning ,"music
+sam likes c
+artike apple",False,False,True
+Q3,what does tom like,swimming,"s.
+attention helps models use ","s can run on local computers.
+","swimming
+s ap lic
+django apple",False,False,True
+Q4,what does anna like,painting,"intelligence.
+students create ",learning models contain parame,"painting
+p apneural neetworkad",False,False,True
+Q5,what does lily like,reading,helps models use contextual in,"sfformaties.
+attention helps m","reading
+snear music
+django app",False,False,True
