@@ -1,0 +1,6 @@
+Model No.,Model,Model Category,Prompts,Average_Score,Average_Latency,Average_Tokens_Per_Sec,Token_Limit_Hits
+11,HuggingFaceTB/SmolLM2-360M-Instruct,Tiny (<0.5B),25,5.16,1.35,36.53,2
+12,Qwen/Qwen2.5-1.5B-Instruct,Small (0.5B-1.5B),25,7.08,6.1,13.01,2
+13,Qwen/Qwen2.5-3B-Instruct,Medium (>1.5B-3B),25,7.8,3.87,23.15,1
+14,Qwen/Qwen2.5-7B-Instruct,Large (>3B-7B),25,8.6,6.94,10.68,1
+15,Qwen/Qwen2.5-14B-Instruct,Very Large (>7B),25,8.96,13.9,5.26,0
