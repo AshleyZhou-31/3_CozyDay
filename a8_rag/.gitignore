@@ -1,0 +1,11 @@
+# Verification copies are not submission notebooks.
+rag_system_verified.ipynb
+rag_system_review.ipynb
+.ipynb_checkpoints/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.cache/
+hf_cache/
