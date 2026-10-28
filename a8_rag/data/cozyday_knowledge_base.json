@@ -1,0 +1,182 @@
+[
+  {
+    "id": "P001",
+    "title": "Creating an actionable task",
+    "topic": "Task Creation",
+    "body": "A useful task describes one clear outcome rather than a vague intention. For example, replace “work on biology” with “summarize chapter four and answer the practice questions.” When preparing a task in CozyDay, give it a short descriptive title, optional notes, an estimated duration, and a realistic due date if one exists. Record the next physical action in the notes when the work feels overwhelming. Large assignments should become several smaller tasks, each with an observable completion criterion. Review a newly entered task to make sure its wording still makes sense when seen without the surrounding conversation. An organized task list supports planning, but creating tasks does not replace doing the work."
+  },
+  {
+    "id": "P002",
+    "title": "Breaking complex assignments into steps",
+    "topic": "Task Creation",
+    "body": "A semester paper can be represented as a sequence of manageable tasks: choose a topic, find readings, draft an outline, write a first version, and revise citations. Distinguish milestones, which indicate progress, from individual actions, which are what someone can complete in a work session. Estimate durations conservatively and create extra time for unpredictable research or feedback. If a task depends on another task, explain that dependency in its notes so the student avoids starting too early. Some users prefer to group related steps under one project label. When plans change, adjust the unfinished steps rather than deleting a useful history of completed work."
+  },
+  {
+    "id": "P003",
+    "title": "Organizing tasks by context",
+    "topic": "Categories",
+    "body": "Categories help students see different commitments without treating every item as equally urgent. Common CozyDay contexts include coursework, research, work shifts, personal errands, health, and social plans. Assign a category based on the task’s purpose rather than simply where it takes place. A reading assignment for a class belongs in coursework even when completed in a library. Consistent labels make reviews and searches easier. Start with a few broad categories; too many narrowly defined categories can make organizing harder than doing the task. Categories can be revisited at the end of a week when the student learns which divisions are actually useful."
+  },
+  {
+    "id": "P004",
+    "title": "Choosing categories for overlapping commitments",
+    "topic": "Categories",
+    "body": "A task may touch more than one part of life. Preparing a research presentation for a course could reasonably be considered research or coursework. Choose a primary category according to the obligation that determines its deadline, and clarify the secondary context in the task notes if needed. Keep category names stable across the semester so summary views are interpretable. Avoid making a new category for every project unless doing so will improve retrieval or planning. If a student needs detailed grouping, combine a broad category with a clear project prefix in the task title. This approach balances flexible organization with a simple, readable task list."
+  },
+  {
+    "id": "P005",
+    "title": "Separating urgency from importance",
+    "topic": "Priorities",
+    "body": "Priority is a planning aid, not a judgment about personal worth. A task can be urgent because its deadline is close, important because it advances a long-term goal, both, or neither. Consider consequences, deadlines, and effort before labeling work as high priority. A quiz due tomorrow may need attention before an optional project idea, even when the project feels more exciting. Reserve the highest priority for tasks where delay has a meaningful cost. Review priority labels regularly, especially after completing time-sensitive work. Assigning every task the highest priority makes the label useless and can increase stress rather than focus."
+  },
+  {
+    "id": "P006",
+    "title": "Planning when everything feels urgent",
+    "topic": "Priorities",
+    "body": "When several deadlines compete, identify the earliest firm deadline and estimate how much work remains for each item. Break the biggest obligation into small actions so it is easier to begin. Protect time for essential tasks and consider renegotiating a flexible deadline before it becomes impossible. A useful daily plan normally contains a limited number of must-do items rather than an unrealistic list of everything outstanding. If two tasks truly have the same deadline, compare the likely consequences and the minimum effort needed to make acceptable progress. Revising priorities is a normal response to new information, not evidence that an earlier plan failed."
+  },
+  {
+    "id": "P007",
+    "title": "Adding and interpreting due dates",
+    "topic": "Deadlines",
+    "body": "A deadline is the time by which a deliverable needs to be completed, not the time at which work should begin. Record the actual due date and include the correct time zone when the obligation is tied to an online submission or another location. For assignments, separately note personal target dates for drafts and reviews. Do not assume that a calendar day ends at midnight if an instructor specifies an earlier hour. A deadline without a time may need verification from the source instructions. Students should confirm official submission details using the original course or organization notice rather than treating a planning tool as the final authority."
+  },
+  {
+    "id": "P008",
+    "title": "Working backward from submission",
+    "topic": "Deadlines",
+    "body": "Backward planning starts with the final due date and identifies the work that must happen before it. A group report may require time for independent drafts, peer review, integration, and a final upload. Schedule a buffer ahead of the official deadline for technical problems or late feedback. Put intermediate checkpoints on the calendar even if they are not graded. When a task slips, revise the remaining plan and inform collaborators who depend on the output. Do not silently move the real deadline to make a dashboard look better. Keeping the original external commitment distinct from personal checkpoints makes progress easier to interpret and supports more accurate communication."
+  },
+  {
+    "id": "P009",
+    "title": "Choosing helpful reminders",
+    "topic": "Reminders",
+    "body": "A reminder is most useful when it arrives early enough for the student to act. A notification five minutes before a three-hour assignment is due may create anxiety without giving enough time to finish. For longer work, plan an early reminder to start and a later reminder to check completion. For short appointments, a closer reminder may be appropriate. Avoid sending repeated alerts for tasks that cannot yet be acted upon. Students should use notification settings that fit their class schedule and concentration needs. An unanswered reminder should prompt a review of timing or workload, not an assumption that the student is lazy."
+  },
+  {
+    "id": "P010",
+    "title": "Reducing notification overload",
+    "topic": "Reminders",
+    "body": "Too many alerts make it difficult to identify which messages deserve attention. Group routine reminders into a planned daily review when possible, and keep immediate alerts for genuinely time-sensitive commitments. A reminder system should allow students to distinguish a major exam deadline from a low-stakes personal preference. Review stale tasks after several missed alerts instead of escalating their intensity automatically. If a student routinely ignores a type of notification, the best response may be changing the delivery time or deleting an unnecessary reminder. Notification design should respect quiet hours, attention, and autonomy, and important deadlines should still be checked against official sources."
+  },
+  {
+    "id": "P011",
+    "title": "Building a realistic weekly study plan",
+    "topic": "Study Planning",
+    "body": "A weekly plan begins with fixed obligations such as class meetings, work shifts, and appointments. Estimate the time left for reading, assignments, practice, and recovery rather than assuming every empty hour is available. Place demanding work in periods when attention is generally strongest, and divide long sessions with breaks. A study block should specify an achievable action such as reviewing lecture notes or completing ten practice problems. Leave unscheduled capacity for interruptions and tasks that take longer than expected. At the end of the week, compare planned and completed work to improve estimates. The goal is a useful guide, not a schedule that punishes normal variation."
+  },
+  {
+    "id": "P012",
+    "title": "Preparing for exams with spaced review",
+    "topic": "Study Planning",
+    "body": "Studying for an exam works better as a series of sessions than as one vague task on the night before the test. Begin by identifying topics, practice materials, and areas of uncertainty. Allocate time for retrieval practice, problem solving, and reviewing mistakes instead of rereading everything passively. Spread sessions across multiple days when possible, and add short checkpoints for self-testing. A plan should also account for other courses so one exam does not consume all available time. If a student falls behind, prioritize the highest-value practice and clarify what can reasonably be completed. Progress means improving understanding, not merely checking off hours."
+  },
+  {
+    "id": "P013",
+    "title": "Making room for rest and recovery",
+    "topic": "Wellness",
+    "body": "Students benefit from treating sleep, meals, movement, and social connection as real parts of a schedule rather than optional rewards. A planning tool can reserve time for these activities without claiming to diagnose health conditions or replace professional care. When a schedule contains continuous work blocks, consider whether breaks and transitions are missing. If a student has a difficult week, reducing optional tasks can make the plan more sustainable. Recovery periods do not need to be filled with productivity goals. Personal wellness preferences differ, so suggestions should be adjustable and never framed as moral obligations. A manageable workload is more useful than a perfect-looking but exhausting calendar."
+  },
+  {
+    "id": "P014",
+    "title": "Responding to an overloaded day",
+    "topic": "Wellness",
+    "body": "An overloaded day can be improved by reviewing which commitments are fixed, which can be moved, and which can be simplified. First protect urgent responsibilities and basic needs, including reasonable opportunities for meals and rest. Then choose a small number of meaningful actions rather than constantly rescheduling every unfinished task. If a workload remains unrealistic, the plan should make that conflict visible instead of hiding it. Students can ask instructors or teammates about options when circumstances change. A productivity assistant should support thoughtful choices and reduce unnecessary friction; it should not shame students for having limits, missing a voluntary goal, or taking an evening off."
+  },
+  {
+    "id": "P015",
+    "title": "Minimizing sensitive information in tasks",
+    "topic": "Privacy",
+    "body": "Task descriptions sometimes contain private information, such as medical appointments, addresses, personal notes, or identifying details about classmates. Record only information needed to plan or complete the task. A neutral title such as “appointment” may be more appropriate than a sensitive description on a shared screen. Do not put passwords, authentication tokens, or confidential participant data in ordinary task notes. Before sharing a screenshot or exporting a list, review both visible titles and hidden notes. Access rules and data handling depend on the actual CozyDay implementation, so students should not assume a particular encryption, retention, or sharing feature exists unless verified."
+  },
+  {
+    "id": "P016",
+    "title": "Sharing plans without exposing private data",
+    "topic": "Privacy",
+    "body": "Collaborative planning requires separating information teammates need from information they do not. When assigning a group task, share the deliverable, responsible person, and deadline, but avoid unrelated personal details. A shared project summary may identify a meeting time without showing someone’s private appointments. If a user plans to export tasks or send a report, inspect it first for confidential notes or contact information. Privacy settings should be verified in the application rather than inferred from a friendly interface. When uncertain, keep sensitive content outside the tool and communicate directly using an approved channel. Clear boundaries can support collaboration without turning every personal commitment into group information."
+  },
+  {
+    "id": "P017",
+    "title": "Finding a task using useful keywords",
+    "topic": "Search",
+    "body": "A student searching for a task should start with words that describe the deliverable, project, course, or deadline. Consistent task titles improve search results; “submit lab report” is easier to find than “finish that thing.” A category or project prefix can also provide context when several assignments have similar names. Search terms may differ from the exact wording in a saved task, so users may need synonyms such as “essay” and “paper.” In a retrieval-based assistant, the quality of the answer depends on the text that was indexed. If a search cannot find a matching task, the assistant should acknowledge uncertainty instead of inventing a result."
+  },
+  {
+    "id": "P018",
+    "title": "Disambiguating similar tasks",
+    "topic": "Search",
+    "body": "Multiple tasks may share a common title, especially in weekly courses with repeated readings or quizzes. Add distinctive details such as a chapter number, week, or project name so results can be separated. When asking the system a question, include the course or category if known. For example, “What is due in my statistics class this Friday?” is more specific than “What is due?” A retrieval system may return more than one candidate when wording overlaps. A responsible assistant should show the distinguishing details and ask for clarification rather than merging different assignments into one answer. This keeps the task list and related recommendations accurate."
+  },
+  {
+    "id": "P019",
+    "title": "Interpreting task completion summaries",
+    "topic": "Analytics",
+    "body": "A completion count describes how many recorded tasks were marked done, not how much effort a student invested or how much they learned. One five-minute errand and one long paper might each count as a single task. For a more balanced view, compare completion with estimates, deadlines, and categories. Trends can be useful for recognizing consistently overfull weeks or a recurring shortage of study time. However, a decline in completed tasks may reflect harder assignments, illness, or a change in how tasks are recorded. Present analytics as descriptive indicators rather than definitive judgments of discipline, intelligence, or success."
+  },
+  {
+    "id": "P020",
+    "title": "Using patterns to adjust future plans",
+    "topic": "Analytics",
+    "body": "Weekly summaries can reveal whether a student regularly schedules more work than can fit in available hours. Compare planned task durations with actual experience when such observations are available, and adjust future estimates accordingly. If deadlines cluster on one day, begin suitable work earlier instead of assuming the final day will be enough. Category-level patterns may reveal that course tasks consistently crowd out personal commitments. A good planning system explains that missing or inconsistent entries weaken summary accuracy. It should also make room for positive signs, including steady progress on large goals and deliberate rest, rather than rewarding only the highest possible task count."
+  },
+  {
+    "id": "P021",
+    "title": "Preparing a useful weekly progress report",
+    "topic": "Reports",
+    "body": "A weekly report can summarize tasks completed, deadlines approaching, work still in progress, and decisions that need attention. Group information by project or course so readers can understand the context. Separate confirmed completion from plans or predictions. If an item is blocked, state what input is missing and who may be able to provide it. Keep report language neutral: unfinished work is a status, not a character judgment. A report drafted from a task database is only as complete as the recorded entries, so review it against source materials before sending. The best reports help someone decide what to do next."
+  },
+  {
+    "id": "P022",
+    "title": "Creating a clear group status update",
+    "topic": "Reports",
+    "body": "For a group project, a status update should identify the deliverable, owner, current state, and upcoming handoff. Include important dependencies such as waiting for a teammate to review code before the next stage can begin. Avoid presenting tentative dates as promises. If a deliverable is ready for review, provide the relevant link or file location rather than simply saying “done.” A useful report is concise enough to scan while preserving enough evidence to prevent confusion. When multiple teammates contribute, keep private notes separate from the public status message. Encourage reviewers to report specific missing requirements instead of reopening finished work without a clear reason."
+  },
+  {
+    "id": "P023",
+    "title": "Keeping accounts and access secure",
+    "topic": "Authentication",
+    "body": "Account access should use the sign-in method supported by the actual deployed application. Students should choose strong, unique credentials wherever passwords are required and avoid sharing them through task notes or messages. Shared computers introduce extra risks: sign out when finished and avoid leaving private dashboards open in public spaces. A planning assistant should never ask users to reveal their password in a chat response. If a login attempt fails, consult the application’s documented recovery procedure instead of guessing that an account was deleted. Authentication details are implementation-specific; this knowledge base describes safe practices and does not claim that CozyDay already supports a particular provider."
+  },
+  {
+    "id": "P024",
+    "title": "Troubleshooting sign-in problems",
+    "topic": "Authentication",
+    "body": "If a user cannot access a planning account, first check whether the correct email address or sign-in method is being used. Network problems, browser state, and service interruptions can produce similar symptoms, so avoid assuming one cause without evidence. Follow official reset instructions if they exist, and confirm that the destination is the legitimate application site before entering credentials. Do not place reset links, temporary codes, or passwords into general-purpose task entries. If collaboration depends on account access, tell the team that the task is blocked without exposing private security details. An assistant should distinguish documented steps from suggestions and should not invent support channels."
+  },
+  {
+    "id": "P025",
+    "title": "What should I work on first today?",
+    "topic": "Common Questions",
+    "body": "The best first task depends on deadlines, consequences, available time, and current energy. Begin by checking tasks with firm near-term deadlines and obligations that may block other people. Then consider important work that requires sustained attention but has no immediate deadline. A large task can become a short first action, such as opening the document and drafting an outline. Avoid choosing solely by whichever title sounds most urgent or whichever task is easiest to mark complete. If there is not enough time for everything, make that tradeoff explicit. A useful answer names the recommended first step and explains why it fits the day."
+  },
+  {
+    "id": "P026",
+    "title": "How do I recover after missing a deadline?",
+    "topic": "Common Questions",
+    "body": "After missing a deadline, confirm the current status from the authoritative source rather than assuming that submission is impossible. Check whether a late submission, extension, or alternate arrangement is available, and communicate clearly if another person is affected. Update the task list to distinguish the original deadline from any approved new date. Identify the smallest concrete action needed to move forward, such as contacting an instructor or finishing the remaining section. The purpose of a planning assistant is to help with next steps, not to assign blame. Patterns of missed deadlines can also suggest that future plans need larger buffers or fewer simultaneous commitments."
+  },
+  {
+    "id": "P027",
+    "title": "Combining fixed events and flexible work",
+    "topic": "Calendar Coordination",
+    "body": "Calendar events such as classes, labs, jobs, and appointments occupy fixed times, while independent study tasks often have more flexibility. Plan flexible work around fixed events rather than assuming a task can happen during a meeting. Include travel, setup, and transition time when relevant. Large open blocks do not automatically indicate available energy or a good setting for deep work. If deadlines appear near a busy day, schedule preparation on an earlier day when possible. A planning system can suggest a schedule, but it should not silently create events or change someone else’s calendar. Confirm any actual calendar integration before relying on synchronized updates."
+  },
+  {
+    "id": "P028",
+    "title": "Managing schedule changes responsibly",
+    "topic": "Calendar Coordination",
+    "body": "Unexpected cancellations and new obligations can make an existing daily plan obsolete. When something changes, identify which tasks are affected and preserve hard deadlines while moving flexible blocks. Do not automatically cancel shared commitments or assume an empty calendar block is safe to use. Check for dependent work: moving the draft date might also require moving the review date. If a task belongs to a group, explain the downstream impact before promising a new handoff. Students may prefer to review proposed changes before applying them. This conservative approach reduces accidental conflicts and helps a schedule remain a trusted representation of real obligations."
+  },
+  {
+    "id": "P029",
+    "title": "Writing task text that is easy to scan",
+    "topic": "Accessibility",
+    "body": "Clear task language helps people find information quickly, including users who rely on screen readers, magnification, or brief attention windows. Use informative titles and straightforward wording rather than emoji-only labels or unexplained abbreviations. When organizing a long assignment, separate steps into short descriptions and use consistent naming. Do not use color alone to indicate urgency or completion because color can be inaccessible or ambiguous. Reports and retrieved answers should include text labels and context. Good accessibility benefits all students, particularly when they are tired, multitasking, or checking plans on a small screen. Actual interface accessibility still requires testing in the deployed product."
+  },
+  {
+    "id": "P030",
+    "title": "Making planning recommendations understandable",
+    "topic": "Accessibility",
+    "body": "Planning advice should distinguish confirmed facts from suggestions. For instance, “the recorded due date is Friday” is different from “consider starting Wednesday.” When an answer is generated from a knowledge base, cite or identify the relevant passage if the interface allows it. Present one sensible recommendation before optional alternatives instead of producing an overwhelming list. Use concrete examples when explaining concepts such as priorities, overlap, or retrieval. Avoid medical, psychological, or academic-success guarantees that the system cannot support. A student should be able to understand why a recommendation appeared and retain control over whether to follow it."
+  }
+]

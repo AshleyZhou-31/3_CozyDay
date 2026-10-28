@@ -1,0 +1,3 @@
+# Stage 1 only: standard-library chunking has no third-party runtime dependencies.
+# Jupyter is needed only to view/run rag_system.ipynb interactively.
+notebook>=7,<8
