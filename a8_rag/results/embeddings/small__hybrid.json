@@ -1,0 +1,24 @@
+{
+  "model_key": "small",
+  "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "strategy": "hybrid",
+  "chunk_ids": [
+    "HYBRID_001",
+    "HYBRID_002",
+    "HYBRID_003",
+    "HYBRID_004",
+    "HYBRID_005",
+    "HYBRID_006",
+    "HYBRID_007",
+    "HYBRID_008",
+    "HYBRID_009",
+    "HYBRID_010",
+    "HYBRID_011",
+    "HYBRID_012",
+    "HYBRID_013",
+    "HYBRID_014",
+    "HYBRID_015"
+  ],
+  "dimension": 384,
+  "embed_time_seconds": 0.05493712518364191
+}

@@ -1,0 +1,24 @@
+{
+  "model_key": "large",
+  "model_name": "BAAI/bge-large-en-v1.5",
+  "strategy": "hybrid",
+  "chunk_ids": [
+    "HYBRID_001",
+    "HYBRID_002",
+    "HYBRID_003",
+    "HYBRID_004",
+    "HYBRID_005",
+    "HYBRID_006",
+    "HYBRID_007",
+    "HYBRID_008",
+    "HYBRID_009",
+    "HYBRID_010",
+    "HYBRID_011",
+    "HYBRID_012",
+    "HYBRID_013",
+    "HYBRID_014",
+    "HYBRID_015"
+  ],
+  "dimension": 1024,
+  "embed_time_seconds": 1.0639199998695403
+}

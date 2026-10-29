@@ -1,0 +1,28 @@
+{
+  "model_key": "medium",
+  "model_name": "sentence-transformers/all-mpnet-base-v2",
+  "strategy": "overlap",
+  "chunk_ids": [
+    "OVERLAP_001",
+    "OVERLAP_002",
+    "OVERLAP_003",
+    "OVERLAP_004",
+    "OVERLAP_005",
+    "OVERLAP_006",
+    "OVERLAP_007",
+    "OVERLAP_008",
+    "OVERLAP_009",
+    "OVERLAP_010",
+    "OVERLAP_011",
+    "OVERLAP_012",
+    "OVERLAP_013",
+    "OVERLAP_014",
+    "OVERLAP_015",
+    "OVERLAP_016",
+    "OVERLAP_017",
+    "OVERLAP_018",
+    "OVERLAP_019"
+  ],
+  "dimension": 768,
+  "embed_time_seconds": 0.7113277078606188
+}
