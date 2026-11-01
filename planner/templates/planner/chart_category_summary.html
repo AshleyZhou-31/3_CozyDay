@@ -1,40 +1,128 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Category Summary Chart - CozyDay{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'planner/insights.css' %}">
+<div class="insights">
+  <div class="cz-page-header">
+    <h2>Plan Items per Category</h2>
+    <p class="cz-lede">An interactive bar chart of how many plan items fall in each category. Hover or tap a bar to see its exact count.</p>
+  </div>
 
-<h2>Plan Items per Category</h2>
-<p>This bar chart loads its data live from <code>/api/summary/</code> — it is not hard-coded into the page.</p>
+  <div class="cz-callout" role="note">
+    <h3>Where this data comes from</h3>
+    <p>
+      The chart loads its data live from the public summary API
+      (<code>/api/summary/</code>); nothing is hard-coded in the page. That API reports
+      the shared <strong>demo account</strong>, so it may differ from your own numbers on the
+      <a href="{% url 'planner:analytics' %}">Analytics</a> and
+      <a href="{% url 'planner:planitem-reports' %}">Reports</a> pages.
+    </p>
+  </div>
 
-<div id="chart-category-summary"></div>
+  <section class="cz-card" aria-labelledby="chart-heading">
+    <h3 id="chart-heading">Plan Items per Category</h3>
+    <p class="cz-muted">One bar per category; taller bars mean more plan items.</p>
+    <p id="chart-status" class="cz-status" role="status" aria-live="polite">Loading chart&hellip;</p>
+    <div id="chart-category-summary" class="cz-chart-frame" role="img" aria-label="Bar chart of plan items per category; the same numbers are listed below it."></div>
+    <div id="chart-message"></div>
+    <h4 id="chart-summary-heading" hidden>Chart data as text</h4>
+    <ul id="chart-summary" class="cz-chart-summary" aria-labelledby="chart-summary-heading" hidden></ul>
+  </section>
+
+  <p><a href="{% url 'planner:analytics' %}">&larr; Back to Analytics</a></p>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
 <script type="text/javascript">
+  const API_URL = "/api/summary/";
+  const PROPERTY = "category_counts";
+  const CONTAINER = "#chart-category-summary";
+
   const spec = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "title": "Plan Items per Category",
-    "width": 500,
-    "height": 300,
+    "title": {"text": "Plan Items per Category", "color": "#17365d", "fontSize": 16},
+    "width": "container",
+    "height": 280,
+    "autosize": {"type": "fit", "contains": "padding"},
     "data": {
-      "url": "/api/summary/",
-      "format": {"type": "json", "property": "category_counts"}
+      "url": API_URL,
+      "format": {"type": "json", "property": PROPERTY}
     },
-    "mark": "bar",
+    "mark": {"type": "bar", "color": "#3f6b45"},
     "encoding": {
-      "x": {"field": "name", "type": "nominal", "title": "Category", "sort": "-y"},
-      "y": {"field": "item_count", "type": "quantitative", "title": "Number of plan items"},
-      "color": {"field": "name", "type": "nominal", "legend": null},
+      "x": {"field": "name", "type": "nominal", "title": "Category", "sort": "-y", "axis": {"labelAngle": -35}},
+      "y": {"field": "item_count", "type": "quantitative", "title": "Number of plan items", "axis": {"tickMinStep": 1}},
       "tooltip": [
         {"field": "name", "type": "nominal", "title": "Category"},
         {"field": "item_count", "type": "quantitative", "title": "Items"}
       ]
+    },
+    "config": {
+      "axis": {"labelColor": "#263238", "titleColor": "#17365d", "labelLimit": 120},
+      "view": {"stroke": "#dfe7da"}
     }
   };
-  vegaEmbed("#chart-category-summary", spec);
-</script>
 
+  function showMessage(kind, title, text) {
+    const box = document.getElementById("chart-message");
+    box.replaceChildren();
+    const div = document.createElement("div");
+    div.className = "cz-callout" + (kind ? " cz-callout--" + kind : "");
+    if (kind === "error") { div.setAttribute("role", "alert"); }
+    const h = document.createElement("h4");
+    h.textContent = title;
+    const p = document.createElement("p");
+    p.textContent = text;
+    div.append(h, p);
+    box.append(div);
+  }
+
+  function setStatus(text) {
+    document.getElementById("chart-status").textContent = text;
+  }
+
+  function fillSummary(rows) {
+    const list = document.getElementById("chart-summary");
+    list.replaceChildren();
+    rows.forEach(function (r) {
+      const li = document.createElement("li");
+      li.textContent = r.name + ": " + r.item_count + (r.item_count === 1 ? " item" : " items");
+      list.append(li);
+    });
+    list.hidden = false;
+    document.getElementById("chart-summary-heading").hidden = false;
+  }
+
+  fetch(API_URL, {headers: {"Accept": "application/json"}})
+    .then(function (resp) {
+      if (!resp.ok) { throw new Error("HTTP " + resp.status); }
+      return resp.json();
+    })
+    .then(function (payload) {
+      const rows = payload[PROPERTY] || [];
+      if (rows.length === 0) {
+        setStatus("No data to show.");
+        document.querySelector(CONTAINER).hidden = true;
+        showMessage("", "No data yet", "There are no categories to chart yet. Add plan items with a category and reload.");
+        return;
+      }
+      fillSummary(rows);
+      return vegaEmbed(CONTAINER, spec, {actions: false}).then(function () {
+        setStatus("Chart loaded.");
+      });
+    })
+    .catch(function () {
+      setStatus("The chart could not be loaded.");
+      document.querySelector(CONTAINER).hidden = true;
+      showMessage("error", "Chart unavailable",
+        "We could not load the chart data. Check your connection, then reload the page. " +
+        "If the problem continues, the summary service may be temporarily down.");
+    });
+</script>
 {% endblock %}

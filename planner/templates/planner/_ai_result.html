@@ -1,0 +1,27 @@
+<section class="cz-card cz-result" aria-labelledby="{{ heading_id }}">
+  <span class="cz-result-source">{{ source_label }}</span>
+  <h3 id="{{ heading_id }}">{{ heading }}</h3>
+  <p class="cz-muted">This is a suggestion, not a commitment. Check the times before you rely on them.</p>
+
+  <h4>Priority</h4>
+  <p class="cz-priority">{{ result.priority }}</p>
+
+  <h4>Schedule</h4>
+  <ol>
+    {% for step in result.schedule %}
+      <li>{{ step }}</li>
+    {% endfor %}
+  </ol>
+
+  {% if result.reason %}
+    <h4>Reason</h4>
+    <p>{{ result.reason }}</p>
+  {% endif %}
+
+  {% if show_incomplete and not result.complete %}
+    <div class="cz-callout cz-callout--warn" role="note">
+      <h4>This suggestion looks incomplete</h4>
+      <p>The model may have been cut off. Try a shorter request if you need the full reasoning.</p>
+    </div>
+  {% endif %}
+</section>

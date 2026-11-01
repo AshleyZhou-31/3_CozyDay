@@ -1,12 +1,41 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Analytics - CozyDay{% endblock %}
 
 {% block content %}
-<h2>Plan Items by Category</h2>
-<figure>
-  <img src="{% url 'planner:category-chart-png' %}"
-       alt="Bar chart showing the number of plan items in each category">
-  <figcaption>Number of plan items per category, computed live from the database.</figcaption>
-</figure>
+<link rel="stylesheet" href="{% static 'planner/insights.css' %}">
+<div class="insights">
+  <div class="cz-page-header">
+    <h2>Analytics</h2>
+    <p class="cz-lede">
+      See how your own plan items are spread across categories. The chart is drawn
+      fresh from your account every time you open this page.
+    </p>
+  </div>
+
+  <section class="cz-card" aria-labelledby="analytics-chart-heading">
+    <h3 id="analytics-chart-heading">Plan Items by Category</h3>
+    <p class="cz-muted">Each bar is one category; its height is the number of plan items in it.</p>
+    <figure class="cz-chart">
+      <img src="{% url 'planner:category-chart-png' %}"
+           alt="Bar chart showing the number of plan items in each category"
+           width="640" height="400">
+      <figcaption>Number of plan items per category, computed live from the database.</figcaption>
+    </figure>
+    <p class="cz-help">
+      If the chart does not appear, reload the page. The exact counts are listed on the
+      <a href="{% url 'planner:planitem-reports' %}">Reports page</a>.
+    </p>
+  </section>
+
+  <section class="cz-card cz-card--tint" aria-labelledby="analytics-more-heading">
+    <h3 id="analytics-more-heading">More ways to explore</h3>
+    <ul class="cz-link-grid">
+      <li><a href="{% url 'planner:planitem-reports' %}">Reports<small>Totals, tables and downloads</small></a></li>
+      <li><a href="{% url 'chart-category-summary' %}">Category chart<small>Interactive, from the summary API</small></a></li>
+      <li><a href="{% url 'chart-activity-over-time' %}">Activity over time<small>Interactive, from the summary API</small></a></li>
+    </ul>
+  </section>
+</div>
 {% endblock %}

@@ -1,49 +1,76 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Reports - CozyDay{% endblock %}
 
 {% block content %}
-<h2>Plan Item Reports</h2>
+<link rel="stylesheet" href="{% static 'planner/insights.css' %}">
+<div class="insights">
+  <div class="cz-page-header">
+    <h2>Plan Item Reports</h2>
+    <p class="cz-lede">
+      Totals and breakdowns of your plan items, with downloads if you want the raw data.
+    </p>
+  </div>
 
-<p>
-    Total plan items: <strong>{{ total_items }}</strong> &middot;
-    Completed: <strong>{{ total_completed }}</strong>
-</p>
+  <dl class="cz-metrics" aria-label="Summary of your plan items">
+    <div class="cz-metric"><dt>Total plan items</dt><dd>{{ total_items }}</dd></div>
+    <div class="cz-metric"><dt>Completed</dt><dd>{{ total_completed }}</dd></div>
+  </dl>
 
-<p>
-    <a class="cozy-button" href="{% url 'planner:planitem-export-csv' %}">Download CSV</a>
-    <a class="cozy-button" href="{% url 'planner:planitem-export-json' %}">Download JSON</a>
-</p>
+  <section class="cz-card" aria-labelledby="reports-export-heading">
+    <h3 id="reports-export-heading">Download your data</h3>
+    <p class="cz-muted">CSV opens in a spreadsheet; JSON is for other programs.</p>
+    <div class="cz-actions">
+      <a class="cozy-button" href="{% url 'planner:planitem-export-csv' %}">Download CSV</a>
+      <a class="cozy-button" href="{% url 'planner:planitem-export-json' %}">Download JSON</a>
+    </div>
+  </section>
 
-<h3>Plan Items per Category</h3>
-<table>
-    <thead>
-        <tr><th>Category</th><th>Plan Items</th></tr>
-    </thead>
-    <tbody>
-        {% for row in category_summary %}
-        <tr><td>{{ row.name }}</td><td>{{ row.item_count }}</td></tr>
-        {% empty %}
-        <tr><td colspan="2">No categories yet.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+  <section class="cz-card" aria-labelledby="reports-category-heading">
+    <h3 id="reports-category-heading">Plan Items per Category</h3>
+    <div class="cz-table-wrap">
+      <table>
+        <caption>How many plan items each category holds.</caption>
+        <thead>
+          <tr><th scope="col">Category</th><th scope="col" class="cz-num">Plan Items</th></tr>
+        </thead>
+        <tbody>
+          {% for row in category_summary %}
+          <tr><th scope="row">{{ row.name }}</th><td class="cz-num">{{ row.item_count }}</td></tr>
+          {% empty %}
+          <tr class="cz-empty-row"><td colspan="2">No categories yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-<h3>Completed vs. Open by Item Type</h3>
-<table>
-    <thead>
-        <tr><th>Item Type</th><th>Status</th><th>Count</th></tr>
-    </thead>
-    <tbody>
-        {% for row in status_summary %}
-        <tr>
-            <td>{{ row.item_type }}</td>
-            <td>{% if row.is_completed %}Completed{% else %}Open{% endif %}</td>
-            <td>{{ row.item_count }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="3">No plan items yet.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+  <section class="cz-card" aria-labelledby="reports-status-heading">
+    <h3 id="reports-status-heading">Completed vs. Open by Item Type</h3>
+    <div class="cz-table-wrap">
+      <table>
+        <caption>Plan items grouped by type and whether they are done.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Item Type</th>
+            <th scope="col">Status</th>
+            <th scope="col" class="cz-num">Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in status_summary %}
+          <tr>
+            <th scope="row">{{ row.item_type }}</th>
+            <td>{% if row.is_completed %}<span class="cz-badge">Completed</span>{% else %}<span class="cz-badge cz-badge--open">Open</span>{% endif %}</td>
+            <td class="cz-num">{{ row.item_count }}</td>
+          </tr>
+          {% empty %}
+          <tr class="cz-empty-row"><td colspan="3">No plan items yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
 {% endblock %}

@@ -1,0 +1,492 @@
+/* CozyDay "insights" pages: Analytics, Reports, chart pages, AI Planner, API Planner.
+   Everything is scoped under .insights so it cannot change any other page, and it
+   defines its own tokens so it does not depend on the global stylesheet. Colour pairs
+   were checked against WCAG AA (4.5:1 for text): ink on card 12.1, muted text 5.4,
+   white on button 6.2, error text 6.8, warning text 7.3, link 6.8. */
+
+.insights {
+    --cz-ink: #17365d;
+    --cz-text: #263238;
+    --cz-muted: #5a6f5d;
+    --cz-link: #1f5f8b;
+    --cz-card: #fffefa;
+    --cz-tint: #f4f8f1;
+    --cz-line: #dfe7da;
+    --cz-accent: #3f6b45;
+    --cz-accent-hover: #335a39;
+    --cz-info-bg: #eef4fb;
+    --cz-info-line: #b8cde6;
+    --cz-error-bg: #fbefe9;
+    --cz-error-line: #b5654a;
+    --cz-error-text: #8a3b24;
+    --cz-warn-bg: #fdf5dc;
+    --cz-warn-line: #d9b44a;
+    --cz-warn-text: #6b4b00;
+    --cz-radius: 12px;
+    --cz-gap: 20px;
+    color: var(--cz-text);
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.insights *,
+.insights *::before,
+.insights *::after {
+    box-sizing: border-box;
+}
+
+/* ---- keyboard focus: visible on every interactive element ---- */
+.insights a:focus-visible,
+.insights button:focus-visible,
+.insights input:focus-visible,
+.insights textarea:focus-visible,
+.insights summary:focus-visible {
+    outline: 3px solid var(--cz-ink);
+    outline-offset: 2px;
+}
+
+/* ---- page header (a div, because the global "header" rule would style a <header>) ---- */
+.insights .cz-page-header {
+    margin-bottom: 24px;
+}
+
+.insights .cz-page-header h2 {
+    margin: 0 0 8px;
+    color: var(--cz-ink);
+    font-size: 1.9rem;
+    line-height: 1.2;
+}
+
+.insights .cz-lede {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--cz-muted);
+    font-size: 1.05rem;
+}
+
+/* ---- cards ---- */
+.insights .cz-card {
+    margin: 0 0 var(--cz-gap);
+    padding: 22px 24px;
+    background: var(--cz-card);
+    border: 1px solid var(--cz-line);
+    border-radius: var(--cz-radius);
+}
+
+.insights .cz-card > h3 {
+    margin: 0 0 6px;
+    color: var(--cz-ink);
+    font-size: 1.2rem;
+}
+
+.insights .cz-card--tint {
+    background: var(--cz-tint);
+}
+
+.insights .cz-muted {
+    margin: 0 0 14px;
+    color: var(--cz-muted);
+    font-size: 0.95rem;
+}
+
+.insights a {
+    color: var(--cz-link);
+    font-weight: 600;
+}
+
+/* ---- buttons (darker than the global .cozy-button, which is 2.4:1 white on green) ---- */
+.insights .cz-button,
+.insights .cozy-button {
+    display: inline-block;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--cz-accent);
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.insights .cz-button:hover,
+.insights .cozy-button:hover {
+    background: var(--cz-accent-hover);
+    color: #ffffff;
+}
+
+.insights .cz-button[disabled] {
+    background: #6f8a73;
+    cursor: progress;
+}
+
+.insights .cz-button--secondary {
+    background: transparent;
+    color: var(--cz-ink);
+    border: 2px solid var(--cz-ink);
+}
+
+.insights .cz-button--secondary:hover {
+    background: var(--cz-info-bg);
+    color: var(--cz-ink);
+}
+
+.insights .cz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 4px 0 0;
+}
+
+/* ---- metric tiles (Reports) ---- */
+.insights .cz-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin: 0 0 var(--cz-gap);
+}
+
+.insights .cz-metric {
+    margin: 0;
+    padding: 16px 18px;
+    background: var(--cz-tint);
+    border: 1px solid var(--cz-line);
+    border-radius: 10px;
+}
+
+.insights .cz-metric dt {
+    color: var(--cz-muted);
+    font-size: 0.95rem;
+}
+
+.insights .cz-metric dd {
+    margin: 4px 0 0;
+    color: var(--cz-ink);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+/* ---- tables ---- */
+.insights .cz-table-wrap {
+    overflow-x: auto;
+}
+
+.insights table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.insights caption {
+    padding: 0 0 8px;
+    color: var(--cz-muted);
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+.insights th,
+.insights td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--cz-line);
+    text-align: left;
+}
+
+.insights thead th {
+    color: var(--cz-ink);
+    background: var(--cz-tint);
+    border-bottom: 2px solid var(--cz-line);
+}
+
+.insights td.cz-num,
+.insights th.cz-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.insights .cz-empty-row td {
+    padding: 18px 12px;
+    color: var(--cz-muted);
+}
+
+.insights .cz-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #e3efe0;
+    color: #2f5a36;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.insights .cz-badge--open {
+    background: var(--cz-info-bg);
+    color: var(--cz-ink);
+}
+
+/* ---- charts ---- */
+.insights .cz-chart {
+    margin: 0;
+}
+
+.insights .cz-chart img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--cz-line);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.insights .cz-chart figcaption {
+    margin-top: 8px;
+    color: var(--cz-muted);
+    font-size: 0.95rem;
+}
+
+.insights .cz-chart-frame {
+    min-height: 120px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.insights .cz-chart-frame .vega-embed {
+    display: block;
+    width: 100%;
+}
+
+.insights .cz-chart-summary {
+    margin: 12px 0 0;
+    padding-left: 20px;
+}
+
+.insights .cz-chart-summary li {
+    margin: 4px 0;
+}
+
+.insights .cz-link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.insights .cz-link-grid li {
+    margin: 0;
+}
+
+.insights .cz-link-grid a {
+    display: block;
+    min-height: 44px;
+    padding: 12px 14px;
+    background: var(--cz-tint);
+    border: 1px solid var(--cz-line);
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.insights .cz-link-grid a:hover {
+    background: #e9f1e5;
+}
+
+.insights .cz-link-grid small {
+    display: block;
+    margin-top: 2px;
+    color: var(--cz-muted);
+    font-weight: 400;
+}
+
+/* ---- callouts: info, privacy, error, warning ---- */
+.insights .cz-callout {
+    margin: 0 0 var(--cz-gap);
+    padding: 14px 18px;
+    border: 1px solid var(--cz-info-line);
+    border-left-width: 5px;
+    border-radius: 10px;
+    background: var(--cz-info-bg);
+}
+
+.insights .cz-callout h3,
+.insights .cz-callout h4 {
+    margin: 0 0 4px;
+    color: var(--cz-ink);
+    font-size: 1rem;
+}
+
+.insights .cz-callout p {
+    margin: 0 0 6px;
+}
+
+.insights .cz-callout p:last-child {
+    margin-bottom: 0;
+}
+
+.insights .cz-callout ul {
+    margin: 6px 0 0;
+    padding-left: 22px;
+}
+
+.insights .cz-callout li {
+    margin: 4px 0;
+}
+
+.insights .cz-callout--error {
+    background: var(--cz-error-bg);
+    border-color: var(--cz-error-line);
+    color: var(--cz-error-text);
+}
+
+.insights .cz-callout--error h3,
+.insights .cz-callout--error h4 {
+    color: var(--cz-error-text);
+}
+
+.insights .cz-callout--error a {
+    color: var(--cz-error-text);
+    text-decoration: underline;
+}
+
+.insights .cz-callout--warn {
+    background: var(--cz-warn-bg);
+    border-color: var(--cz-warn-line);
+    color: var(--cz-warn-text);
+}
+
+.insights .cz-callout--warn h3,
+.insights .cz-callout--warn h4 {
+    color: var(--cz-warn-text);
+}
+
+/* ---- planner form ---- */
+.insights .cz-field {
+    margin: 0 0 16px;
+}
+
+.insights .cz-field label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--cz-ink);
+    font-weight: 700;
+}
+
+.insights .cz-field textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #8da28f;
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--cz-text);
+    font: inherit;
+    resize: vertical;
+}
+
+.insights .cz-help {
+    margin: 6px 0 0;
+    color: var(--cz-muted);
+    font-size: 0.95rem;
+}
+
+.insights .errorlist {
+    margin: 6px 0 0;
+    padding: 8px 12px;
+    list-style: none;
+    border-left: 4px solid var(--cz-error-line);
+    background: var(--cz-error-bg);
+    color: var(--cz-error-text);
+    font-weight: 600;
+}
+
+.insights .cz-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0 0 18px;
+}
+
+.insights .cz-check input[type="checkbox"] {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    margin: 2px 0 0;
+    accent-color: var(--cz-accent);
+}
+
+.insights .cz-check label {
+    font-weight: 400;
+}
+
+.insights .cz-status {
+    margin: 12px 0 0;
+    color: var(--cz-ink);
+}
+
+/* ---- generated result ---- */
+.insights .cz-result {
+    border-color: #b9cdb5;
+    background: #f9fcf7;
+}
+
+.insights .cz-result-source {
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #e3efe0;
+    color: #2f5a36;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.insights .cz-result h4 {
+    margin: 18px 0 6px;
+    color: var(--cz-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.insights .cz-result .cz-priority {
+    margin: 0;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 1px solid #b9cdb5;
+    border-radius: 10px;
+    color: var(--cz-ink);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.insights .cz-result ol {
+    margin: 0;
+    padding-left: 24px;
+}
+
+.insights .cz-result li {
+    margin: 8px 0;
+    padding-left: 4px;
+}
+
+@media (max-width: 600px) {
+    .insights .cz-card {
+        padding: 16px;
+    }
+
+    .insights .cz-page-header h2 {
+        font-size: 1.55rem;
+    }
+
+    .insights .cz-actions .cz-button,
+    .insights .cz-actions .cozy-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .insights .cz-chart-frame {
+        min-height: 100px;
+    }
+}
