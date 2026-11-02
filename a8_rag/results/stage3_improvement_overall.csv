@@ -1,0 +1,4 @@
+version,rows,mean_context_score,mean_answer_score,answers_ending_cleanly,mean_answer_words,mean_generation_latency_s
+after_complete-within-limit,45,2.9556,2.2222,1.0,105.9556,9.8833
+after_concise-complete,45,2.9556,2.2,1.0,73.2,7.3547
+before_baseline_prompt,45,2.9556,2.4667,0.7111,152.5778,13.6145
