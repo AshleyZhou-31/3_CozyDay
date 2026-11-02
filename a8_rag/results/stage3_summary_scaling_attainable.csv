@@ -1,0 +1,10 @@
+embedding_key,chunking,full_30,subset_10,change_full_minus_subset
+large,fixed,1.0,1.0,0.0
+large,hybrid,1.0,1.0,0.0
+large,overlap,1.0,1.0,0.0
+medium,fixed,1.0,1.0,0.0
+medium,hybrid,1.0,1.0,0.0
+medium,overlap,1.0,1.0,0.0
+small,fixed,1.0,1.0,0.0
+small,hybrid,1.0,1.0,0.0
+small,overlap,1.0,1.0,0.0

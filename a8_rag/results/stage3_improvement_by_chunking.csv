@@ -1,0 +1,10 @@
+version,chunking,rows,mean_context_score,mean_answer_score,answers_ending_cleanly,mean_answer_words,mean_generation_latency_s
+after_complete-within-limit,fixed,15,3.0,1.9333,1.0,108.7333,9.4131
+after_complete-within-limit,hybrid,15,2.9333,2.4667,1.0,87.4,9.1908
+after_complete-within-limit,overlap,15,2.9333,2.2667,1.0,121.7333,11.0459
+after_concise-complete,fixed,15,3.0,2.3333,1.0,75.8,7.198
+after_concise-complete,hybrid,15,2.9333,2.2,1.0,72.1333,7.4228
+after_concise-complete,overlap,15,2.9333,2.0667,1.0,71.6667,7.4432
+before_baseline_prompt,fixed,15,3.0,2.4,0.6667,167.6,14.3573
+before_baseline_prompt,hybrid,15,2.9333,2.7333,0.8,146.7333,13.3552
+before_baseline_prompt,overlap,15,2.9333,2.2667,0.6667,143.4,13.1311

@@ -1,0 +1,4 @@
+chunking,rows,mean_context_score,mean_evidence_recall,mean_answer_score,mean_embedding_latency_s,mean_retrieval_latency_s,mean_generation_latency_s,mean_total_latency_s
+fixed,15,3.0,1.0,2.4,0.1889,0.0058,14.3573,14.5571
+hybrid,15,2.9333,0.9778,2.7333,0.1106,0.0009,13.3552,13.4711
+overlap,15,2.9333,0.9778,2.2667,0.1344,0.0005,13.1311,13.2706

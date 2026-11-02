@@ -12,3 +12,6 @@ numpy==2.5.3
 transformers==5.20.0
 sentence-transformers==6.2.0
 scikit-learn==1.9.1
+
+# Stage 3 experiments and summaries (experiments.py, scoring.py).
+pandas==3.0.5

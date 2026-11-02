@@ -73,3 +73,29 @@ Functions are deterministic for the same ordered records and parameters. This co
 - **Hybrid, 15 chunks:** nonoverlapping whole-paragraph groups with exactly the same fine topic and a 230-word soft cap. An oversized single paragraph stays whole.
 
 For overlap, use positive integer parameters, with `stride < window` when `window > 1`; `window=1` only accepts `stride=1` and deliberately disables overlap for that custom run. A final end-anchored window covers any remaining tail without dropping paragraphs. Full semantic rules and their rationale are in `rag_analysis.md`.
+
+## Stage 3 (Shivani Shivani): experiments, failures, improvement
+
+Implements Part 2 (system experiments) and Part 3 (failure analysis and improvement). Details, tables and conclusions are in `rag_analysis.md` (Stage 3 section) and `rag_system.ipynb` (sections 10 to 17).
+
+Files added:
+
+- `experiments.py`: runs the 45-evaluation grid, the 10-paragraph scaling comparison, and the prompt-improvement runs. Each finished row is appended to `results/stage3_evaluations.csv`, so an interrupted run resumes where it stopped (rerunning a command skips rows already recorded).
+- `scoring.py`: the single deterministic scoring rubric (context quality and answer quality, both 0-3).
+- `test_stage3.py`: 19 tests. They use stand-in models, so they need no downloads; they also check the committed results table.
+- `results/stage3_evaluations.csv`: 185 rows (45 main, 45 scaling retrieval, 5 scaling generation, 2 x 45 improvement), with full retrieved chunk text, scores, answers and latencies.
+- `results/stage3_summary_*.csv` and `results/stage3_improvement_*.csv`: summaries derived from that table by `python experiments.py summary`.
+
+To reproduce (from `a8_rag/`, after `python -m pip install -r requirements.txt`; the first run downloads the three embedding models and the 3B generation model, and the generation model needs roughly 12 GB of free memory):
+
+```bash
+python test_stage3.py
+python experiments.py main
+python experiments.py scaling-retrieval
+python experiments.py scaling-generation --model large --strategy hybrid
+python experiments.py improve-prompt
+python experiments.py improve-prompt --variant complete-within-limit
+python experiments.py summary
+```
+
+The generation model, decoding settings, Top-K and the five queries are the frozen Stage 2 values; only the improvement runs change the system prompt, and they are labelled by variant in the `variant` column. The notebook's Stage 3 cells read the saved CSV and run in seconds without any model download.

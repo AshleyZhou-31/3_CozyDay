@@ -1,0 +1,10 @@
+embedding_key,chunking,full_context,full_recall,subset_context,subset_recall,context_change_full_minus_subset
+large,fixed,3.0,1.0,2.8,0.8667,0.2
+large,hybrid,3.0,1.0,2.8,0.8667,0.2
+large,overlap,3.0,1.0,2.8,0.8667,0.2
+medium,fixed,3.0,1.0,2.8,0.8667,0.2
+medium,hybrid,3.0,1.0,2.8,0.8667,0.2
+medium,overlap,3.0,1.0,2.8,0.8667,0.2
+small,fixed,3.0,1.0,2.8,0.8667,0.2
+small,hybrid,2.8,0.9333,2.8,0.8667,0.0
+small,overlap,2.8,0.9333,2.8,0.8667,0.0

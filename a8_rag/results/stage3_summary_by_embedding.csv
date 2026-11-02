@@ -1,0 +1,4 @@
+embedding_key,dimensions,rows,mean_context_score,mean_evidence_recall,mean_answer_score,mean_embedding_latency_s,mean_retrieval_latency_s,mean_generation_latency_s,mean_total_latency_s
+large,1024,15,3.0,1.0,2.5333,0.153,0.0007,13.7648,13.9226
+medium,768,15,3.0,1.0,2.4667,0.1278,0.0007,13.4281,13.5608
+small,384,15,2.8667,0.9556,2.4,0.1531,0.0058,13.6506,13.8154

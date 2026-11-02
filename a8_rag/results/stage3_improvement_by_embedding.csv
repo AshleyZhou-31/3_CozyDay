@@ -1,0 +1,10 @@
+version,embedding_key,rows,mean_context_score,mean_answer_score,answers_ending_cleanly,mean_answer_words,mean_generation_latency_s
+after_complete-within-limit,large,15,3.0,2.2,1.0,99.5333,9.4717
+after_complete-within-limit,medium,15,3.0,2.2,1.0,109.2667,10.0398
+after_complete-within-limit,small,15,2.8667,2.2667,1.0,109.0667,10.1384
+after_concise-complete,large,15,3.0,2.4667,1.0,76.1333,7.5861
+after_concise-complete,medium,15,3.0,2.2,1.0,71.2667,7.197
+after_concise-complete,small,15,2.8667,1.9333,1.0,72.2,7.2809
+before_baseline_prompt,large,15,3.0,2.5333,0.6667,154.0,13.7648
+before_baseline_prompt,medium,15,3.0,2.4667,0.6667,150.6667,13.4281
+before_baseline_prompt,small,15,2.8667,2.4,0.8,153.0667,13.6506
