@@ -210,3 +210,82 @@ The prompt change fixed completeness and reliability but not coverage, so on the
 * The corpus has 30 paragraphs, so the scaling result does not extend to large collections.
 * The improvement used the same five queries it was evaluated on and tried two variants.
 * Retrieval quality is near the ceiling, so these experiments mostly discriminate on generation behaviour.
+
+---
+
+# P1 A8 — Stage 4: System Design Reflection and Final Integration
+
+**Owner:** Ashley Zhou | **Project:** Team 3 CozyDay | **Scope:** Part 4 and final submission integration.
+
+## Cost awareness
+
+RAG cost is not controlled by one setting. The main cost drivers occur during offline indexing, online retrieval, and generation:
+
+| Factor | Cost effect | CozyDay evidence and design decision |
+|---|---|---|
+| Embedding dimensionality | Higher dimensions use more storage and memory, transfer more bytes, and usually take longer to build and search at scale. | For fixed chunks, committed vectors use about 46 KB at 384 dimensions, 92 KB at 768, and 123 KB at 1024. MPNet (768) matched BGE-large (1024) on retrieval, so the medium model is the best default unless a larger evaluation set demonstrates a reliable large-model gain. |
+| Chunk size | Small chunks create more vectors and searches but may isolate precise evidence. Large chunks reduce vector count but increase prompt tokens and can mix relevant and irrelevant text. | Fixed chunks were most precise in retrieval; hybrid chunks produced the best answers by preserving complete same-topic passages. The production choice should be hybrid with a 230-word soft cap, monitored against fixed chunks. |
+| Overlap | Overlap improves boundary coverage but repeats text, increasing embedding work, storage, retrieved duplication, and prompt tokens. | The overlap index contains 3,942 indexed words versus 3,111 without overlap, a 27% increase. It did not improve answer quality here, so it is not the default. |
+| Chunk count | More chunks increase embedding calls, index size, and similarity comparisons. | The current strategies create 15–30 chunks, but a larger corpus should use batched embedding jobs and an approximate-nearest-neighbor vector index instead of scanning every vector. |
+| Top-K retrieval | Larger K increases retrieval and prompt size and may introduce distracting evidence. Smaller K is cheaper but may omit needed context. | Top-K is frozen at 3 and achieved 0.99 mean evidence recall. Increasing it is not justified by these results; it should be tuned only with a broader held-out query set. |
+| Prompt length | More retrieved text increases input tokens, latency, memory, and the chance that irrelevant text affects the answer. | Hybrid and overlap supplied about 620 words per query versus 326 for fixed chunks. Context should be de-duplicated and capped before prompt construction. |
+| Generation | Model loading and output-token generation dominate online latency and compute. | Search took under 1 ms while generation averaged 13.6 seconds. The largest savings therefore come from shorter grounded answers, quantized inference, batching where safe, and response caching—not from micro-optimizing cosine search. |
+| Caching | Caches reduce repeated embedding and generation work but require invalidation and storage. | Cache document embeddings by document hash, query embeddings by normalized query and model version, and final answers only when the user, corpus version, access scope, prompt version, and retrieval result are identical. |
+
+The cost-effective default for this corpus is the 768-dimension MPNet embedder, hybrid chunking, and Top-K 3. It preserves the best observed retrieval/answer trade-off without paying the 1024-dimension storage cost. This is a starting point, not a universal claim; production monitoring must detect query types for which the default underperforms.
+
+## RAG vs. fine-tuning vs. pure prompting
+
+| Approach | When to use | Strengths | Limitations and maintenance |
+|---|---|---|---|
+| RAG | The answer depends on changing, private, or source-specific knowledge such as CozyDay planning guidance. | Updates do not require retraining; retrieved passages provide inspectable evidence; access rules can be applied before retrieval. | Requires ingestion, chunking, embedding, index freshness, retrieval evaluation, and protection against irrelevant or unauthorized context. Re-index documents when content or the embedding model changes. |
+| Fine-tuning | Stable behavior, tone, output format, or domain task patterns need to be learned repeatedly and enough curated examples exist. | Can make behavior consistent and shorten prompts; useful for classification or specialized response style. | Training and evaluation cost more; facts become stale; it does not safely replace retrieval for frequently changing knowledge. New data and model versions require controlled retraining and regression testing. |
+| Pure prompting | The task needs general model knowledge, a small amount of instructions, or a quick prototype with no external knowledge base. | Simplest system, no index, and fastest to change instructions. | Long prompts become costly, cannot reliably provide private/current facts, and offer weak evidence traceability. Prompt changes can introduce regressions and still require evaluation. |
+
+CozyDay should use RAG because its guidance can change independently of the generation model and because retrieved evidence can be inspected. Fine-tuning could later enforce response structure or tone, while pure prompting remains appropriate for generic planning tasks that need no CozyDay-specific facts.
+
+## Scaling to 10,000 users per day
+
+Ten thousand users per day is modest in average requests per second but can produce short peaks, repeated questions, and concurrent model generations. The design separates offline indexing from online requests:
+
+1. **Versioned ingestion:** store approved source documents in object storage. A background queue detects added or changed documents by content hash.
+2. **Chunking workers:** apply the selected strategy deterministically, preserve source IDs and access metadata, and reject malformed content before indexing.
+3. **Batch embedding jobs:** embed only new or changed chunks, in batches, with a pinned model/version. Record dimensions, corpus version, and model version with every vector.
+4. **Vector storage:** use a managed or self-hosted approximate-nearest-neighbor index. Partition by project or tenant, filter by user authorization, replicate for availability, and retain the old index until a new version passes checks.
+5. **Request gateway:** authenticate users, validate and normalize queries, apply rate limits, and attach the user's authorization scope.
+6. **Query embedding and retrieval:** cache safe repeated query embeddings, search the correct index partition, apply metadata filters before returning Top-K 3, and de-duplicate overlapping passages.
+7. **Prompt construction:** enforce a context/token budget, include source identifiers, and keep the generation model and prompt version observable.
+8. **Generation workers:** serve the fixed Qwen model behind a queue with horizontally scalable workers. Quantization or an optimized inference server can reduce memory and latency after quality regression tests.
+9. **Response cache:** reuse a response only when query, authorized user scope, corpus/index version, retrieved chunk IDs, model, and prompt version match. Do not share private cached responses across users.
+10. **Operations:** log structured latency and retrieval metadata without raw secrets; monitor error rate, queue depth, cache hit rate, retrieval quality samples, generation latency, token use, and index freshness. Alert on stale indexes, authorization-filter failures, and quality regressions.
+
+Horizontal scaling applies first to the stateless API/request layer and generation workers. The vector store uses read replicas or sharding as the corpus grows. Offline embedding queues absorb document-update bursts without slowing online queries. Access control must be applied before context reaches the LLM, and logs should minimize personal data.
+
+## System architecture
+
+![CozyDay RAG architecture](system_architecture.svg)
+
+The required logical path is:
+
+```text
+Documents -> Chunking -> Embeddings -> Vector Store
+                                           |
+User -> Query -> Query Embedding -> Retrieval -> Retrieved Context -> Prompt -> LLM -> Response
+```
+
+The diagram adds the production controls needed for 10K users/day: background ingestion, versioned indexes, authorization filters, caching, rate limits, monitoring, and horizontally scaled workers. Document indexing is asynchronous; the online path reads a validated index version and never waits for corpus re-embedding.
+
+## Final integration verification
+
+The final review preserves the experimental contract rather than reinterpreting earlier results:
+
+* Generation remains `Qwen/Qwen2.5-3B-Instruct`, greedy decoding, `max_new_tokens=300`.
+* The five questions in `queries.py` are unchanged across all comparisons.
+* `results/stage3_evaluations.csv` contains all 45 main rows: 3 embedding models x 3 chunking strategies x 5 queries.
+* Every main row includes retrieved chunk IDs, full retrieved chunk text, similarity scores, a generated answer, quality scores, latency, and notes.
+* The knowledge base remains 30 paragraphs and 3,111 body words; the three strategy defaults remain fixed 130 words, overlap window 2/stride 1, and hybrid 230 words.
+* The committed results remain unchanged. Stage 4 adds interpretation, architecture, packaging, and validation only.
+
+Final checks run `test_stage1.py`, the lightweight Stage 2 suite, `test_stage3.py`, and `test_stage4.py`. The notebook is parsed to confirm that every code cell is syntactically valid, no saved output has an exception, no machine-specific absolute path remains, and the Stage 4 reflection is included. Full model reproduction requires the three Hugging Face embedding downloads, the 3B Qwen download, and approximately 12 GB of free memory; saved experiment outputs are included so graders can inspect all results without rerunning model inference.
+
+The final ZIP places `rag_system.ipynb`, `rag_analysis.md`, `requirements.txt`, and `README.md` at its root, alongside the implementation modules, tests, `data/`, `results/`, and `system_architecture.svg`. It excludes Git metadata, virtual environments, caches, credentials, temporary notebooks, and model-weight formats.

@@ -1,95 +1,72 @@
-# CozyDay — P1 A8, Stage 1 (Lin Gao)
+# Team 3 CozyDay — P1 A8 Semantic Relationships and Retrieval
 
-Implements Step 1.1 (knowledge base), Step 1.2 (three chunking strategies), automated validation, and the Stage 2 handoff. Embeddings, retrieval, generation, experiments, and system design belong to later stages.
+This folder is the complete submission source for CozyDay's Retrieval-Augmented Generation system. It implements the full path **data -> chunking -> embeddings -> retrieval -> Qwen generation -> output**, evaluates all nine embedding/chunking configurations, analyzes failures, and documents a production design for 10,000 users per day.
 
-## Setup and verification
+## Submission contents
 
-Use Python **3.11+** (verified with Python 3.12). From the repository root:
+- `rag_system.ipynb` — end-to-end implementation, saved experiment tables, failure examples, improvement comparison, cost reflection, and architecture.
+- `rag_analysis.md` — full written analysis for Parts 1–4.
+- `requirements.txt` — pinned Python dependencies.
+- `data/cozyday_knowledge_base.json` — 30 paragraphs and 3,111 body words.
+- `results/` — cached embedding arrays plus all row-level and summary experiment results.
+- `system_architecture.svg` — scalable RAG design diagram.
+- `chunking.py`, `embedding.py`, `retrieval.py`, `generation.py`, `rag.py` — pipeline modules.
+- `queries.py`, `experiments.py`, `scoring.py` — frozen questions, experiment runner, and deterministic rubric.
+- `test_stage1.py` through `test_stage4.py` — validation and integration tests.
+
+The final archive is named `Team3-CozyDay-P1-A8.zip`. Its required files are at the ZIP root; no repository history, virtual environment, credentials, cache directory, or model weights are included.
+
+## Experimental contract
+
+- Embedding models: MiniLM 384 dimensions, MPNet 768, and BGE-large 1024.
+- Chunking: fixed length, overlapping paragraphs, and hybrid same-topic groups.
+- Generation: `Qwen/Qwen2.5-3B-Instruct`, greedy decoding, `max_new_tokens=300`.
+- Retrieval: normalized cosine similarity, Top-K 3.
+- Queries: the same five realistic questions in `queries.py` for all configurations.
+- Main grid: 3 models x 3 strategies x 5 queries = 45 evaluations. Every row contains the retrieved chunks and generated answer.
+
+Stage 4 does not alter the saved experimental results. It adds cost awareness, the RAG/fine-tuning/prompting comparison, the 10K-user architecture, final consistency checks, and submission packaging.
+
+## Quick review without model downloads
+
+Use Python 3.11 or newer. From the ZIP root (or from `a8_rag/` in the repository):
 
 ```bash
-cd a8_rag
+python -m unittest -v test_stage1.py
+python -m unittest -v test_stage2.py
+python -m unittest -v test_stage3.py
+python -m unittest -v test_stage4.py
+```
+
+These tests validate the knowledge base, chunk boundaries, retrieval/generation interfaces, committed experiment tables, Stage 4 requirements, notebook integrity, and portability. Stage 2 includes one live MiniLM load/encode check and therefore downloads the smallest embedding model on its first run; it does not load the medium, large, or 3B generation model. Stages 1, 3, and 4 use saved data or stand-ins and require no model download.
+
+Open `rag_system.ipynb` to inspect the saved outputs and all 45 evaluations. The Stage 3 notebook sections read the committed CSV files, so the results are available even on a machine without enough memory for model inference.
+
+## Full clean-environment reproduction
+
+Create an isolated environment and install the pinned dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m pip check
-python chunking.py
-python test_stage1.py
-jupyter nbconvert --to notebook --execute rag_system.ipynb --output rag_system_verified.ipynb
-jupyter notebook rag_system.ipynb
 ```
 
-The executed verification copy is ignored by Git; do not include it in the PR or final ZIP. To update the canonical notebook after intentional changes, run `jupyter nbconvert --to notebook --execute --inplace rag_system.ipynb` and inspect its outputs. Save the full representative chunks, not truncated previews.
-
-Only notebook tooling needs installation. Chunking and unit tests use the Python standard library and require no credentials, GPU, network access, or model downloads. Dependencies are pinned to the versions used for verification; a clean environment avoids conflicts with existing A7 environments.
-
-## Files and paths
-
-- `data/cozyday_knowledge_base.json`: 30 paragraphs, IDs `P001`–`P030`; each record has nonempty string fields `id`, `title`, `topic`, and `body`.
-- `chunking.py`: loading, chunking, and validation functions.
-- `test_stage1.py`: 26 regression tests, including negative and boundary cases.
-- `rag_system.ipynb`: Stage 1 demonstration, complete examples, validation, and saved outputs.
-- `rag_analysis.md`: boundaries, semantic section mapping, counts, and limitations.
-- `requirements.txt`: notebook dependencies only.
-
-The default data path is derived from `chunking.py`'s location. A caller-provided relative data path is resolved against the caller's working directory. Run the examples below from `a8_rag/`; no machine-specific path is required. The notebook executes with `a8_rag/` as its working directory, including when invoked via nbconvert from the repository root.
-
-The final team ZIP should put the required notebook, README, analysis, requirements, module, tests, and `data/` at its root. Later stages can add `results/` and their own modules inside `a8_rag/` without altering A7 files. Do not replace the repository's existing root README or requirements with these Stage 1 files.
-
-## Frozen Stage 2 interface
-
-```python
-from chunking import load_knowledge_base, validate_knowledge_base, build_all_chunks
-from chunking import fixed_length_chunks, overlapping_paragraph_chunks, hybrid_topic_chunks
-
-records = load_knowledge_base()
-summary = validate_knowledge_base(records)
-chunks_by_strategy = build_all_chunks(records)
-
-fixed = fixed_length_chunks(records, target_words=130)
-overlap = overlapping_paragraph_chunks(records, window=2, stride=1)
-hybrid = hybrid_topic_chunks(records, max_words=230)
-texts = [chunk['text'] for chunk in chunks_by_strategy['fixed']]
-# Stage 2 can pass texts to SentenceTransformer.encode and retain chunk metadata.
-```
-
-`build_all_chunks` always returns the keys `fixed`, `overlap`, and `hybrid`. Each value is a nonempty ordered list of these objects:
-
-```json
-{"chunk_id":"FIXED_001","strategy":"fixed","source_ids":["P001"],"topic":"Task Creation","text":"Complete chunk text...","word_count":112}
-```
-
-- `chunk_id`: strategy prefix plus a sequential number, e.g. `FIXED_001`, `OVERLAP_001`, `HYBRID_001`; IDs are unique across all three strategies.
-- `source_ids`: ordered original paragraph IDs that actually contributed text. Fixed chunks may contain only some sentences from a paragraph; overlap and hybrid retain whole paragraphs.
-- `topic`: the fine topic for fixed/hybrid and single-topic overlap windows. A mixed-fine-topic overlap window uses its explicitly documented related section label.
-- `text`: the embedding input, with complete sentences and no display truncation.
-- `word_count`: whitespace-separated text tokens only, excluding titles/IDs.
-
-Functions are deterministic for the same ordered records and parameters. This correction changes earlier chunk boundaries and IDs; discard any chunks from the pre-review version. Freeze this corrected dataset, section mapping, ordering, and default parameters before Stage 2 indexes it. Custom parameter runs may reuse sequential IDs, so Stage 2 must store those in separate configuration-specific collections.
-
-`validate_knowledge_base(records)` enforces the full assignment size limits. For the later scaling experiment, call `build_all_chunks(records[:10])` directly: chunkers and `validate_chunks` accept any nonempty valid subset, including one paragraph. Empty inputs and malformed records raise `ValueError`. Validation remains active with `python -O`.
-
-## Boundary contract
-
-- **Fixed, 30 chunks:** greedy whole-sentence packing to 130 words; always flush at a fine-topic change. A single overlong sentence remains whole; topic-boundary chunks can be shorter.
-- **Overlap, 19 chunks:** whole adjacent paragraph windows, normally size two and stride one, inside related semantic sections only. `P001+P002`, `P002+P003`, `P003+P004` demonstrate actual overlap. A short section is emitted once; unrelated sections are never bridged.
-- **Hybrid, 15 chunks:** nonoverlapping whole-paragraph groups with exactly the same fine topic and a 230-word soft cap. An oversized single paragraph stays whole.
-
-For overlap, use positive integer parameters, with `stride < window` when `window > 1`; `window=1` only accepts `stride=1` and deliberately disables overlap for that custom run. A final end-anchored window covers any remaining tail without dropping paragraphs. Full semantic rules and their rationale are in `rag_analysis.md`.
-
-## Stage 3 (Shivani Shivani): experiments, failures, improvement
-
-Implements Part 2 (system experiments) and Part 3 (failure analysis and improvement). Details, tables and conclusions are in `rag_analysis.md` (Stage 3 section) and `rag_system.ipynb` (sections 10 to 17).
-
-Files added:
-
-- `experiments.py`: runs the 45-evaluation grid, the 10-paragraph scaling comparison, and the prompt-improvement runs. Each finished row is appended to `results/stage3_evaluations.csv`, so an interrupted run resumes where it stopped (rerunning a command skips rows already recorded).
-- `scoring.py`: the single deterministic scoring rubric (context quality and answer quality, both 0-3).
-- `test_stage3.py`: 19 tests. They use stand-in models, so they need no downloads; they also check the committed results table.
-- `results/stage3_evaluations.csv`: 185 rows (45 main, 45 scaling retrieval, 5 scaling generation, 2 x 45 improvement), with full retrieved chunk text, scores, answers and latencies.
-- `results/stage3_summary_*.csv` and `results/stage3_improvement_*.csv`: summaries derived from that table by `python experiments.py summary`.
-
-To reproduce (from `a8_rag/`, after `python -m pip install -r requirements.txt`; the first run downloads the three embedding models and the 3B generation model, and the generation model needs roughly 12 GB of free memory):
+Then execute the canonical notebook from its own directory:
 
 ```bash
-python test_stage3.py
+jupyter nbconvert --to notebook --execute rag_system.ipynb \
+  --output rag_system_verified.ipynb \
+  --ExecutePreprocessor.timeout=-1
+```
+
+The first full run downloads three sentence-transformer models and `Qwen/Qwen2.5-3B-Instruct`. Generation needs approximately 12 GB of free memory and can take substantial time on CPU. `rag_system_verified.ipynb` is a temporary verification copy and must not be placed in the final ZIP.
+
+To reproduce Stage 3 row-level results separately, run:
+
+```bash
 python experiments.py main
 python experiments.py scaling-retrieval
 python experiments.py scaling-generation --model large --strategy hybrid
@@ -98,4 +75,30 @@ python experiments.py improve-prompt --variant complete-within-limit
 python experiments.py summary
 ```
 
-The generation model, decoding settings, Top-K and the five queries are the frozen Stage 2 values; only the improvement runs change the system prompt, and they are labelled by variant in the `variant` column. The notebook's Stage 3 cells read the saved CSV and run in seconds without any model download.
+Completed run IDs are skipped, so the commands resume safely. To perform a completely new experiment, use a copy of the folder and remove only the copied result files you intend to regenerate.
+
+## Data and path behavior
+
+All default paths are derived from module locations and are relative to this folder. No machine-specific path, token, password, API key, or external service is required. Model downloads use the standard Hugging Face cache outside the project and are not included in the ZIP.
+
+The knowledge base contains general student-planning guidance, not live user data. Each paragraph has an ID, title, fine topic, and 80–200-word body. The chunk records retain complete text, source paragraph IDs, strategy, topic, and word count for retrieval diagnostics.
+
+## Recommended production configuration
+
+For this corpus, the recommended starting configuration is MPNet (768 dimensions), hybrid chunking (230-word soft cap), and Top-K 3. MPNet matched BGE-large on retrieval while using fewer vector dimensions; hybrid produced the best mean answer score. Production monitoring should evaluate broader held-out queries before treating this as a permanent choice.
+
+The scalable design is in `system_architecture.svg` and the Stage 4 section of `rag_analysis.md`. It separates background ingestion/indexing from the online request path and includes tenant filtering, access control, caching, rate limiting, logging, monitoring, and horizontal generation workers.
+
+## Build the final ZIP
+
+From the repository root:
+
+```bash
+cd a8_rag
+zip -r ../Team3-CozyDay-P1-A8.zip . \
+  -x '*.git*' '*/.venv/*' '*/venv/*' '*/__pycache__/*' \
+     '*/.ipynb_checkpoints/*' '*rag_system_verified.ipynb' \
+     '*.pt' '*.bin' '*.safetensors' '*.gguf' '.env' '*.env'
+```
+
+Run `python test_stage4.py` after creating the ZIP; the final test also inspects its root files and exclusions.
