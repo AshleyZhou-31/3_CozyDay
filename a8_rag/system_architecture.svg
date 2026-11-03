@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="760" viewBox="0 0 1500 760" role="img" aria-labelledby="title desc">
+  <title id="title">CozyDay RAG system architecture for 10,000 users per day</title>
+  <desc id="desc">Offline documents are chunked, embedded, and stored in a vector store. Online user queries are embedded, matched, assembled with retrieved context, sent to the generation model, and returned with monitoring and caching.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#6b4a2f"/>
+    </marker>
+    <style>
+      .bg { fill:#fffaf3; }
+      .lane { fill:#f8efe3; stroke:#d9c1a9; stroke-width:2; rx:22; }
+      .box { fill:#ffffff; stroke:#8a5d3b; stroke-width:2.5; rx:16; }
+      .store { fill:#eef6ff; stroke:#416d9e; stroke-width:2.5; rx:16; }
+      .service { fill:#f1f8ed; stroke:#527d46; stroke-width:2.5; rx:16; }
+      .ops { fill:#fff2e8; stroke:#ae6334; stroke-width:2.5; rx:16; }
+      .arrow { fill:none; stroke:#6b4a2f; stroke-width:3; marker-end:url(#arrow); }
+      .dash { fill:none; stroke:#7d7d7d; stroke-width:2; stroke-dasharray:8 7; marker-end:url(#arrow); }
+      .title { font:700 30px Arial, sans-serif; fill:#2f2925; }
+      .lane-title { font:700 22px Arial, sans-serif; fill:#6b4a2f; }
+      .label { font:700 18px Arial, sans-serif; fill:#2f2925; text-anchor:middle; }
+      .small { font:15px Arial, sans-serif; fill:#4d4742; text-anchor:middle; }
+      .note { font:15px Arial, sans-serif; fill:#4d4742; }
+    </style>
+  </defs>
+  <rect class="bg" width="1500" height="760"/>
+  <text class="title" x="750" y="48" text-anchor="middle">CozyDay RAG Architecture — Scalable to 10K Users/Day</text>
+
+  <rect class="lane" x="45" y="80" width="1410" height="245"/>
+  <text class="lane-title" x="75" y="115">Offline ingestion and indexing</text>
+  <rect class="box" x="95" y="155" width="190" height="95"/>
+  <text class="label" x="190" y="192">Documents</text><text class="small" x="190" y="220">versioned knowledge base</text>
+  <rect class="box" x="350" y="155" width="190" height="95"/>
+  <text class="label" x="445" y="192">Chunking</text><text class="small" x="445" y="220">fixed / overlap / hybrid</text>
+  <rect class="service" x="605" y="155" width="205" height="95"/>
+  <text class="label" x="707" y="192">Batch Embeddings</text><text class="small" x="707" y="220">cached, versioned jobs</text>
+  <rect class="store" x="875" y="145" width="220" height="115"/>
+  <text class="label" x="985" y="187">Vector Store</text><text class="small" x="985" y="215">partitioned indexes</text><text class="small" x="985" y="237">metadata + access rules</text>
+  <rect class="ops" x="1160" y="155" width="220" height="95"/>
+  <text class="label" x="1270" y="192">Index Monitoring</text><text class="small" x="1270" y="220">freshness, errors, versions</text>
+  <path class="arrow" d="M285 202 H350"/><path class="arrow" d="M540 202 H605"/><path class="arrow" d="M810 202 H875"/><path class="arrow" d="M1095 202 H1160"/>
+
+  <rect class="lane" x="45" y="350" width="1410" height="300"/>
+  <text class="lane-title" x="75" y="385">Online request path</text>
+  <rect class="box" x="75" y="445" width="150" height="90"/>
+  <text class="label" x="150" y="480">User</text><text class="small" x="150" y="508">authenticated request</text>
+  <rect class="box" x="270" y="445" width="150" height="90"/>
+  <text class="label" x="345" y="480">Query</text><text class="small" x="345" y="508">validated + normalized</text>
+  <rect class="service" x="465" y="435" width="180" height="110"/>
+  <text class="label" x="555" y="475">Query</text><text class="label" x="555" y="499">Embedding</text><text class="small" x="555" y="525">same model/version</text>
+  <rect class="service" x="690" y="435" width="180" height="110"/>
+  <text class="label" x="780" y="475">Similarity</text><text class="label" x="780" y="499">Retrieval</text><text class="small" x="780" y="525">Top-K + filters</text>
+  <rect class="box" x="915" y="435" width="180" height="110"/>
+  <text class="label" x="1005" y="475">Prompt +</text><text class="label" x="1005" y="499">Context</text><text class="small" x="1005" y="525">token budget enforced</text>
+  <rect class="service" x="1140" y="435" width="150" height="110"/>
+  <text class="label" x="1215" y="475">LLM</text><text class="small" x="1215" y="505">Qwen2.5-3B</text><text class="small" x="1215" y="526">autoscaled workers</text>
+  <rect class="box" x="1330" y="445" width="100" height="90"/>
+  <text class="label" x="1380" y="480">Response</text><text class="small" x="1380" y="508">grounded answer</text>
+  <path class="arrow" d="M225 490 H270"/><path class="arrow" d="M420 490 H465"/><path class="arrow" d="M645 490 H690"/><path class="arrow" d="M870 490 H915"/><path class="arrow" d="M1095 490 H1140"/><path class="arrow" d="M1290 490 H1330"/>
+  <path class="arrow" d="M985 260 V375 H780 V435"/>
+
+  <rect class="ops" x="400" y="590" width="700" height="105"/>
+  <text class="label" x="750" y="625">Shared production controls</text>
+  <text class="small" x="750" y="654">response/query cache • rate limits • access control • structured logs • latency/quality monitoring</text>
+  <text class="small" x="750" y="677">horizontal API workers • background indexing queue • model and index versioning</text>
+  <path class="dash" d="M750 590 V545"/>
+  <text class="note" x="75" y="727">Required logical flow: User → Query → Embedding → Vector Store → Retrieved Context → LLM → Response</text>
+</svg>
