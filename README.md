@@ -105,7 +105,9 @@ one consistent end-to-end flow.
 9. Optional AI setup and the complete data/safety workflow are documented in
    [`README_AI.md`](README_AI.md). Authenticated users can compare the local
    planner at `/planitems/ai-planner/` with the external API planner at
-   `/planitems/api-ai-planner/`.
+   `/planitems/api-ai-planner/`. The new RAG Planner user flow is at
+   `/planitems/ai-rag-planner/`; its Stage 1 response is a labeled placeholder
+   until the local retrieval and generation service is connected in Stage 2.
 
 ---
 

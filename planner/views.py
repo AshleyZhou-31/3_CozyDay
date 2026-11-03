@@ -8,9 +8,10 @@ from django.http import JsonResponse
 
 from django.db.models import Count, Q
 from .models import Category, PlanItem
-from .forms import AIPlannerForm, PlanItemForm
+from .forms import AIPlannerForm, AIRAGPlannerForm, PlanItemForm
 from .ai_planner import AIPlannerError, generate_plan
 from .external_ai import ExternalAIError, generate_external_plan
+from .rag_planner import generate_rag_plan
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
@@ -28,9 +29,13 @@ from matplotlib.ticker import MaxNLocator
 from django.utils import timezone
 import csv
 import requests
+import logging
+import math
 
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_GET
+
+logger = logging.getLogger(__name__)
 
 def home(request):
     """Render the CozyDay landing page."""
@@ -622,5 +627,68 @@ def api_ai_planner(request):
     return render(
         request,
         "planner/external_ai_planner.html",
+        {"form": form, "result": result, "error_message": error_message},
+    )
+
+
+@login_required
+def ai_rag_planner(request):
+    """Render the authenticated user flow for the local RAG planning assistant."""
+    result = None
+    error_message = ""
+
+    if request.method == "POST":
+        form = AIRAGPlannerForm(request.POST)
+        if form.is_valid():
+            try:
+                result = generate_rag_plan(form.cleaned_data["query"], user=request.user)
+                if (
+                    not isinstance(result, dict)
+                    or not isinstance(result.get("answer"), str)
+                    or not result["answer"].strip()
+                ):
+                    raise ValueError("Invalid RAG response schema")
+                if not isinstance(result.get("retrieved_chunks"), list):
+                    raise ValueError("Invalid RAG response schema")
+                if any(
+                    not isinstance(chunk, dict)
+                    or not isinstance(chunk.get("id"), str)
+                    or not isinstance(chunk.get("text"), str)
+                    or (
+                        chunk.get("score") is not None
+                        and not isinstance(chunk.get("score"), (int, float))
+                    )
+                    for chunk in result["retrieved_chunks"]
+                ):
+                    raise ValueError("Invalid RAG response schema")
+                latency = result.get("latency_seconds")
+                if (
+                    not isinstance(latency, (int, float))
+                    or not math.isfinite(latency)
+                    or latency < 0
+                ):
+                    raise ValueError("Invalid RAG response schema")
+                if (
+                    result.get("warning") is not None
+                    and not isinstance(result["warning"], str)
+                ):
+                    raise ValueError("Invalid RAG response schema")
+                result.setdefault("warning", None)
+                result["query"] = form.cleaned_data["query"]
+            except Exception as exc:
+                # Do not log the exception text: it may contain the user's query.
+                logger.error("RAG Planner service failed (%s)", type(exc).__name__)
+                result = None
+                error_message = getattr(
+                    exc,
+                    "user_message",
+                    "The planning assistant is temporarily unavailable. Please try again later.",
+                )
+    else:
+        form = AIRAGPlannerForm()
+
+    return render(
+        request,
+        "planner/ai_rag_planner.html",
         {"form": form, "result": result, "error_message": error_message},
     )

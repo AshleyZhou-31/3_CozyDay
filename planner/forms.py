@@ -51,3 +51,30 @@ class AIPlannerForm(forms.Form):
             return clean_user_text(self.cleaned_data["request_text"])
         except AIInputError as exc:
             raise forms.ValidationError(exc.user_message)
+
+
+class AIRAGPlannerForm(forms.Form):
+    """Validated user question for the local retrieval-augmented planner."""
+
+    query = forms.CharField(
+        label="What would you like help planning?",
+        strip=True,
+        widget=forms.Textarea(
+            attrs={
+                "rows": 5,
+                "maxlength": getattr(settings, "AI_PLANNER_MAX_INPUT_CHARS", 600),
+            }
+        ),
+        help_text=(
+            "Ask a specific planning question. Do not include sensitive personal information."
+        ),
+    )
+
+    def clean_query(self):
+        try:
+            return clean_user_text(
+                self.cleaned_data["query"],
+                max_chars=getattr(settings, "AI_PLANNER_MAX_INPUT_CHARS", 600),
+            )
+        except AIInputError as exc:
+            raise forms.ValidationError(exc.user_message)
