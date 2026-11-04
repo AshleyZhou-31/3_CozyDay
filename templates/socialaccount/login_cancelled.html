@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Google login cancelled - CozyDay{% endblock %}
+
+{% block content %}
+<section class="status-card" aria-labelledby="cancelled-heading">
+    <span class="status-icon" aria-hidden="true">↶</span>
+    <p class="eyebrow">No changes were made</p>
+    <h1 id="cancelled-heading">Google login was cancelled</h1>
+    <p>You are still logged out. You can try Google again or use your CozyDay username and password instead.</p>
+    <div class="button-row">
+        <a class="cozy-button" href="{% url 'login' %}">Return to login</a>
+        <a class="cozy-button cozy-button--secondary" href="{% url 'home' %}">Go home</a>
+    </div>
+</section>
+{% endblock %}
