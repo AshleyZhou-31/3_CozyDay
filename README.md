@@ -581,3 +581,13 @@ All in `docs/api_use_cases/`, each pointed at the production API:
 3. **`javascript_client.html`** — a standalone HTML page, outside the Django app, that uses `fetch()` to pull the public API and render a category list and totals directly in the browser.
 
 Evidence screenshots are in `docs/screenshots/a5/shivani_part3/`.
+
+---
+
+## UI Stage 4 — Final Integration
+
+The final UI pass aligns the implemented product with the approved calm, card-based,
+person-first wireframe direction. It refines Home, Login, Sign Up, shared navigation,
+OAuth error states, and the new RAG Planner while preserving existing feature behavior.
+The responsive and accessibility checklist, implementation notes, and before/after
+evidence are in [`docs/ui_stage4/`](docs/ui_stage4/README.md).

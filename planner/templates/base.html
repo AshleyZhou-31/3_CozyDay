@@ -5,59 +5,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="theme-color" content="#fffaf3">
     <link rel="stylesheet" href="{% static 'planner/style.css' %}">
-
-    <title>
-        {% block title %}
-        CozyDay
-        {% endblock %}
-    </title>
-
-
+    {% block extra_head %}{% endblock %}
+    <title>{% block title %}CozyDay{% endblock %}</title>
 </head>
 
 <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
 
-    <header>
-        <h1>CozyDay</h1>
+    <div class="app-shell">
+        <header class="site-header">
+            <a class="brand" href="{% url 'home' %}" aria-label="CozyDay home">
+                <span class="brand-mark" aria-hidden="true">C</span>
+                <span>
+                    <strong>CozyDay</strong>
+                    <small>A calmer way to plan</small>
+                </span>
+            </a>
 
-        <nav aria-label="Main navigation">
-            <a href="{% url 'home' %}">Home</a>
+            <nav class="site-nav" aria-label="Main navigation">
+                <a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>
+                    <span aria-hidden="true">⌂</span> Home
+                </a>
 
-            {% if user.is_authenticated %}
-                <a href="{% url 'planner:planitem-list' %}">Plan Items</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'planner:planitem-list' %}" {% if request.resolver_match.url_name == 'planitem-list' or request.resolver_match.url_name == 'planitem-detail' %}aria-current="page"{% endif %}>
+                        <span aria-hidden="true">□</span> Plan Items
+                    </a>
+                    <a href="{% url 'planner:analytics' %}" {% if request.resolver_match.url_name == 'analytics' %}aria-current="page"{% endif %}>
+                        <span aria-hidden="true">◫</span> Analytics
+                    </a>
+                    <a href="{% url 'planner:planitem-reports' %}" {% if request.resolver_match.url_name == 'planitem-reports' %}aria-current="page"{% endif %}>
+                        <span aria-hidden="true">≡</span> Reports
+                    </a>
+                    <a href="{% url 'planner:ai-rag-planner' %}" {% if request.resolver_match.url_name == 'ai-rag-planner' %}aria-current="page"{% endif %}>
+                        <span aria-hidden="true">✦</span> RAG Planner
+                    </a>
 
-                {% if user.is_staff %}
-                    <a href="{% url 'admin:index' %}">Admin</a>
+                    <details class="nav-more">
+                        <summary>More tools</summary>
+                        <div class="nav-more-menu">
+                            <a href="{% url 'planner:ai-planner' %}">Local AI Planner</a>
+                            <a href="{% url 'planner:api-ai-planner' %}">API Planner</a>
+                            {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+                        </div>
+                    </details>
+
+                    <form class="nav-logout" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Log out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" {% if request.resolver_match.url_name == 'login' %}aria-current="page"{% endif %}>Log in</a>
+                    <a href="{% url 'signup' %}" {% if request.resolver_match.url_name == 'signup' %}aria-current="page"{% endif %}>Sign up</a>
                 {% endif %}
+            </nav>
+        </header>
 
-                <a href="{% url 'planner:analytics' %}">Analytics</a>
-                <a href="{% url 'planner:planitem-reports' %}">Reports</a>
-                <a href="{% url 'planner:ai-planner' %}">AI Planner</a>
-                <a href="{% url 'planner:ai-rag-planner' %}">AI RAG Planner</a>
-                <a href="{% url 'planner:api-ai-planner' %}">API Planner</a>
+        <div class="app-content">
+            <main id="main-content" tabindex="-1">
+                {% block content %}{% endblock %}
+            </main>
 
-                <form method="post" action="{% url 'logout' %}" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit">Logout</button>
-                </form>
-            {% else %}
-                <a href="{% url 'login' %}">Login</a>
-                <a href="{% url 'signup' %}">Sign Up</a>
-            {% endif %}
-        </nav>
-    </header>
-
-
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-
-    <footer>
-        <p>CozyDay - Team 3</p>
-    </footer>
-
+            <footer><p>CozyDay · Team 3</p></footer>
+        </div>
+    </div>
 </body>
 </html>

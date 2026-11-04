@@ -1,33 +1,56 @@
 {% extends "base.html" %}
 {% load allauth socialaccount %}
 
-{% block title %}
-Sign Up - CozyDay
-{% endblock %}
+{% block title %}Sign up - CozyDay{% endblock %}
 
 {% block content %}
-<h2>Sign Up</h2>
+<div class="auth-shell">
+    <section class="auth-card" aria-labelledby="signup-heading">
+        <div class="auth-heading">
+            <p class="eyebrow">Start gently</p>
+            <h1 id="signup-heading">Create your CozyDay account</h1>
+            <p>Make a private space for your plans, patterns, and next steps.</p>
+        </div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+        {% if form.non_field_errors %}
+            <div class="form-alert" role="alert">
+                <strong>We could not create your account.</strong>
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
 
-    <button type="submit">Sign Up</button>
-</form>
+        <form method="post" class="auth-form" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-field{% if field.errors %} form-field--error{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<div class="field-help" id="{{ field.id_for_label }}-help">{{ field.help_text|safe }}</div>{% endif %}
+                    {% if field.errors %}<div class="field-errors" role="alert">{{ field.errors }}</div>{% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="cozy-button auth-submit">Create account</button>
+        </form>
 
-<p>
-    Already have an account?
-    <a href="{% url 'login' %}">Log in</a>
-</p>
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+            <div class="auth-divider"><span>or</span></div>
+            {% for provider in socialaccount_providers %}
+                <a class="oauth-button" href="{% provider_login_url provider.id process='signup' %}">
+                    <span class="google-mark" aria-hidden="true">G</span>
+                    Continue with {{ provider.name }}
+                </a>
+            {% endfor %}
+            <p class="privacy-note">Google authentication is handled securely by the provider. CozyDay never sees your Google password.</p>
+        {% endif %}
 
-{% get_providers as socialaccount_providers %}
-{% if socialaccount_providers %}
-<hr>
-<h3>Or use a third-party</h3>
-<ul>
-    {% for provider in socialaccount_providers %}
-    <li><a href="{% provider_login_url provider.id process='signup' %}">Continue with {{ provider.name }}</a></li>
-    {% endfor %}
-</ul>
-{% endif %}
+        <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Log in</a>.</p>
+    </section>
+
+    <aside class="auth-aside" aria-label="CozyDay account benefits">
+        <span aria-hidden="true">☀</span>
+        <h2>Plan without pressure</h2>
+        <p>CozyDay keeps structure flexible and uses clear, non-judgmental language throughout your experience.</p>
+    </aside>
+</div>
 {% endblock %}

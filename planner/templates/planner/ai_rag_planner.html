@@ -1,64 +1,69 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}AI RAG Planner - CozyDay{% endblock %}
 
 {% block content %}
-<h2>AI RAG Planner</h2>
-
-<p>
-    Ask a planning question and CozyDay will use guidance from its knowledge base
-    to suggest practical next steps. The final assistant will run locally and
-    display the sources used for its answer.
-</p>
-
-<form method="post" action="{% url 'planner:ai-rag-planner' %}">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-
-    <p>
-        <label for="{{ form.query.id_for_label }}">{{ form.query.label }}</label><br>
-        {{ form.query }}
-        {% if form.query.help_text %}<br><small>{{ form.query.help_text }}</small>{% endif %}
-        {{ form.query.errors }}
-    </p>
-
-    <button type="submit" class="cozy-button">Ask the planning assistant</button>
-</form>
-
-{% if error_message %}
-    <div role="alert" class="ai-planner-error">
-        <p><strong>Sorry:</strong> {{ error_message }}</p>
+<link rel="stylesheet" href="{% static 'planner/insights.css' %}">
+<div class="insights rag-page">
+    <div class="cz-page-header">
+        <p class="eyebrow">Grounded planning support</p>
+        <h2>AI RAG Planner</h2>
+        <p class="cz-lede">
+            Ask a focused planning question. CozyDay will suggest practical next steps
+            and show the knowledge sources used for its answer.
+        </p>
     </div>
-{% endif %}
 
-{% if result %}
-    <section aria-labelledby="rag-result-heading">
-        <h3 id="rag-result-heading">Planning response</h3>
-        <h4>Your question</h4>
-        <p>{{ result.query }}</p>
-
-        <h4>Answer</h4>
-        <p>{{ result.answer }}</p>
-
-        <h4>Retrieved sources</h4>
-        {% if result.retrieved_chunks %}
-            <ul>
-                {% for chunk in result.retrieved_chunks %}
-                    <li>
-                        <strong>{{ chunk.id|default:"Source" }}</strong>
-                        {% if chunk.score != None %}<small>(score: {{ chunk.score|floatformat:3 }})</small>{% endif %}
-                        <p>{{ chunk.text }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No relevant sources were retrieved.</p>
-        {% endif %}
-
-        <p><small>Response time: {{ result.latency_seconds|floatformat:3 }} seconds</small></p>
-        {% if result.warning %}
-            <p role="status"><small>{{ result.warning }}</small></p>
-        {% endif %}
+    <section class="cz-card cz-card--tint" aria-labelledby="rag-question-heading">
+        <h3 id="rag-question-heading">What would you like help with?</h3>
+        <p class="cz-muted">For your privacy, avoid names, addresses, health details, or other sensitive information.</p>
+        <form method="post" action="{% url 'planner:ai-rag-planner' %}" novalidate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="cz-callout cz-callout--error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+            <div class="form-field{% if form.query.errors %} form-field--error{% endif %}">
+                <label for="{{ form.query.id_for_label }}">{{ form.query.label }}</label>
+                {{ form.query }}
+                {% if form.query.help_text %}<p class="field-help">{{ form.query.help_text }}</p>{% endif %}
+                {% if form.query.errors %}<div class="field-errors" role="alert">{{ form.query.errors }}</div>{% endif %}
+            </div>
+            <button type="submit" class="cz-button">Ask the planning assistant</button>
+        </form>
     </section>
-{% endif %}
+
+    {% if error_message %}
+        <div role="alert" class="cz-callout cz-callout--error">
+            <strong>We could not create a response.</strong>
+            <p>{{ error_message }}</p>
+        </div>
+    {% endif %}
+
+    {% if result %}
+        <section class="cz-card" aria-labelledby="rag-result-heading">
+            <h3 id="rag-result-heading">Planning response</h3>
+            <div class="rag-question"><strong>Your question</strong><p>{{ result.query }}</p></div>
+            <div class="rag-answer"><strong>Suggested next steps</strong><p>{{ result.answer }}</p></div>
+
+            <details class="rag-sources">
+                <summary>Review retrieved sources ({{ result.retrieved_chunks|length }})</summary>
+                {% if result.retrieved_chunks %}
+                    <ol>
+                        {% for chunk in result.retrieved_chunks %}
+                            <li>
+                                <strong>{{ chunk.id|default:"Source" }}</strong>
+                                {% if chunk.score != None %}<small>Relevance: {{ chunk.score|floatformat:3 }}</small>{% endif %}
+                                <p>{{ chunk.text }}</p>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <p>No relevant sources were retrieved.</p>
+                {% endif %}
+            </details>
+
+            <p class="cz-muted">Response time: {{ result.latency_seconds|floatformat:3 }} seconds</p>
+            {% if result.warning %}<p role="status" class="cz-callout cz-callout--warn">{{ result.warning }}</p>{% endif %}
+        </section>
+    {% endif %}
+</div>
 {% endblock %}
