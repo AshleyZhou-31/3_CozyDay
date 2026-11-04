@@ -196,11 +196,14 @@ class AnswerQueryTests(SimpleTestCase):
         self.assertTrue(timed_out)
         self.assertEqual(answer, "")
         self.assertLess(
-            elapsed, 1.0,
+            elapsed, 0.4,
             f"took {elapsed:.2f}s to return -- the soft timeout is not actually "
             "bounding the caller's wait (this is the bug Ashley found in PR #31: "
             "ThreadPoolExecutor used as a context manager blocks on "
-            "shutdown(wait=True) until the slow worker finishes)",
+            "shutdown(wait=True) until the slow worker finishes). A 1.0s threshold "
+            "was too loose: the buggy implementation returns in ~0.6s (bounded by "
+            "the slow call itself, not the 0.15s timeout) and would have passed "
+            "that check too.",
         )
 
     def test_retrieval_exception_becomes_retrieval_error(self):
