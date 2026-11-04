@@ -1,4 +1,5 @@
-"""Focused tests for the Stage 1 Django RAG Planner workflow."""
+"""Focused tests for the Django RAG Planner workflow (Stage 2: the view now
+calls the real local RAG engine; the mock Stage 1 adapter is gone)."""
 
 from unittest.mock import patch
 
@@ -55,11 +56,21 @@ class AIRAGPlannerViewTests(TestCase):
         self.assertContains(response, "0.125 seconds")
         generate.assert_called_once_with("How do I break up a paper?", user=self.user)
 
-    def test_stage_one_adapter_response_is_visibly_labeled(self):
-        response = self.client.post(self.url, {"query": "How should I plan a study week?"})
+    def test_real_adapter_delegates_to_rag_engine(self):
+        """Stage 2: the mock adapter is gone; generate_rag_plan now calls the
+        local RAG engine directly (still mocked here so no model is loaded)."""
+        fake_result = {
+            "answer": "Break the paper into milestones: topic, outline, draft, revise, submit.",
+            "retrieved_chunks": [{"id": "HYBRID_002", "text": "Split into milestones.", "score": 0.91}],
+            "latency_seconds": 0.42,
+            "warning": None,
+        }
+        with patch("planner.rag_engine.answer_query", return_value=fake_result):
+            response = self.client.post(self.url, {"query": "How should I plan a study week?"})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Stage 1 mock response only")
-        self.assertContains(response, "STAGE1-MOCK")
+        self.assertContains(response, "Break the paper into milestones")
+        self.assertNotContains(response, "Stage 1 mock response only")
+        self.assertNotContains(response, "STAGE1-MOCK")
 
     def test_empty_and_whitespace_only_input_do_not_call_service(self):
         with patch("planner.views.generate_rag_plan") as generate:

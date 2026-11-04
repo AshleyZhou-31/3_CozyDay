@@ -27,3 +27,9 @@ torch>=2.3,<3
 transformers>=4.46,<6
 accelerate>=1.0,<2
 bitsandbytes>=0.43,<1  # required for Model 10 (Mistral-Nemo) 4-bit NF4 quantization on Colab
+
+# AI Integration (Stage 2 local RAG): MPNet embeddings + cosine retrieval,
+# reused from a8_rag/. Versions match what a8_rag/requirements.txt already
+# verified working together with the torch/transformers pins above.
+sentence-transformers==6.2.0
+scikit-learn==1.9.1

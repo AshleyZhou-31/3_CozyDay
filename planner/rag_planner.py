@@ -1,8 +1,16 @@
-"""Temporary Stage 1 adapter for the local RAG Planner page contract.
+"""Stage 2: local RAG Planner service adapter.
 
-Stage 2 replaces this implementation with the local retrieval and generation
-pipeline. Keep the function signature and response fields stable so that the
-Django view and template do not need to change.
+Thin wrapper preserving the Stage 1 page contract
+(``generate_rag_plan(query, user=None) -> {"answer", "retrieved_chunks",
+"latency_seconds", "warning"}``) while delegating the real work to
+:mod:`planner.rag_engine`: local MPNet embeddings, hybrid-chunking cosine
+retrieval, and the locked Qwen2.5-3B-Instruct generation pipeline, all
+adapted from the team's A8 RAG assignment.
+
+``rag_engine`` (and the torch/transformers/sentence-transformers it needs)
+is imported lazily inside the function body, not at module load time, so
+importing this module -- and therefore Django starting up, and the normal
+test suite running -- never pulls in or downloads anything heavy.
 """
 
 
@@ -18,25 +26,18 @@ class RAGPlannerError(Exception):
 
 
 def generate_rag_plan(query, user=None):
-    """Return a clearly labeled mock result matching the Stage 2 contract.
+    """Run the local RAG pipeline and return the Stage 1 page contract.
 
-    ``user`` is accepted for a future user-scoped retrieval implementation;
-    this placeholder neither reads nor returns personal user data.
+    All failures are normalised to ``RAGPlannerError`` subclasses carrying a
+    safe ``user_message``; the Django view never sees a raw model or library
+    exception, and the user's query text is never logged.
     """
-    del query, user
+    from . import rag_engine
+
+    result = rag_engine.answer_query(query, user=user)
     return {
-        "answer": (
-            "A local planning answer will appear here after the RAG service is "
-            "connected. The finished assistant will use retrieved CozyDay "
-            "planning guidance to suggest actionable next steps."
-        ),
-        "retrieved_chunks": [
-            {
-                "id": "STAGE1-MOCK",
-                "text": "Placeholder source shown to verify the Django result layout; no knowledge-base retrieval has run.",
-                "score": None,
-            }
-        ],
-        "latency_seconds": 0.0,
-        "warning": "Stage 1 mock response only. The local RAG model is not connected yet.",
+        "answer": result["answer"],
+        "retrieved_chunks": result["retrieved_chunks"],
+        "latency_seconds": result["latency_seconds"],
+        "warning": result["warning"],
     }
