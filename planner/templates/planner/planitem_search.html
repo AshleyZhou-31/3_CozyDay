@@ -4,48 +4,68 @@
 
 {% block content %}
 
-<h2>Search & Summarize Plan Items</h2>
+<div class="eyebrow">Plan Items</div>
+<h2>Search &amp; summarize</h2>
+<p class="hero-lede">Total plan items in the system: <strong>{{ total_count }}</strong></p>
 
-<p>Total plan items in the system: <strong>{{ total_count }}</strong></p>
+<div class="search-panels">
+    <section class="search-panel">
+        <h3>Search by title (GET)</h3>
+        <form method="get" action="{% url 'planner:planitem-search' %}">
+            <div class="form-field">
+                <label for="get-title">Title contains</label>
+                <input type="text" id="get-title" name="title" value="{{ get_title }}">
+            </div>
+            <div class="form-field">
+                <label for="get-category">Category contains</label>
+                <input type="text" id="get-category" name="category" value="{{ category_query }}">
+            </div>
+            <button type="submit" class="cozy-button">Search</button>
+        </form>
+        <p class="field-help">This uses a GET request, so your search terms appear in the URL's query string.</p>
+    </section>
 
-<h3>Search by title (GET)</h3>
-<form method="get" action="{% url 'planner:planitem-search' %}">
-    <label for="get-title">Title contains:</label>
-    <input type="text" id="get-title" name="title" value="{{ get_title }}">
-    <label for="get-category">Category contains:</label>
-    <input type="text" id="get-category" name="category" value="{{ category_query }}">
-    <button type="submit">Search</button>
-</form>
-<p><small>This uses a GET request, so your search terms appear in the URL's query string.</small></p>
-
-<h3>Search by title (POST)</h3>
-<form method="post" action="{% url 'planner:planitem-search' %}">
-    {% csrf_token %}
-    <label for="post-title">Title contains:</label>
-    <input type="text" id="post-title" name="title" value="{{ post_title }}">
-    <button type="submit">Search</button>
-</form>
-<p><small>This uses a POST request, so your search term is never added to the URL.</small></p>
+    <section class="search-panel">
+        <h3>Search by title (POST)</h3>
+        <form method="post" action="{% url 'planner:planitem-search' %}">
+            {% csrf_token %}
+            <div class="form-field">
+                <label for="post-title">Title contains</label>
+                <input type="text" id="post-title" name="title" value="{{ post_title }}">
+            </div>
+            <button type="submit" class="cozy-button cozy-button--secondary">Search</button>
+        </form>
+        <p class="field-help">This uses a POST request, so your search term is never added to the URL.</p>
+    </section>
+</div>
 
 <h3>Results</h3>
-<ul>
+<div class="plan-list">
     {% for item in items %}
-        <li>
-            <a href="{{ item.get_absolute_url }}">{{ item.title }}</a>
-            — {{ item.category.name|default:"No category" }}
-        </li>
+        <a class="plan-card" href="{{ item.get_absolute_url }}">
+            <span class="plan-card-main">
+                <span class="plan-card-title">{{ item.title }}</span>
+                <span class="item-tags">
+                    <span class="item-tag item-tag--category">{{ item.category.name|default:"No category" }}</span>
+                </span>
+            </span>
+            <span class="plan-arrow" aria-hidden="true">›</span>
+        </a>
     {% empty %}
-        <li>No plan items match your search.</li>
+        <div class="empty-state">
+            <p>No plan items match your search.</p>
+            <a class="cozy-button cozy-button--secondary" href="{% url 'planner:planitem-search' %}">Reset search</a>
+        </div>
     {% endfor %}
-</ul>
+</div>
 
 <h3>Plan items per category</h3>
-<ul>
+<div class="item-tags item-tags--summary">
     {% for category in category_summary %}
-        <li>{{ category.name }}: {{ category.item_count }}</li>
+        <span class="item-tag item-tag--category">{{ category.name }}: {{ category.item_count }}</span>
     {% empty %}
-        <li>No categories yet.</li>
+        <p>No categories yet.</p>
     {% endfor %}
-</ul>
+</div>
 
 {% endblock %}

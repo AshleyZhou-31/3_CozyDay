@@ -3,42 +3,55 @@
 {% block title %}{{ item.title }} - CozyDay{% endblock %}
 
 {% block content %}
-<article>
+<article class="item-detail">
+    <div class="eyebrow">{{ item.get_item_type_display }}</div>
     <h2>{{ item.title }}</h2>
+
+    <p class="status-pill status-pill--{% if item.is_completed %}done{% else %}open{% endif %}">
+        {% if item.is_completed %}✓ Completed{% else %}Open{% endif %}
+    </p>
+
     <div class="detail-grid">
-    <div class="detail-item">
-        <span class="detail-label">Type</span>
-        <strong>{{ item.get_item_type_display }}</strong>
-    </div>
+        <div class="detail-item">
+            <span class="detail-label">Type</span>
+            <strong>{{ item.get_item_type_display }}</strong>
+        </div>
 
-    <div class="detail-item">
-        <span class="detail-label">Timing</span>
-        <strong>{{ item.get_timing_display }}</strong>
-    </div>
+        <div class="detail-item">
+            <span class="detail-label">Timing</span>
+            <strong>{{ item.get_timing_display }}</strong>
+        </div>
 
-    <div class="detail-item">
-        <span class="detail-label">Category</span>
-        <strong>{{ item.category|default:"Uncategorized" }}</strong>
-    </div>
+        <div class="detail-item">
+            <span class="detail-label">Category</span>
+            <strong>{{ item.category|default:"Uncategorized" }}</strong>
+        </div>
 
-    <div class="detail-item">
-        <span class="detail-label">Scheduled date</span>
-        <strong>{{ item.scheduled_date|default:"Not scheduled" }}</strong>
-    </div>
+        <div class="detail-item">
+            <span class="detail-label">Scheduled date</span>
+            <strong>{{ item.scheduled_date|default:"Not scheduled" }}</strong>
+        </div>
 
-    <div class="detail-item">
-        <span class="detail-label">Status</span>
-        <strong>
-            {% if item.is_completed %}Completed{% else %}Open{% endif %}
-        </strong>
+        <div class="detail-item">
+            <span class="detail-label">Scheduled time</span>
+            <strong>{{ item.scheduled_time|default:"Not set" }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <strong>
+                {% if item.is_completed %}Completed{% else %}Open{% endif %}
+            </strong>
+        </div>
     </div>
-</div>
 
     {% if item.notes %}
         <h3>Notes</h3>
         <p>{{ item.notes }}</p>
     {% endif %}
 
-    <p><a href="{% url 'planner:planitem-list' %}">Back to Plan Items</a></p>
+    <p class="button-row">
+        <a class="cozy-button cozy-button--secondary" href="{% url 'planner:planitem-list' %}">← Back to Plan Items</a>
+    </p>
 </article>
 {% endblock %}
