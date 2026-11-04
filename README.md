@@ -594,7 +594,7 @@ evidence are in [`docs/ui_stage4/`](docs/ui_stage4/README.md).
 
 ## Local RAG Planning Assistant (AI Integration, Stage 2)
 
-An authenticated user can ask a planning question at `/ai-rag-planner/` (linked from the
+An authenticated user can ask a planning question at `/planitems/ai-rag-planner/` (linked from the
 main navigation). The view embeds the question with a local `sentence-transformers/all-mpnet-base-v2`
 model, retrieves the top 3 most relevant chunks from the CozyDay knowledge base (hybrid
 chunking, adapted unmodified from the team's A8 assignment), and generates a grounded

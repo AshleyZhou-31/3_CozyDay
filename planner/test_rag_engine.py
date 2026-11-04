@@ -165,6 +165,44 @@ class AnswerQueryTests(SimpleTestCase):
                     rag_engine.answer_query("a planning question", max_time_seconds=0.01)
         self.assertIn("too long", ctx.exception.user_message)
 
+    def test_generate_with_timeout_returns_promptly_not_after_full_slow_call(self):
+        """PR #31 review (Ashley): the previous implementation used
+        ThreadPoolExecutor as a context manager, so __exit__'s
+        shutdown(wait=True) blocked until the slow worker finished even
+        after future.result() had already raised TimeoutError -- making
+        the soft timeout a no-op. This calls the REAL
+        _generate_with_timeout (not mocked) against a genuinely slow fake
+        generate_answer and asserts on wall-clock time that it returns
+        near max_time_seconds, not after the full slow call."""
+        import time as time_module
+
+        def _slow_generate_answer(generation_info, chunks, query):
+            time_module.sleep(0.6)
+            return "late answer", 0.6
+
+        with patch("generation.generate_answer", side_effect=_slow_generate_answer):
+            start = time_module.perf_counter()
+            answer, latency, timed_out = rag_engine._generate_with_timeout(
+                _fake_generation_info(), [], "a planning question", max_time_seconds=0.15
+            )
+            elapsed = time_module.perf_counter() - start
+
+        # Drain: block until the orphaned background thread actually
+        # releases _generate_lock, so this test doesn't leave a stale lock
+        # that intermittently stalls whichever test runs next.
+        rag_engine._generate_lock.acquire()
+        rag_engine._generate_lock.release()
+
+        self.assertTrue(timed_out)
+        self.assertEqual(answer, "")
+        self.assertLess(
+            elapsed, 1.0,
+            f"took {elapsed:.2f}s to return -- the soft timeout is not actually "
+            "bounding the caller's wait (this is the bug Ashley found in PR #31: "
+            "ThreadPoolExecutor used as a context manager blocks on "
+            "shutdown(wait=True) until the slow worker finishes)",
+        )
+
     def test_retrieval_exception_becomes_retrieval_error(self):
         with patch("embedding.embed_query", side_effect=RuntimeError("model crashed")), patch.object(
             rag_engine, "get_engine", return_value=_fake_engine()

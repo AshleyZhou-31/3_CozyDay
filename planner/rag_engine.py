@@ -288,6 +288,18 @@ def _generate_with_timeout(generation_info, chunks, query, max_time_seconds):
     a8_rag.generation's decoding settings stay locked and unmodified; this
     only bounds how long the Django request waits for one call, and
     serializes generation calls against the single shared model instance.
+
+    The executor is deliberately NOT used as a context manager.
+    ThreadPoolExecutor.__exit__ calls shutdown(wait=True), which blocks
+    until the submitted task finishes -- even after future.result() has
+    already raised TimeoutError. That would make this "soft timeout" a
+    no-op: the caller would still block for however long the real
+    (possibly-stuck) generation call takes. shutdown(wait=False) lets this
+    function return promptly on timeout instead; the abandoned worker
+    thread keeps running to completion in the background, which is the
+    known limitation already documented in
+    docs/ai_integration_model_rationale.md (Python cannot safely kill a
+    running model.generate() call from another thread).
     """
     from concurrent.futures import ThreadPoolExecutor
     from concurrent.futures import TimeoutError as FutureTimeoutError
@@ -298,11 +310,13 @@ def _generate_with_timeout(generation_info, chunks, query, max_time_seconds):
         with _generate_lock:
             return generate_answer(generation_info, chunks, query)
 
-    with ThreadPoolExecutor(max_workers=1) as pool:
-        future = pool.submit(_run)
-        try:
-            answer, latency = future.result(timeout=max_time_seconds)
-            return answer, latency, False
-        except FutureTimeoutError:
-            logger.warning("RAG generation exceeded the %.0fs soft timeout", max_time_seconds)
-            return "", max_time_seconds, True
+    pool = ThreadPoolExecutor(max_workers=1)
+    future = pool.submit(_run)
+    try:
+        answer, latency = future.result(timeout=max_time_seconds)
+        return answer, latency, False
+    except FutureTimeoutError:
+        logger.warning("RAG generation exceeded the %.0fs soft timeout", max_time_seconds)
+        return "", max_time_seconds, True
+    finally:
+        pool.shutdown(wait=False)
