@@ -1,71 +1,72 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}AI Planner - CozyDay{% endblock %}
 
 {% block content %}
-<h2>AI Planner</h2>
+<link rel="stylesheet" href="{% static 'planner/insights.css' %}">
+<div class="insights">
+  <div class="cz-page-header">
+    <h2>AI Planner</h2>
+    <p class="cz-lede">Describe what you need to get done today and the local AI model will suggest a priority, a schedule, and a short reason. Suggestions are only a starting point, so please double-check the times.</p>
+  </div>
 
-<p>
-    Describe what you need to get done today and the local AI model will suggest a
-    priority, a schedule, and a short reason. Suggestions are only a starting point,
-    so please double-check the times.
-</p>
-<p>
-    <small>
-        The model runs on this computer. The first request can take a few minutes while
-        the model downloads and loads; later requests are faster.
-    </small>
-</p>
+  <div class="cz-callout" role="note">
+    <h3>Privacy</h3>
+    <p>The model runs on this computer, so your request is not sent to any outside service.</p>
+    <p>The first request can take a few minutes while the model downloads and loads; later requests are faster.</p>
+  </div>
 
-<form method="post" action="{% url 'planner:ai-planner' %}">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+  <section class="cz-card" aria-labelledby="local-form-heading">
+    <h3 id="local-form-heading">1. Your request</h3>
+    <form method="post" action="{% url 'planner:ai-planner' %}" id="local-form">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
 
-    <p>
-        <label for="{{ form.request_text.id_for_label }}">{{ form.request_text.label }}</label><br>
+      <div class="cz-field">
+        <label for="{{ form.request_text.id_for_label }}">{{ form.request_text.label }}</label>
         {{ form.request_text }}
-        {% if form.request_text.help_text %}<br><small>{{ form.request_text.help_text }}</small>{% endif %}
+        {% if form.request_text.help_text %}<p class="cz-help">{{ form.request_text.help_text }}</p>{% endif %}
         {{ form.request_text.errors }}
-    </p>
-    <p>
+      </div>
+      <div class="cz-check">
         {{ form.include_plan_items }}
         <label for="{{ form.include_plan_items.id_for_label }}">{{ form.include_plan_items.label }}</label>
-    </p>
+      </div>
 
-    <button type="submit" class="cozy-button">Suggest a plan</button>
-</form>
+      <button type="submit" class="cz-button" id="local-submit" data-busy-text="Working&hellip;">Suggest a plan</button>
+      <p id="local-busy" class="cz-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
 
-{% if error_message %}
-    <div role="alert" class="ai-planner-error">
-        <p><strong>Sorry:</strong> {{ error_message }}</p>
+  {% if error_message %}
+    <div role="alert" class="ai-planner-error cz-callout cz-callout--error">
+      <h3>The planner could not finish</h3>
+      <p><strong>Sorry:</strong> {{ error_message }}</p>
+      <p>Your request is still in the box above, so you can edit it and try again.</p>
     </div>
-{% endif %}
+  {% endif %}
 
-{% if result %}
-    <section aria-labelledby="ai-result-heading">
-        <h3 id="ai-result-heading">Your suggested plan</h3>
+  {% if result %}
+    {% include "planner/_ai_result.html" with result=result heading="Your suggested plan" heading_id="local-result-heading" source_label="Generated locally" show_incomplete=True %}
+  {% endif %}
+</div>
 
-        <h4>Priority</h4>
-        <p>{{ result.priority }}</p>
-
-        <h4>Schedule</h4>
-        <ol>
-            {% for step in result.schedule %}
-                <li>{{ step }}</li>
-            {% endfor %}
-        </ol>
-
-        {% if result.reason %}
-            <h4>Reason</h4>
-            <p>{{ result.reason }}</p>
-        {% endif %}
-
-        {% if not result.complete %}
-            <p><small>
-                This suggestion looks incomplete (the model may have been cut off).
-                Try a shorter request if you need the full reasoning.
-            </small></p>
-        {% endif %}
-    </section>
-{% endif %}
+<script>
+  (function () {
+    var form = document.getElementById("local-form");
+    var btn = document.getElementById("local-submit");
+    var busy = document.getElementById("local-busy");
+    form.addEventListener("submit", function () {
+      btn.disabled = true;
+      btn.textContent = btn.dataset.busyText;
+      busy.textContent = "Working on your plan. The first request can take a few minutes.";
+    });
+    window.addEventListener("pageshow", function () {
+      btn.disabled = false;
+      btn.textContent = "Suggest a plan";
+      busy.textContent = "";
+    });
+  })();
+</script>
 {% endblock %}
