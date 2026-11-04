@@ -873,3 +873,157 @@ li {
         animation-iteration-count: 1 !important;
     }
 }
+
+/* Plan Items (UI Refinement Stage 2): list toolbar, item tags, status pill,
+   search panels. Wireframe-inspired (Hick's Law / Gestalt proximity from
+   docs/wireframes/Wireframes with design rationale_Team_3.pdf) rather than
+   wireframe-literal — see PR description for documented deviations. */
+
+.list-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+    margin: 20px 0 28px;
+    padding: 18px 20px;
+    border: 1px solid var(--cozy-line);
+    border-radius: var(--cozy-radius);
+    background: var(--cozy-sage);
+}
+
+.toolbar-search {
+    flex: 1 1 240px;
+    min-width: 220px;
+}
+
+.toolbar-search label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--cozy-navy);
+    font-weight: 750;
+}
+
+.toolbar-search-row {
+    display: flex;
+    gap: 10px;
+}
+
+.toolbar-search-row input {
+    flex: 1;
+}
+
+.add-item-panel {
+    flex: 0 0 auto;
+}
+
+.add-item-panel summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.add-item-panel summary::-webkit-details-marker {
+    display: none;
+}
+
+.add-item-form {
+    width: min(480px, 100%);
+    margin-top: 16px;
+    padding: 18px;
+    border: 1px solid var(--cozy-line);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.plan-card-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.plan-card-title {
+    font-size: 1.02rem;
+}
+
+.item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.item-tags--summary {
+    margin-top: 12px;
+}
+
+.item-tag {
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--cozy-sage);
+    color: var(--cozy-green-dark);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.item-tag--category {
+    background: var(--cozy-peach);
+    color: var(--cozy-navy);
+}
+
+.empty-state {
+    padding: 20px;
+    border: 1px dashed var(--cozy-line);
+    border-radius: 12px;
+    color: var(--cozy-muted);
+    text-align: center;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 18px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+
+.status-pill--open {
+    background: var(--cozy-peach);
+    color: var(--cozy-navy);
+}
+
+.status-pill--done {
+    background: var(--cozy-sage);
+    color: var(--cozy-green-dark);
+}
+
+.search-panels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0 28px;
+}
+
+.search-panel {
+    padding: 18px 20px;
+    border: 1px solid var(--cozy-line);
+    border-radius: var(--cozy-radius);
+    background: #fff;
+}
+
+.search-panel h3 {
+    margin-top: 0;
+}
+
+@media (max-width: 680px) {
+    .toolbar-search-row {
+        flex-direction: column;
+    }
+
+    .toolbar-search-row button {
+        width: 100%;
+    }
+}

@@ -17,6 +17,10 @@ class PlanItemForm(forms.ModelForm):
             "scheduled_time",
             "notes",
         ]
+        widgets = {
+            "scheduled_date": forms.DateInput(attrs={"type": "date"}),
+            "scheduled_time": forms.TimeInput(attrs={"type": "time"}),
+        }
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)

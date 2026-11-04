@@ -1,45 +1,81 @@
 {% extends "base.html" %}
 
-{% block title %}
-Plan Items - CozyDay
-{% endblock %}
+{% block title %}Plan Items - CozyDay{% endblock %}
 
 {% block content %}
 
-<h2>Plan Items</h2>
+<div class="eyebrow">Plan Items</div>
+<h2>Your plan items</h2>
 
-<h3>Search Plan Items</h3>
+<div class="list-toolbar">
+    <form class="toolbar-search" method="get">
+        <label for="search-title">Search by title</label>
+        <div class="toolbar-search-row">
+            <input
+                type="search"
+                id="search-title"
+                name="title"
+                value="{{ search_title }}"
+                placeholder="Search by title"
+            >
+            <button type="submit" class="cozy-button cozy-button--secondary">Search</button>
+        </div>
+    </form>
 
-<form method="get">
-    <label for="search-title">Title:</label>
-    <input
-        type="search"
-        id="search-title"
-        name="title"
-        value="{{ search_title }}"
-        placeholder="Search by title"
-    >
-    <button type="submit">Search</button>
-</form>
-
-<h3>Add a Plan Item</h3>
-
-<form method="post" novalidate>
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Plan Item</button>
-</form>
+    <details class="add-item-panel"{% if form.errors %} open{% endif %}>
+        <summary class="cozy-button">+ Add a Plan Item</summary>
+        <form method="post" novalidate class="add-item-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="form-alert" role="alert">
+                    <ul>
+                        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            {% for field in form %}
+                <div class="form-field{% if field.errors %} form-field--error{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<p class="field-help">{{ field.help_text }}</p>{% endif %}
+                    {% if field.errors %}
+                        <div class="field-errors">
+                            <ul>{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="cozy-button">Add Plan Item</button>
+        </form>
+    </details>
+</div>
 
 <h3>Your Plan Items</h3>
 
 <div class="plan-list">
     {% for item in items %}
         <a class="plan-card" href="{{ item.get_absolute_url }}">
-            <span>{{ item.title }}</span>
-            <span class="plan-arrow">›</span>
+            <span class="plan-card-main">
+                <span class="plan-card-title">{{ item.title }}</span>
+                <span class="item-tags">
+                    <span class="item-tag item-tag--type">{{ item.get_item_type_display }}</span>
+                    <span class="item-tag item-tag--timing">{{ item.get_timing_display }}</span>
+                    {% if item.category %}
+                        <span class="item-tag item-tag--category">{{ item.category.name }}</span>
+                    {% endif %}
+                </span>
+            </span>
+            <span class="plan-arrow" aria-hidden="true">›</span>
         </a>
     {% empty %}
-        <p>No plan items available yet.</p>
+        {% if search_title %}
+            <div class="empty-state">
+                <p>No plan items match &ldquo;{{ search_title }}&rdquo;.</p>
+                <a class="cozy-button cozy-button--secondary" href="{% url 'planner:planitem-list' %}">Reset search</a>
+            </div>
+        {% else %}
+            <p class="empty-state">No plan items yet. Use <strong>+ Add a Plan Item</strong> above to create your first one.</p>
+        {% endif %}
     {% endfor %}
 </div>
 
