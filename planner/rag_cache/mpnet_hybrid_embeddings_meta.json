@@ -1,0 +1,22 @@
+{
+  "model_name": "sentence-transformers/all-mpnet-base-v2",
+  "chunking_version": "a8-hybrid-v1",
+  "corpus_hash": "954524906133563438d7cdc911294fbbb2a918d1388c18ac10bc03c9c994213a",
+  "chunk_ids": [
+    "HYBRID_001",
+    "HYBRID_002",
+    "HYBRID_003",
+    "HYBRID_004",
+    "HYBRID_005",
+    "HYBRID_006",
+    "HYBRID_007",
+    "HYBRID_008",
+    "HYBRID_009",
+    "HYBRID_010",
+    "HYBRID_011",
+    "HYBRID_012",
+    "HYBRID_013",
+    "HYBRID_014",
+    "HYBRID_015"
+  ]
+}
