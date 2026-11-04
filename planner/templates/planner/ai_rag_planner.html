@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}AI RAG Planner - CozyDay{% endblock %}
+
+{% block content %}
+<h2>AI RAG Planner</h2>
+
+<p>
+    Ask a planning question and CozyDay will use guidance from its knowledge base
+    to suggest practical next steps. The final assistant will run locally and
+    display the sources used for its answer.
+</p>
+
+<form method="post" action="{% url 'planner:ai-rag-planner' %}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <p>
+        <label for="{{ form.query.id_for_label }}">{{ form.query.label }}</label><br>
+        {{ form.query }}
+        {% if form.query.help_text %}<br><small>{{ form.query.help_text }}</small>{% endif %}
+        {{ form.query.errors }}
+    </p>
+
+    <button type="submit" class="cozy-button">Ask the planning assistant</button>
+</form>
+
+{% if error_message %}
+    <div role="alert" class="ai-planner-error">
+        <p><strong>Sorry:</strong> {{ error_message }}</p>
+    </div>
+{% endif %}
+
+{% if result %}
+    <section aria-labelledby="rag-result-heading">
+        <h3 id="rag-result-heading">Planning response</h3>
+        <h4>Your question</h4>
+        <p>{{ result.query }}</p>
+
+        <h4>Answer</h4>
+        <p>{{ result.answer }}</p>
+
+        <h4>Retrieved sources</h4>
+        {% if result.retrieved_chunks %}
+            <ul>
+                {% for chunk in result.retrieved_chunks %}
+                    <li>
+                        <strong>{{ chunk.id|default:"Source" }}</strong>
+                        {% if chunk.score != None %}<small>(score: {{ chunk.score|floatformat:3 }})</small>{% endif %}
+                        <p>{{ chunk.text }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No relevant sources were retrieved.</p>
+        {% endif %}
+
+        <p><small>Response time: {{ result.latency_seconds|floatformat:3 }} seconds</small></p>
+        {% if result.warning %}
+            <p role="status"><small>{{ result.warning }}</small></p>
+        {% endif %}
+    </section>
+{% endif %}
+{% endblock %}
