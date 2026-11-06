@@ -35,9 +35,12 @@ def generate_rag_plan(query, user=None):
     from . import rag_engine
 
     result = rag_engine.answer_query(query, user=user)
-    return {
+    response = {
         "answer": result["answer"],
         "retrieved_chunks": result["retrieved_chunks"],
         "latency_seconds": result["latency_seconds"],
         "warning": result["warning"],
     }
+    if result.get("stage_latencies"):
+        response["stage_latencies"] = result["stage_latencies"]
+    return response

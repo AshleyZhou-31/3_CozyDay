@@ -42,7 +42,7 @@
         <section class="cz-card" aria-labelledby="rag-result-heading">
             <h3 id="rag-result-heading">Planning response</h3>
             <div class="rag-question"><strong>Your question</strong><p>{{ result.query }}</p></div>
-            <div class="rag-answer"><strong>Suggested next steps</strong><p>{{ result.answer }}</p></div>
+            <div class="rag-answer"><strong>Suggested next steps</strong>{{ result.answer|linebreaks }}</div>
 
             <details class="rag-sources">
                 <summary>Review retrieved sources ({{ result.retrieved_chunks|length }})</summary>
@@ -61,7 +61,10 @@
                 {% endif %}
             </details>
 
-            <p class="cz-muted">Response time: {{ result.latency_seconds|floatformat:3 }} seconds</p>
+            <p class="cz-muted">Response time: {{ result.latency_seconds|floatformat:3 }} seconds{% if result.stage_latencies %}
+                (embedding {{ result.stage_latencies.embedding|floatformat:3 }}s,
+                retrieval {{ result.stage_latencies.retrieval|floatformat:3 }}s,
+                generation {{ result.stage_latencies.generation|floatformat:3 }}s){% endif %}</p>
             {% if result.warning %}<p role="status" class="cz-callout cz-callout--warn">{{ result.warning }}</p>{% endif %}
         </section>
     {% endif %}

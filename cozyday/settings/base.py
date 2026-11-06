@@ -170,6 +170,14 @@ AI_PLANNER_MAX_TIME_SECONDS = _env_int("AI_PLANNER_MAX_TIME_SECONDS", 120)
 AI_PLANNER_MAX_PLAN_ITEMS = _env_int("AI_PLANNER_MAX_PLAN_ITEMS", 10)
 AI_PLANNER_FEW_SHOTS = _env_int("AI_PLANNER_FEW_SHOTS", 3)
 
+# A9 Stage 3: best-chunk similarity below this skips generation (0 disables).
+try:
+    AI_PLANNER_MIN_RELEVANCE = float(os.environ.get("AI_PLANNER_MIN_RELEVANCE", "0.35"))
+except ValueError:
+    AI_PLANNER_MIN_RELEVANCE = 0.35
+# A9 Stage 3: trim answers cut off by the token limit (set to 0 to disable).
+AI_PLANNER_OUTPUT_VALIDATION = os.environ.get("AI_PLANNER_OUTPUT_VALIDATION", "1") not in ("0", "false", "False")
+
 # External AI planner. The secret is environment-only and never committed.
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
