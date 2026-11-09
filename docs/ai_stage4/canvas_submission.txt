@@ -1,0 +1,30 @@
+Team 3 — CozyDay
+P1-A9 Django AI Integration
+
+GitHub Repository:
+https://github.com/AshleyZhou-31/3_CozyDay
+
+Integrated Feature:
+CozyDay now includes a login-protected local RAG Planning Assistant at
+/planitems/ai-rag-planner/. The Django form validates a planning question, embeds it
+with sentence-transformers/all-mpnet-base-v2, retrieves the top three hybrid chunks by
+cosine similarity, and generates a grounded response with Qwen/Qwen2.5-3B-Instruct.
+The result page displays the answer, retrieved sources, similarity scores, warnings and
+per-stage latency. A relevance gate refuses low-relevance questions, and output
+validation removes unfinished token-limit tails.
+
+Final Documentation and Architecture:
+https://github.com/AshleyZhou-31/3_CozyDay/tree/main/docs/ai_stage4
+
+Evaluation and Failure Evidence:
+https://github.com/AshleyZhou-31/3_CozyDay/tree/main/docs/ai_stage3_evaluation
+
+Model and Settings Rationale:
+https://github.com/AshleyZhou-31/3_CozyDay/blob/main/docs/ai_integration_model_rationale.md
+
+In-Person Demonstration:
+Thursday, November 12, 2026 at 11:15 AM, EDUC 338
+
+The README includes fresh-clone setup, model-download expectations, automated tests,
+real-model smoke-test commands, privacy guidance and known limitations. No API key is
+required for the local RAG feature.

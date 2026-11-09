@@ -1,0 +1,14 @@
+flowchart LR
+    U[Authenticated user] --> F[Django RAG Planner form]
+    F --> V[Input validation and protected view]
+    V --> E[MPNet query embedding]
+    E --> S[Cosine search over cached hybrid-chunk vectors]
+    S --> K[Top 3 retrieved chunks]
+    K --> G{Best similarity at least 0.35?}
+    G -- No --> A[Grounded abstention and warning]
+    G -- Yes --> P[System instruction plus context plus query]
+    P --> Q[Qwen2.5-3B-Instruct]
+    Q --> O[Output schema and completion validation]
+    O --> R[Django result page]
+    A --> R
+    R --> D[Answer, sources, scores, warning, and latency]
