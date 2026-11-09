@@ -105,9 +105,9 @@ one consistent end-to-end flow.
 9. Optional AI setup and the complete data/safety workflow are documented in
    [`README_AI.md`](README_AI.md). Authenticated users can compare the local
    planner at `/planitems/ai-planner/` with the external API planner at
-   `/planitems/api-ai-planner/`. The new RAG Planner user flow is at
-   `/planitems/ai-rag-planner/`; its Stage 1 response is a labeled placeholder
-   until the local retrieval and generation service is connected in Stage 2.
+   `/planitems/api-ai-planner/`. The integrated RAG Planner is at
+   `/planitems/ai-rag-planner/`; it now uses the local MPNet retrieval and
+   Qwen2.5-3B generation pipeline described below.
 
 ---
 
@@ -592,39 +592,78 @@ OAuth error states, and the new RAG Planner while preserving existing feature be
 The responsive and accessibility checklist, implementation notes, and before/after
 evidence are in [`docs/ui_stage4/`](docs/ui_stage4/README.md).
 
-## Local RAG Planning Assistant (AI Integration, Stage 2)
+## A9 Local RAG Planning Assistant — Final Integrated System
 
 An authenticated user can ask a planning question at `/planitems/ai-rag-planner/` (linked from the
 main navigation). The view embeds the question with a local `sentence-transformers/all-mpnet-base-v2`
 model, retrieves the top 3 most relevant chunks from the CozyDay knowledge base (hybrid
 chunking, adapted unmodified from the team's A8 assignment), and generates a grounded
 answer with a local `Qwen/Qwen2.5-3B-Instruct` model. No paid API key is used for this
-feature. See `docs/ai_integration_model_rationale.md` for why these specific models and
-settings were chosen.
+feature. The page validates input, displays the retrieved sources and similarity
+scores, reports stage latencies, refuses low-relevance questions, and trims an
+unfinished final sentence when generation reaches its token limit. See
+[`docs/ai_stage4/`](docs/ai_stage4/README.md) for the complete architecture,
+evaluation, failure analysis, privacy notes, final QA record, and demonstration plan.
 
 ### Setup
 
-Dependencies are in `requirements.txt` (includes `torch`, `transformers`,
-`sentence-transformers`, `scikit-learn`). No extra migration or configuration step is
-needed; both models are downloaded automatically from Hugging Face on first use and then
-cached by `transformers`/`sentence-transformers` in your Hugging Face cache directory
-(not inside the repo). Expect roughly 0.5GB (MPNet) + 6GB (Qwen2.5-3B) of downloads the
-first time the feature is used, and real inference time on CPU/MPS/CUDA after that
-(subsequent requests reuse the already-loaded models and the cached embeddings in
-`planner/rag_cache/`, so only the first request per server process is slow).
+Dependencies are in `requirements.txt` (including `torch`, `transformers`,
+`sentence-transformers`, and `scikit-learn`). Complete setup from a fresh clone:
+
+```bash
+git clone https://github.com/AshleyZhou-31/3_CozyDay.git
+cd 3_CozyDay
+python3 -m venv .venv
+source .venv/bin/activate                 # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+cp .env.example .env                      # replace DJANGO_SECRET_KEY
+python manage.py migrate
+python manage.py createsuperuser           # or create a normal account in the UI
+python manage.py check
+python manage.py runserver
+```
+
+Log in and open `http://127.0.0.1:8000/planitems/ai-rag-planner/`. No paid API
+key is required. Both models download automatically from Hugging Face on first use
+and are then cached outside the repository. Allow about 0.5 GB for MPNet and about
+6 GB for Qwen2.5-3B, plus enough free memory for local inference. Subsequent requests
+reuse the process-cached models and the committed 45 KB chunk-embedding cache in
+`planner/rag_cache/`.
+
+Optional settings in `.env`:
+
+```text
+AI_PLANNER_DEVICE=auto
+AI_PLANNER_MAX_TIME_SECONDS=120
+AI_PLANNER_MIN_RELEVANCE=0.35
+AI_PLANNER_OUTPUT_VALIDATION=1
+```
 
 ### Running the automated tests (no model download)
 
-    python manage.py test planner.test_rag_engine planner.test_ai_rag_planner
+```bash
+python manage.py check
+python manage.py test planner.test_rag_engine planner.test_ai_rag_planner \
+  planner.test_rag_stage3_regression planner.test_rag_evaluate_command
+python manage.py test
+```
 
 These tests mock every model; they never download or load a real embedding or generation
 model, so they run in a couple of seconds.
 
 ### Running a real local smoke test (downloads and loads real models)
 
-    python manage.py rag_smoke_test
-    python manage.py rag_smoke_test --query "How do I plan a weekly study schedule?"
+```bash
+python manage.py rag_smoke_test
+python manage.py rag_smoke_test --query "How do I plan a weekly study schedule?"
+python manage.py rag_evaluate --variants improved --cases Q1,Q3,X1 \
+  --out /tmp/cozyday-final-rehearsal.csv --force
+```
 
 This is a separate, manually-run command -- it is never invoked by the automated test
-suite -- that sends one real question through the full local pipeline and prints the
-answer, retrieved chunks, and latency.
+suite -- that sends real questions through the full local pipeline and prints or
+records the answer, retrieved chunks, scores, and latency. Warm the models before an
+in-person demonstration; the first request may take several minutes to download and
+load them, and measured generation took about 5–21 seconds per in-scope question on
+the Stage 3 MacBook Air run.
