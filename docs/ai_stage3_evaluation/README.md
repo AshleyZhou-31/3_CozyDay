@@ -10,10 +10,20 @@ Evidence files in this folder:
 
 | File | Content |
 |---|---|
-| `stage3_results_final.csv` | Final results: 7 cases x {baseline, improved}, with answers, retrieved chunk IDs and text excerpts, similarity scores, rubric scores, latencies |
-| `stage3_runs.csv` | Raw full run (the X1/X2 "improved" rows in it were recorded before the relevance gate was installed) |
-| `stage3_runs_gate.csv` | Raw rerun of X1 and X2 with the gate installed; these are the final X1/X2 "improved" rows |
+| `stage3_results_final.csv` | Final results: 7 cases x {baseline, improved}, with answers, retrieved chunk IDs and text excerpts, similarity scores, rubric scores, latencies. This is the file the tables below are taken from |
+| `stage3_runs.csv` | Raw full run (all 7 cases, both variants) made before the relevance gate existed; its X1/X2 "improved" rows are therefore superseded |
+| `stage3_runs_validation_only.csv` | An earlier, identical full run kept as a repeat measurement: all 14 answers match `stage3_runs.csv` exactly; only the latencies differ by normal run-to-run variation |
+| `stage3_runs_gate.csv` | Raw rerun of X1 and X2 (improved variant only) with the relevance gate installed |
 | `screenshots/` | Page screenshots listed at the end |
+
+### How `stage3_results_final.csv` was assembled
+
+1. Start from the 14 rows of `stage3_runs.csv`.
+2. Remove its two X1/X2 `improved` rows (recorded before the gate was installed; they only repeat the baseline behaviour).
+3. Add the two `improved` rows from `stage3_runs_gate.csv`.
+4. Sort by case (Q1-Q5, X1, X2), baseline row first.
+
+No cell was edited, and all 14 rows keep the same columns. Q1-Q5 are not rerun for the final file because their best retrieval scores (0.527-0.762) are above the gate threshold, so the gate cannot change them; the relevance gate and output validation switches are both part of the `improved` variant, so each case was run once with them off and once with them on.
 
 `baseline` = both Stage 3 improvements switched off (`AI_PLANNER_OUTPUT_VALIDATION=False`,
 `AI_PLANNER_MIN_RELEVANCE=0`). `improved` = shipped behaviour. Generation is greedy, so both
@@ -82,13 +92,22 @@ most of the 300-token budget; Q2 and Q3 are short).
 - **Root cause category:** input validation (nothing rejects or redirects a vague question),
   leading to a retrieval miss and then a generation failure to abstain cleanly.
 
+### Failure 4: Numbered list shown as one run-on paragraph (Q1, seen in the page screenshot)
+- **What happened:** the model returns a numbered list with line breaks, but the page rendered the
+  answer inside a single paragraph, so "1. ... 2. ... 3. ..." ran together in one block.
+- **Root cause category:** UI handling (the template ignored line breaks in the answer).
+- **Fix:** the answer is now rendered with Django's `linebreaks` filter, which keeps paragraph and
+  line breaks and still HTML-escapes the model text. **Remaining:** the model's markdown markers
+  (`**bold**`) still appear as literal asterisks because the page does not render markdown.
+
 ### Limitation A (not fixed): Q3 omits "fixed obligations"
 Generation under-uses the top chunk. This matches the A8 finding that Q3 consistently misses this
 point. Prompt changes would alter the locked generation module, so it is documented, not fixed.
 
 ## Improvement made
 
-Two changes to `planner/rag_engine.py`; the second one is the main improvement.
+Changes to `planner/rag_engine.py` (items 1 and 2; the first is the main improvement) and to the
+page template (item 3).
 
 1. **Relevance gate (retrieved-context filtering).** If the best retrieved chunk scores below
    `AI_PLANNER_MIN_RELEVANCE` (default 0.35, set 0 to disable), the model is not called. The page
@@ -101,6 +120,9 @@ Two changes to `planner/rag_engine.py`; the second one is the main improvement.
    shows "This answer reached the length limit, so the unfinished last part was removed. Ask a
    narrower question to see the rest." Complete answers are untouched.
 
+3. **Answer formatting.** `ai_rag_planner.html` renders the answer with `linebreaks`, so numbered
+   lists and paragraphs from the model keep their line breaks (still escaped).
+
 Also added: per-stage latencies (embedding, retrieval, generation) in the service result and on
 the page, which the evaluation needs.
 
@@ -111,6 +133,7 @@ the page, which the evaluation needs.
 | X1 "What is the capital of France and who designed the Eiffel Tower?" | Model called (2.97 s generation); answered "Paris... Gustave Eiffel"; three unrelated sources shown with no warning | Model not called (generation 0.00 s, total 0.318 s); abstention message with topic suggestions; warning "best relevance 0.04" |
 | X2 "help" | Model called (11.90 s); unrelated account-login tips | Model not called (total 0.036 s); same abstention message; warning "best relevance 0.18" |
 | Q1 paper breakdown | Ends with dangling "7", no notice | Ends after item 6; length-limit notice shown |
+| Q1 list formatting | Whole numbered list shown as one paragraph | Each paragraph and list item on its own line |
 | Q2-Q5 | Reference answers | Identical answers and identical scores (no regression); best scores 0.527-0.762 are above the gate |
 
 Quality and reliability improved: both failing inputs now give an honest, instant answer instead
@@ -137,10 +160,12 @@ of an ungrounded one, and Q1-Q5 are unchanged.
   answer and warning; a relevant query still reaches the model; the gate can be disabled;
   threshold is configurable; default threshold sits between the measured 0.183 and 0.527.
 - `PageShowsValidationTests`: the page shows the length-limit notice and per-stage latencies.
+- `AnswerFormattingTests`: line breaks in the answer are preserved and answer HTML is still
+  escaped.
 
 `planner/test_rag_evaluate_command.py` checks the evaluation command against a fake engine:
 baseline and improved rows for the same input, resume without duplicates, test-user cleanup, and
-probe status. Full suite: 154 tests passing (`python manage.py test`).
+probe status. Full suite: 156 tests passing (`python manage.py test`).
 
 ## Reproduce
 

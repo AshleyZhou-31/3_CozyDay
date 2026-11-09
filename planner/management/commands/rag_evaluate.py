@@ -134,7 +134,7 @@ class Command(BaseCommand):
         new_file = not out.exists() or options["force"]
         try:
             with out.open("w" if options["force"] else "a", newline="", encoding="utf-8") as handle:
-                writer = csv.DictWriter(handle, fieldnames=FIELDS)
+                writer = csv.DictWriter(handle, fieldnames=FIELDS, lineterminator="\n")
                 if new_file:
                     writer.writeheader()
                 for case_id, name, query, expectation in cases:
