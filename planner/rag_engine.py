@@ -27,6 +27,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import re
 import sys
 import threading
 import time
@@ -230,14 +231,15 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None):
             from embedding import embed_query
             from retrieval import similarity_search
 
-            query_vector, _embedding_latency = embed_query(engine["embedding_info"], query)
-            ranked, _retrieval_latency = similarity_search(
+            query_vector, embedding_latency = embed_query(engine["embedding_info"], query)
+            ranked, retrieval_latency = similarity_search(
                 query_vector, engine["chunk_ids"], engine["vectors"], top_k=top_k
             )
         else:
             # sklearn's cosine_similarity rejects a zero-row corpus outright;
             # an empty knowledge base is a "no results" case, not a crash.
             ranked = []
+            embedding_latency = retrieval_latency = 0.0
     except Exception as exc:
         logger.exception("RAG retrieval failed")
         raise RAGRetrievalError() from exc
@@ -256,8 +258,26 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None):
     if not response_chunks:
         warning = "No closely matching CozyDay guidance was found; this answer may be general."
 
+    min_relevance = _setting("AI_PLANNER_MIN_RELEVANCE", DEFAULT_MIN_RELEVANCE)
+    if response_chunks and max(c["score"] for c in response_chunks) < min_relevance:
+        # Retrieval found nothing relevant: do not let the model answer from
+        # general knowledge or from unrelated chunks. The chunks are still
+        # returned so the user and reviewers can see how weak the match was.
+        best = max(c["score"] for c in response_chunks)
+        return {
+            "answer": OUT_OF_SCOPE_ANSWER,
+            "retrieved_chunks": response_chunks,
+            "latency_seconds": time.perf_counter() - start_total,
+            "warning": f"No closely matching CozyDay guidance was found (best relevance {best:.2f}).",
+            "stage_latencies": {
+                "embedding": embedding_latency,
+                "retrieval": retrieval_latency,
+                "generation": 0.0,
+            },
+        }
+
     try:
-        answer, _generation_latency, timed_out = _generate_with_timeout(
+        answer, generation_latency, timed_out = _generate_with_timeout(
             engine["generation_info"], retrieval_chunks, query, max_time_seconds
         )
     except RAGPlannerError:
@@ -273,13 +293,63 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None):
     if not answer or not answer.strip():
         raise RAGOutputError()
 
+    answer = answer.strip()
+    if _setting("AI_PLANNER_OUTPUT_VALIDATION", True):
+        answer, answer_warning = finalize_answer(answer)
+        warning = warning or answer_warning
+
     total_latency = time.perf_counter() - start_total
     return {
-        "answer": answer.strip(),
+        "answer": answer,
         "retrieved_chunks": response_chunks,
         "latency_seconds": total_latency,
         "warning": warning,
+        "stage_latencies": {
+            "embedding": embedding_latency,
+            "retrieval": retrieval_latency,
+            "generation": generation_latency,
+        },
     }
+
+
+# Chosen from the Stage 3 evaluation: in-scope questions had a best-chunk
+# similarity of 0.527-0.762, the out-of-scope probe 0.040 and the vague
+# one-word probe 0.183. 0.35 sits in the gap; set the setting to 0 to disable.
+DEFAULT_MIN_RELEVANCE = 0.35
+OUT_OF_SCOPE_ANSWER = (
+    "CozyDay's planning guidance does not contain enough information to answer that. "
+    "Try asking about breaking a big task into steps, deciding what to do first, "
+    "building a weekly study plan, sharing a plan without private details, or "
+    "writing a progress report."
+)
+
+TRUNCATION_WARNING = (
+    "This answer reached the length limit, so the unfinished last part was removed. "
+    "Ask a narrower question to see the rest."
+)
+_SENTENCE_END_CHARS = ".!?)\"'\u201d"
+_MIN_KEPT_FRACTION = 0.25
+
+
+def finalize_answer(answer):
+    """Output validation: never show a sentence cut off by the token limit.
+
+    The locked generation step stops at ``max_new_tokens`` even mid-sentence.
+    If the text does not end on terminal punctuation, drop the unfinished
+    tail back to the last finished sentence or list item and return a
+    warning. If no usable finished part remains (nothing ends before 25% of
+    the text), keep the full text and still warn. Complete answers are
+    returned unchanged with no warning.
+    """
+    text = (answer or "").strip()
+    if not text or text[-1] in _SENTENCE_END_CHARS:
+        return text, None
+    sentence_ends = [text.rfind(mark) + 1 for mark in (". ", "! ", "? ")]
+    cut = max(sentence_ends + [text.rfind("\n")])
+    if cut < len(text) * _MIN_KEPT_FRACTION:
+        return text, TRUNCATION_WARNING
+    kept = re.sub(r"(?:^|\s)\d{1,2}\.$", "", text[:cut].rstrip()).rstrip()
+    return kept, TRUNCATION_WARNING
 
 
 def _generate_with_timeout(generation_info, chunks, query, max_time_seconds):
