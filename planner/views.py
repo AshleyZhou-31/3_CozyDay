@@ -758,9 +758,10 @@ def ai_rag_planner(request):
         request_started = time.perf_counter()
         form = AIRAGPlannerForm(request.POST)
         if form.is_valid():
-            validation_started = time.perf_counter()
+            validation_started = None
             try:
                 result = generate_rag_plan(form.cleaned_data["query"], user=request.user)
+                validation_started = time.perf_counter()
                 if (
                     not isinstance(result, dict)
                     or not isinstance(result.get("answer"), str)
@@ -823,7 +824,11 @@ def ai_rag_planner(request):
                 _record_ai_performance(
                     outcome=AIPerformanceEvent.Outcome.ERROR,
                     started_at=request_started,
-                    validation_ms=round((time.perf_counter() - validation_started) * 1000),
+                    validation_ms=(
+                        round((time.perf_counter() - validation_started) * 1000)
+                        if validation_started is not None
+                        else 0
+                    ),
                 )
                 result = None
                 error_message = getattr(

@@ -223,6 +223,14 @@ class AIPerformanceEvent(models.Model):
     validation_latency_ms = models.PositiveIntegerField(default=0)
     max_similarity_score = models.FloatField(null=True, blank=True)
     retrieved_count = models.PositiveSmallIntegerField(default=0)
+    query_length_chars = models.PositiveSmallIntegerField(null=True, blank=True)
+    query_category = models.CharField(max_length=50, null=True, blank=True)
+    input_tokens_estimate = models.PositiveIntegerField(null=True, blank=True)
+    output_tokens_estimate = models.PositiveIntegerField(null=True, blank=True)
+    estimated_cost_usd = models.DecimalField(
+        max_digits=12, decimal_places=8, null=True, blank=True
+    )
+    is_simulated = models.BooleanField(default=False, null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]

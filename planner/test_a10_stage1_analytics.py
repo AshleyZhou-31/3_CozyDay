@@ -37,10 +37,36 @@ class A10PerformanceLoggingTests(TestCase):
         self.assertEqual(event.generation_latency_ms, 70)
         self.assertEqual(event.max_similarity_score, .72)
         self.assertEqual(event.retrieved_count, 1)
+        self.assertIsNone(event.query_length_chars)
+        self.assertIsNone(event.query_category)
+        self.assertIsNone(event.input_tokens_estimate)
+        self.assertIsNone(event.output_tokens_estimate)
+        self.assertIsNone(event.estimated_cost_usd)
+        self.assertFalse(event.is_simulated)
         field_names = {field.name for field in AIPerformanceEvent._meta.fields}
         self.assertNotIn("query", field_names)
         self.assertNotIn("user", field_names)
         self.assertNotIn("answer", field_names)
+
+    @patch("planner.views.time.perf_counter", side_effect=[0.0, 10.0, 10.1, 10.2, 15.0])
+    @patch("planner.views.generate_rag_plan")
+    def test_validation_timer_starts_after_rag_generation(self, generate, _clock):
+        generate.side_effect = lambda *args, **kwargs: (
+            __import__("planner.views", fromlist=["time"]).time.perf_counter(),
+            {
+                "answer": "Break the task into steps.",
+                "retrieved_chunks": [],
+                "latency_seconds": .12,
+                "stage_latencies": {"embedding": .02, "retrieval": .01, "generation": .07},
+                "warning": None,
+            },
+        )[1]
+
+        self.client.post(reverse("planner:ai-rag-planner"), {"query": "A valid question"})
+
+        event = AIPerformanceEvent.objects.get()
+        self.assertEqual(event.validation_latency_ms, 100)
+        self.assertEqual(event.total_latency_ms, 15000)
 
     @patch("planner.views.generate_rag_plan")
     def test_relevance_abstention_is_logged_separately(self, generate):
@@ -107,6 +133,8 @@ class A10SystemDashboardAccessTests(TestCase):
         self.assertEqual(response.context["error_rate"], 33.3)
         self.assertContains(response, "Average stage time")
         self.assertContains(response, "Request outcomes")
+        self.assertContains(response, "Success rate")
+        self.assertContains(response, "33.3%")
 
     def test_empty_dashboard_has_a_clear_state(self):
         staff = get_user_model().objects.create_user(

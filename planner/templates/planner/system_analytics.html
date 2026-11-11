@@ -17,6 +17,7 @@
 
   <section class="metrics-kpis" aria-label="Performance summary">
     <article class="metric-card"><span>Requests</span><strong>{{ event_count }}</strong><small>Recorded in the last 30 days</small></article>
+    <article class="metric-card"><span>Success rate</span><strong>{% if has_events %}{{ success_rate|floatformat:1 }}%{% else %}—{% endif %}</strong><small>Successful responses</small></article>
     <article class="metric-card"><span>Mean latency</span><strong>{% if mean_latency != None %}{{ mean_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>End-to-end server pipeline</small></article>
     <article class="metric-card"><span>Median latency</span><strong>{% if median_latency != None %}{{ median_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>50th percentile</small></article>
     <article class="metric-card"><span>P95 latency</span><strong>{% if p95_latency != None %}{{ p95_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>95th percentile</small></article>
