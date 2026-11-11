@@ -36,6 +36,11 @@
                     <a href="{% url 'planner:analytics' %}" {% if request.resolver_match.url_name == 'analytics' %}aria-current="page"{% endif %}>
                         <span aria-hidden="true">◫</span> Analytics
                     </a>
+                    {% if user.is_staff %}
+                        <a href="{% url 'planner:system-analytics' %}" {% if request.resolver_match.url_name == 'system-analytics' %}aria-current="page"{% endif %}>
+                            <span aria-hidden="true">◴</span> System metrics
+                        </a>
+                    {% endif %}
                     <a href="{% url 'planner:planitem-reports' %}" {% if request.resolver_match.url_name == 'planitem-reports' %}aria-current="page"{% endif %}>
                         <span aria-hidden="true">≡</span> Reports
                     </a>

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}System Performance - CozyDay{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{% static 'planner/system_analytics.css' %}">{% endblock %}
+
+{% block content %}
+<div class="system-metrics">
+  <header class="metrics-header">
+    <div>
+      <p class="metrics-eyebrow">STAFF DASHBOARD · LAST 30 DAYS</p>
+      <h1>AI system performance</h1>
+      <p>Aggregate RAG Planner request timings and outcomes. This page refreshes from recorded requests when opened.</p>
+    </div>
+    <a class="metrics-back" href="{% url 'planner:ai-rag-planner' %}">Open RAG Planner</a>
+  </header>
+
+  <section class="metrics-kpis" aria-label="Performance summary">
+    <article class="metric-card"><span>Requests</span><strong>{{ event_count }}</strong><small>Recorded in the last 30 days</small></article>
+    <article class="metric-card"><span>Success rate</span><strong>{% if has_events %}{{ success_rate|floatformat:1 }}%{% else %}—{% endif %}</strong><small>Successful responses</small></article>
+    <article class="metric-card"><span>Mean latency</span><strong>{% if mean_latency != None %}{{ mean_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>End-to-end server pipeline</small></article>
+    <article class="metric-card"><span>Median latency</span><strong>{% if median_latency != None %}{{ median_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>50th percentile</small></article>
+    <article class="metric-card"><span>P95 latency</span><strong>{% if p95_latency != None %}{{ p95_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>95th percentile</small></article>
+  </section>
+
+  {% if not has_events %}<p class="metrics-empty" role="status">No RAG Planner requests have been recorded yet. Metrics will appear here after the first request.</p>{% endif %}
+
+  <div class="metrics-grid">
+    <section class="metric-panel" aria-labelledby="latency-trend-title">
+      <div class="panel-heading"><div><h2 id="latency-trend-title">Daily mean latency</h2><p>Last 14 days · milliseconds</p></div></div>
+      <div class="latency-chart" role="group" aria-label="Daily mean RAG pipeline latency for the last 14 days; each day's value appears above its bar">
+        {% for day in daily %}<div class="latency-column"><span class="latency-value">{% if day.mean != None %}{{ day.mean|floatformat:0 }}{% else %}–{% endif %}</span><span class="latency-bar {% if day.mean == None %}latency-bar--empty{% endif %}" style="height: {{ day.height }}%"></span><span class="latency-date">{{ day.label }}</span></div>{% endfor %}
+      </div>
+      <p class="chart-caption">Each bar summarizes that day's recorded requests; blank days are shown with a dash.</p>
+    </section>
+
+    <section class="metric-panel" aria-labelledby="stage-latency-title">
+      <div class="panel-heading"><div><h2 id="stage-latency-title">Average stage time</h2><p>Milliseconds per recorded request</p></div></div>
+      <div class="stage-chart">
+        {% for stage in stages %}<div class="stage-row"><div class="stage-label"><span>{{ stage.label }}</span><strong>{% if stage.mean != None %}{{ stage.mean|floatformat:1 }} ms{% else %}—{% endif %}</strong></div><div class="stage-track"><span style="width: {{ stage.width }}%"></span></div></div>{% endfor %}
+      </div>
+      <p class="chart-caption">Abstentions skip generation. Validation covers response-schema checks in Django.</p>
+    </section>
+
+    <section class="metric-panel metric-panel--wide" aria-labelledby="outcomes-title">
+      <div class="panel-heading"><div><h2 id="outcomes-title">Request outcomes</h2><p>Share of recorded submissions</p></div></div>
+      <div class="outcome-list">
+        {% for outcome in outcomes %}<div class="outcome-row"><div class="outcome-label"><span class="outcome-dot outcome-dot--{{ outcome.key }}"></span><span>{{ outcome.label }}</span><strong>{{ outcome.count }} <small>({{ outcome.percent|floatformat:1 }}%)</small></strong></div><div class="outcome-track"><span class="outcome-fill outcome-fill--{{ outcome.key }}" style="width: {{ outcome.percent }}%"></span></div></div>{% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <p class="metrics-privacy">Privacy: analytics records contain timing, outcome, relevance score, and retrieved count only. They do not store prompts, answers, retrieved text, or user IDs. Dashboard access is limited to staff accounts.</p>
+</div>
+{% endblock %}

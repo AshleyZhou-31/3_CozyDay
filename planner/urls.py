@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/plan-items/', views.plan_items_api, name='plan-items-api'),
     path("search/", views.planitem_search, name="planitem-search"),
     path("analytics/", views.analytics, name="analytics"),
+    path("system-analytics/", views.system_analytics, name="system-analytics"),
     path("ai-planner/", views.ai_planner, name="ai-planner"),
     path("ai-rag-planner/", views.ai_rag_planner, name="ai-rag-planner"),
     path("api-ai-planner/", views.api_ai_planner, name="api-ai-planner"),
