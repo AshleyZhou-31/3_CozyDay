@@ -4,10 +4,10 @@ from django.shortcuts import redirect, render
 from django.template import loader
 from django.views import View
 from django.views.generic import DetailView, ListView
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 
 from django.db.models import Count, Q
-from .models import Category, PlanItem
+from .models import AIPerformanceEvent, Category, PlanItem
 from .forms import AIPlannerForm, AIRAGPlannerForm, PlanItemForm
 from .ai_planner import AIPlannerError, generate_plan
 from .external_ai import ExternalAIError, generate_external_plan
@@ -31,6 +31,8 @@ import csv
 import requests
 import logging
 import math
+import statistics
+import time
 
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_GET
@@ -241,6 +243,121 @@ def category_chart_png(request):
 def analytics(request):
     """Page that embeds the category chart."""
     return render(request, "planner/analytics.html")
+
+
+def _percentile(values, percentile):
+    """Return an interpolated percentile for a non-empty sequence."""
+    values = sorted(values)
+    if not values:
+        return None
+    position = (len(values) - 1) * percentile
+    lower = math.floor(position)
+    upper = math.ceil(position)
+    if lower == upper:
+        return values[lower]
+    return values[lower] * (upper - position) + values[upper] * (position - lower)
+
+
+def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0):
+    """Persist aggregate timings only; logging failures must not break answers."""
+    result = result if isinstance(result, dict) else {}
+    stage_latencies = result.get("stage_latencies") or {}
+    chunks = result.get("retrieved_chunks") or []
+    scores = [
+        float(chunk["score"])
+        for chunk in chunks
+        if isinstance(chunk, dict)
+        and isinstance(chunk.get("score"), (int, float))
+        and math.isfinite(chunk["score"])
+    ]
+
+    def milliseconds(seconds):
+        if not isinstance(seconds, (int, float)) or not math.isfinite(seconds):
+            return None
+        return max(0, round(seconds * 1000))
+
+    try:
+        AIPerformanceEvent.objects.create(
+            outcome=outcome,
+            total_latency_ms=max(0, round((time.perf_counter() - started_at) * 1000)),
+            embedding_latency_ms=milliseconds(stage_latencies.get("embedding")),
+            retrieval_latency_ms=milliseconds(stage_latencies.get("retrieval")),
+            generation_latency_ms=milliseconds(stage_latencies.get("generation")),
+            validation_latency_ms=max(0, int(validation_ms)),
+            max_similarity_score=max(scores) if scores else None,
+            retrieved_count=min(len(chunks), 65535),
+        )
+    except Exception as exc:
+        # Analytics persistence is best-effort and must not expose a user's prompt.
+        logger.warning("Could not persist AI performance event (%s)", type(exc).__name__)
+
+
+@login_required
+def system_analytics(request):
+    """Staff-only aggregate dashboard for privacy-minimal RAG performance data."""
+    if not request.user.is_staff:
+        return HttpResponseForbidden("Staff access is required to view system analytics.")
+
+    from datetime import timedelta
+
+    now = timezone.now()
+    events = list(
+        AIPerformanceEvent.objects.filter(created_at__gte=now - timedelta(days=30))
+    )
+    latencies = [event.total_latency_ms for event in events]
+    mean_latency = statistics.fmean(latencies) if latencies else None
+    median_latency = statistics.median(latencies) if latencies else None
+    p95_latency = _percentile(latencies, .95)
+
+    outcomes = [
+        {"key": key, "label": label, "count": sum(e.outcome == key for e in events)}
+        for key, label in AIPerformanceEvent.Outcome.choices
+    ]
+    outcome_total = len(events)
+    for outcome in outcomes:
+        outcome["percent"] = (outcome["count"] / outcome_total * 100) if outcome_total else 0
+
+    stage_specs = [
+        ("Embedding", "embedding_latency_ms"),
+        ("Retrieval", "retrieval_latency_ms"),
+        ("Generation", "generation_latency_ms"),
+        ("Validation", "validation_latency_ms"),
+    ]
+    stages = []
+    for label, field in stage_specs:
+        values = [getattr(event, field) for event in events if getattr(event, field) is not None]
+        stages.append({"label": label, "mean": statistics.fmean(values) if values else None})
+    stage_max = max((stage["mean"] or 0 for stage in stages), default=0)
+    for stage in stages:
+        stage["width"] = (stage["mean"] / stage_max * 100) if stage_max and stage["mean"] is not None else 0
+
+    daily = []
+    for offset in range(13, -1, -1):
+        day = (now - timedelta(days=offset)).date()
+        day_events = [event for event in events if timezone.localtime(event.created_at).date() == day]
+        daily.append({
+            "label": f"{day.strftime('%b')} {day.day}",
+            "mean": statistics.fmean(e.total_latency_ms for e in day_events) if day_events else None,
+            "count": len(day_events),
+        })
+    trend_max = max((row["mean"] or 0 for row in daily), default=0)
+    for row in daily:
+        row["height"] = max(2, row["mean"] / trend_max * 100) if trend_max and row["mean"] is not None else 2
+
+    context = {
+        "event_count": outcome_total,
+        "mean_latency": round(mean_latency) if mean_latency is not None else None,
+        "median_latency": round(median_latency) if median_latency is not None else None,
+        "p95_latency": round(p95_latency) if p95_latency is not None else None,
+        "outcomes": outcomes,
+        "stages": stages,
+        "daily": daily,
+        "success_rate": round(next((x["percent"] for x in outcomes if x["key"] == "success"), 0), 1),
+        "abstention_rate": round(next((x["percent"] for x in outcomes if x["key"] == "abstention"), 0), 1),
+        "error_rate": round(next((x["percent"] for x in outcomes if x["key"] == "error"), 0), 1),
+        "has_events": bool(events),
+    }
+    return render(request, "planner/system_analytics.html", context)
 
 
 PUBLIC_API_DEMO_USERNAME = "rishabh_demo"
@@ -638,8 +755,10 @@ def ai_rag_planner(request):
     error_message = ""
 
     if request.method == "POST":
+        request_started = time.perf_counter()
         form = AIRAGPlannerForm(request.POST)
         if form.is_valid():
+            validation_started = time.perf_counter()
             try:
                 result = generate_rag_plan(form.cleaned_data["query"], user=request.user)
                 if (
@@ -673,17 +792,50 @@ def ai_rag_planner(request):
                     and not isinstance(result["warning"], str)
                 ):
                     raise ValueError("Invalid RAG response schema")
+                validation_ms = round((time.perf_counter() - validation_started) * 1000)
+                outcome = result.get("outcome")
+                if outcome not in (
+                    AIPerformanceEvent.Outcome.SUCCESS,
+                    AIPerformanceEvent.Outcome.ABSTENTION,
+                ):
+                    scores = [
+                        chunk["score"]
+                        for chunk in result["retrieved_chunks"]
+                        if chunk.get("score") is not None
+                    ]
+                    threshold = getattr(settings, "AI_PLANNER_MIN_RELEVANCE", 0.35)
+                    outcome = (
+                        AIPerformanceEvent.Outcome.ABSTENTION
+                        if scores and max(scores) < threshold
+                        else AIPerformanceEvent.Outcome.SUCCESS
+                    )
+                _record_ai_performance(
+                    outcome=outcome,
+                    started_at=request_started,
+                    result=result,
+                    validation_ms=validation_ms,
+                )
                 result.setdefault("warning", None)
                 result["query"] = form.cleaned_data["query"]
             except Exception as exc:
                 # Do not log the exception text: it may contain the user's query.
                 logger.error("RAG Planner service failed (%s)", type(exc).__name__)
+                _record_ai_performance(
+                    outcome=AIPerformanceEvent.Outcome.ERROR,
+                    started_at=request_started,
+                    validation_ms=round((time.perf_counter() - validation_started) * 1000),
+                )
                 result = None
                 error_message = getattr(
                     exc,
                     "user_message",
                     "The planning assistant is temporarily unavailable. Please try again later.",
                 )
+        else:
+            _record_ai_performance(
+                outcome=AIPerformanceEvent.Outcome.ERROR,
+                started_at=request_started,
+            )
     else:
         form = AIRAGPlannerForm()
 

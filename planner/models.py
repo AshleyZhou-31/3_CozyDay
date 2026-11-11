@@ -199,3 +199,35 @@ class WeeklyReflection(models.Model):
     def __str__(self):
         return f"{self.user} - week of {self.week_start}"
 
+
+class AIPerformanceEvent(models.Model):
+    """Privacy-minimal performance record for one RAG planner submission.
+
+    Deliberately excludes prompt text, response text, user IDs, and retrieved
+    content. This lets staff review aggregate reliability without retaining
+    personal planning details.
+    """
+
+    class Outcome(models.TextChoices):
+        SUCCESS = "success", "Successful answer"
+        ABSTENTION = "abstention", "Relevance abstention"
+        ERROR = "error", "Error or invalid submission"
+
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    endpoint = models.CharField(max_length=40, default="rag_planner")
+    outcome = models.CharField(max_length=12, choices=Outcome.choices, db_index=True)
+    total_latency_ms = models.PositiveIntegerField()
+    embedding_latency_ms = models.PositiveIntegerField(null=True, blank=True)
+    retrieval_latency_ms = models.PositiveIntegerField(null=True, blank=True)
+    generation_latency_ms = models.PositiveIntegerField(null=True, blank=True)
+    validation_latency_ms = models.PositiveIntegerField(default=0)
+    max_similarity_score = models.FloatField(null=True, blank=True)
+    retrieved_count = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [models.Index(fields=["created_at", "outcome"], name="aiperf_created_outcome_idx")]
+
+    def __str__(self):
+        return f"{self.get_outcome_display()} at {self.created_at:%Y-%m-%d %H:%M}"
+

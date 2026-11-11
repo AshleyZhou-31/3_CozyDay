@@ -24,3 +24,5 @@ staticfiles/
 *.gguf
 *.ggml
 /llm-test/.cache/
+
+db.sqlite3
