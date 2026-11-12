@@ -258,7 +258,51 @@ def _percentile(values, percentile):
     return values[lower] * (upper - position) + values[upper] * (position - lower)
 
 
-def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0):
+# Checked in this fixed order; first match wins. Order matches Ashley's
+# specified category list exactly, so precedence is unambiguous and
+# documented. Case-insensitive. Only ever called on cleaned, validated
+# input; the raw query itself is never stored, only the returned label.
+_QUERY_CATEGORY_KEYWORDS = [
+    (AIPerformanceEvent.QueryCategory.TASK_BREAKDOWN, (
+        "break down", "breakdown", "break it down", "steps", "subtask",
+        "sub-task", "smaller tasks", "milestone",
+    )),
+    (AIPerformanceEvent.QueryCategory.PRIORITIZATION, (
+        "priorit", "urgent", "most important", "what to work on first",
+        "what should i work on", "which should i do first", "deadline",
+    )),
+    (AIPerformanceEvent.QueryCategory.STUDY_PLANNING, (
+        "study", "exam", "spaced review", "spaced repetition", "revise",
+        "revision",
+    )),
+    (AIPerformanceEvent.QueryCategory.PRIVACY_SHARING, (
+        "share", "sharing", "private", "privacy", "teammate",
+        "group project", "expose",
+    )),
+    (AIPerformanceEvent.QueryCategory.PROGRESS_REPORTING, (
+        "progress", "report", "analytics", "completion", "completed",
+        "weekly report",
+    )),
+]
+
+
+def categorize_query(query):
+    """Deterministically bucket a validated query into a fixed category.
+
+    Case-insensitive keyword match against a documented precedence order;
+    returns QueryCategory.OTHER when nothing matches, or None for empty
+    input. The raw query text is never persisted -- only this label is.
+    """
+    if not isinstance(query, str) or not query.strip():
+        return None
+    lowered = query.lower()
+    for category, keywords in _QUERY_CATEGORY_KEYWORDS:
+        if any(keyword in lowered for keyword in keywords):
+            return category
+    return AIPerformanceEvent.QueryCategory.OTHER
+
+
+def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0, query=None):
     """Persist aggregate timings only; logging failures must not break answers."""
     result = result if isinstance(result, dict) else {}
     stage_latencies = result.get("stage_latencies") or {}
@@ -276,6 +320,9 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0)
             return None
         return max(0, round(seconds * 1000))
 
+    query_length_chars = min(len(query), 32767) if isinstance(query, str) else None
+    query_category = categorize_query(query)
+
     try:
         AIPerformanceEvent.objects.create(
             outcome=outcome,
@@ -286,6 +333,8 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0)
             validation_latency_ms=max(0, int(validation_ms)),
             max_similarity_score=max(scores) if scores else None,
             retrieved_count=min(len(chunks), 65535),
+            query_length_chars=query_length_chars,
+            query_category=query_category,
         )
     except Exception as exc:
         # Analytics persistence is best-effort and must not expose a user's prompt.
@@ -344,6 +393,35 @@ def system_analytics(request):
     for row in daily:
         row["height"] = max(2, row["mean"] / trend_max * 100) if trend_max and row["mean"] is not None else 2
 
+    usage_max = max((row["count"] for row in daily), default=0)
+    for row in daily:
+        row["usage_height"] = max(2, row["count"] / usage_max * 100) if usage_max else 2
+
+    category_rows = [
+        {"key": key, "label": label, "count": sum(e.query_category == key for e in events)}
+        for key, label in AIPerformanceEvent.QueryCategory.choices
+    ]
+    uncategorized_count = sum(e.query_category is None for e in events)
+    category_rows.append({"key": "uncategorized", "label": "Uncategorized", "count": uncategorized_count})
+    for row in category_rows:
+        row["percent"] = (row["count"] / outcome_total * 100) if outcome_total else 0
+
+    comparison_rows = []
+    for row in category_rows:
+        if row["key"] == "uncategorized":
+            cat_events = [e for e in events if e.query_category is None]
+        else:
+            cat_events = [e for e in events if e.query_category == row["key"]]
+        lengths = [e.query_length_chars for e in cat_events if e.query_length_chars is not None]
+        comparison_rows.append({
+            "label": row["label"],
+            "count": len(cat_events),
+            "avg_length": round(sum(lengths) / len(lengths)) if lengths else None,
+            "success": sum(e.outcome == AIPerformanceEvent.Outcome.SUCCESS for e in cat_events),
+            "abstention": sum(e.outcome == AIPerformanceEvent.Outcome.ABSTENTION for e in cat_events),
+            "error": sum(e.outcome == AIPerformanceEvent.Outcome.ERROR for e in cat_events),
+        })
+
     context = {
         "event_count": outcome_total,
         "mean_latency": round(mean_latency) if mean_latency is not None else None,
@@ -352,6 +430,8 @@ def system_analytics(request):
         "outcomes": outcomes,
         "stages": stages,
         "daily": daily,
+        "category_rows": category_rows,
+        "comparison_rows": comparison_rows,
         "success_rate": round(next((x["percent"] for x in outcomes if x["key"] == "success"), 0), 1),
         "abstention_rate": round(next((x["percent"] for x in outcomes if x["key"] == "abstention"), 0), 1),
         "error_rate": round(next((x["percent"] for x in outcomes if x["key"] == "error"), 0), 1),
@@ -815,6 +895,7 @@ def ai_rag_planner(request):
                     started_at=request_started,
                     result=result,
                     validation_ms=validation_ms,
+                    query=form.cleaned_data["query"],
                 )
                 result.setdefault("warning", None)
                 result["query"] = form.cleaned_data["query"]
@@ -824,6 +905,7 @@ def ai_rag_planner(request):
                 _record_ai_performance(
                     outcome=AIPerformanceEvent.Outcome.ERROR,
                     started_at=request_started,
+                    query=form.cleaned_data.get("query"),
                     validation_ms=(
                         round((time.perf_counter() - validation_started) * 1000)
                         if validation_started is not None

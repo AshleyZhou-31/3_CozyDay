@@ -48,6 +48,33 @@
         {% for outcome in outcomes %}<div class="outcome-row"><div class="outcome-label"><span class="outcome-dot outcome-dot--{{ outcome.key }}"></span><span>{{ outcome.label }}</span><strong>{{ outcome.count }} <small>({{ outcome.percent|floatformat:1 }}%)</small></strong></div><div class="outcome-track"><span class="outcome-fill outcome-fill--{{ outcome.key }}" style="width: {{ outcome.percent }}%"></span></div></div>{% endfor %}
       </div>
     </section>
+
+    <section class="metric-panel" aria-labelledby="usage-trend-title">
+      <div class="panel-heading"><div><h2 id="usage-trend-title">Daily request volume</h2><p>Last 14 days · requests per day</p></div></div>
+      <div class="latency-chart" role="group" aria-label="Daily request count for the last 14 days; each day's value appears above its bar">
+        {% for day in daily %}<div class="latency-column"><span class="latency-value">{{ day.count }}</span><span class="latency-bar" style="height: {{ day.usage_height }}%"></span><span class="latency-date">{{ day.label }}</span></div>{% endfor %}
+      </div>
+      <p class="chart-caption">Count of recorded submissions per day, including abstentions and errors.</p>
+    </section>
+
+    <section class="metric-panel" aria-labelledby="category-title">
+      <div class="panel-heading"><div><h2 id="category-title">Common topics</h2><p>Share of requests in the last 30 days</p></div></div>
+      <div class="outcome-list">
+        {% for category in category_rows %}<div class="outcome-row"><div class="outcome-label"><span class="outcome-dot outcome-dot--{{ category.key }}"></span><span>{{ category.label }}</span><strong>{{ category.count }} <small>({{ category.percent|floatformat:1 }}%)</small></strong></div><div class="outcome-track"><span class="outcome-fill outcome-fill--{{ category.key }}" style="width: {{ category.percent }}%"></span></div></div>{% endfor %}
+      </div>
+      <p class="chart-caption">Category is derived from cleaned query text using a fixed keyword list. It is never the raw query itself.</p>
+    </section>
+
+    <section class="metric-panel metric-panel--wide" aria-labelledby="comparison-title">
+      <div class="panel-heading"><div><h2 id="comparison-title">Topic vs. outcome</h2><p>Last 30 days · requests, average query length, and outcome split by topic</p></div></div>
+      <table class="comparison-table">
+        <thead><tr><th scope="col">Topic</th><th scope="col">Requests</th><th scope="col">Avg. length</th><th scope="col">Success</th><th scope="col">Abstention</th><th scope="col">Error</th></tr></thead>
+        <tbody>
+          {% for row in comparison_rows %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.count }}</td><td>{% if row.avg_length != None %}{{ row.avg_length }} chars{% else %}—{% endif %}</td><td>{{ row.success }}</td><td>{{ row.abstention }}</td><td>{{ row.error }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+      <p class="chart-caption">Query length is character count only; no query text is stored or displayed.</p>
+    </section>
   </div>
 
   <p class="metrics-privacy">Privacy: analytics records contain timing, outcome, relevance score, and retrieved count only. They do not store prompts, answers, retrieved text, or user IDs. Dashboard access is limited to staff accounts.</p>

@@ -213,6 +213,14 @@ class AIPerformanceEvent(models.Model):
         ABSTENTION = "abstention", "Relevance abstention"
         ERROR = "error", "Error or invalid submission"
 
+    class QueryCategory(models.TextChoices):
+        TASK_BREAKDOWN = "task_breakdown", "Task breakdown"
+        PRIORITIZATION = "prioritization", "Prioritization"
+        STUDY_PLANNING = "study_planning", "Study planning"
+        PRIVACY_SHARING = "privacy_sharing", "Privacy & sharing"
+        PROGRESS_REPORTING = "progress_reporting", "Progress reporting"
+        OTHER = "other", "Other"
+
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     endpoint = models.CharField(max_length=40, default="rag_planner")
     outcome = models.CharField(max_length=12, choices=Outcome.choices, db_index=True)
