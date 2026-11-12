@@ -36,6 +36,13 @@ from pathlib import Path
 from django.conf import settings
 
 from .rag_planner import RAGPlannerError
+from .plan_templates import (
+    TEMPLATE_TYPES,
+    detect_plan_type,
+    format_structured_plan,
+    get_template,
+    parse_structured_plan,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -212,7 +219,7 @@ def get_engine():
 # --------------------------------------------------------------------------
 # Request pipeline
 # --------------------------------------------------------------------------
-def answer_query(query, user=None, top_k=None, max_time_seconds=None):
+def answer_query(query, user=None, top_k=None, max_time_seconds=None, template_type=None):
     """Run the full retrieve-then-generate pipeline for one validated query.
 
     Returns ``{"answer", "retrieved_chunks", "latency_seconds", "warning"}``
@@ -221,6 +228,7 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None):
     or return any user-specific data.
     """
     del user
+    template_type = template_type if template_type in TEMPLATE_TYPES else detect_plan_type(query)
     top_k = top_k or TOP_K
     max_time_seconds = max_time_seconds or _setting("AI_PLANNER_MAX_TIME_SECONDS", 120)
     engine = get_engine()
@@ -269,6 +277,9 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None):
             "retrieved_chunks": response_chunks,
             "latency_seconds": time.perf_counter() - start_total,
             "warning": f"No closely matching CozyDay guidance was found (best relevance {best:.2f}).",
+            "template_type": template_type,
+            "structured_plan": None,
+            "outcome": "abstention",
             "stage_latencies": {
                 "embedding": embedding_latency,
                 "retrieval": retrieval_latency,
@@ -278,7 +289,8 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None):
 
     try:
         answer, generation_latency, timed_out = _generate_with_timeout(
-            engine["generation_info"], retrieval_chunks, query, max_time_seconds
+            engine["generation_info"], retrieval_chunks, query, max_time_seconds,
+            system_instruction=get_template(template_type),
         )
     except RAGPlannerError:
         raise
@@ -294,13 +306,24 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None):
         raise RAGOutputError()
 
     answer = answer.strip()
+    structured_plan = None
     if _setting("AI_PLANNER_OUTPUT_VALIDATION", True):
-        answer, answer_warning = finalize_answer(answer)
-        warning = warning or answer_warning
+        try:
+            structured_plan = parse_structured_plan(answer)
+        except ValueError as exc:
+            logger.warning("RAG generated an invalid structured plan (%s)", type(exc).__name__)
+            raise RAGOutputError(
+                "The planning assistant could not format the plan correctly. Please try again."
+            ) from exc
+        answer = format_structured_plan(structured_plan)
+    # The Stage 3 evaluation command can disable output checks for its
+    # free-form baseline comparison. Production defaults to True.
 
     total_latency = time.perf_counter() - start_total
     return {
         "answer": answer,
+        "structured_plan": structured_plan,
+        "template_type": template_type,
         "retrieved_chunks": response_chunks,
         "latency_seconds": total_latency,
         "warning": warning,
@@ -352,7 +375,7 @@ def finalize_answer(answer):
     return kept, TRUNCATION_WARNING
 
 
-def _generate_with_timeout(generation_info, chunks, query, max_time_seconds):
+def _generate_with_timeout(generation_info, chunks, query, max_time_seconds, system_instruction=None):
     """Run ``generation.generate_answer`` on a worker thread with a soft timeout.
 
     a8_rag.generation's decoding settings stay locked and unmodified; this
@@ -378,7 +401,9 @@ def _generate_with_timeout(generation_info, chunks, query, max_time_seconds):
 
     def _run():
         with _generate_lock:
-            return generate_answer(generation_info, chunks, query)
+            return generate_answer(
+                generation_info, chunks, query, system_instruction=system_instruction
+            )
 
     pool = ThreadPoolExecutor(max_workers=1)
     future = pool.submit(_run)

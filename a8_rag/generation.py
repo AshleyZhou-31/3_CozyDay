@@ -51,7 +51,7 @@ def describe_generation_model(generation_info):
             'decoding_settings': dict(DECODING_SETTINGS)}
 
 
-def build_prompt(context_chunks, query):
+def build_prompt(context_chunks, query, system_instruction=None):
     """System instruction + retrieved context + user query, as chat messages.
 
     The system instruction explicitly tells the model to rely on context and
@@ -64,12 +64,12 @@ def build_prompt(context_chunks, query):
     ) if context_chunks else '(no context retrieved)'
     user_content = f"Context:\n{context_text}\n\nQuestion: {query}"
     return [
-        {'role': 'system', 'content': SYSTEM_INSTRUCTION},
+        {'role': 'system', 'content': system_instruction or SYSTEM_INSTRUCTION},
         {'role': 'user', 'content': user_content},
     ]
 
 
-def generate_answer(generation_info, context_chunks, query):
+def generate_answer(generation_info, context_chunks, query, system_instruction=None):
     """Run the locked generation model on one (context, query) pair.
 
     Returns (answer_text, latency_seconds). Decoding settings never change
@@ -77,7 +77,7 @@ def generate_answer(generation_info, context_chunks, query):
     """
     model = generation_info['model']
     tokenizer = generation_info['tokenizer']
-    messages = build_prompt(context_chunks, query)
+    messages = build_prompt(context_chunks, query, system_instruction=system_instruction)
     prompt_text = tokenizer.apply_chat_template(messages, tokenize=False,
                                                  add_generation_prompt=True)
     inputs = tokenizer(prompt_text, return_tensors='pt').to(generation_info['device'])

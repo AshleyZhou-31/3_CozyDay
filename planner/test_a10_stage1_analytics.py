@@ -17,6 +17,12 @@ class A10PerformanceLoggingTests(TestCase):
     def test_successful_request_records_stage_timings_without_prompt(self, generate):
         generate.return_value = {
             "answer": "Break the task into steps.",
+            "structured_plan": {
+                "goal": "Break the task into steps.", "time_period": "Not specified",
+                "priorities": [], "tasks_or_phases": ["Break into steps"],
+                "deadlines": [], "recommended_next_steps": ["Choose a first step"],
+            },
+            "template_type": "general",
             "outcome": "success",
             "retrieved_chunks": [{"id": "CHUNK_1", "text": "guidance", "score": .72}],
             "latency_seconds": .12,
@@ -43,6 +49,8 @@ class A10PerformanceLoggingTests(TestCase):
         self.assertIsNone(event.output_tokens_estimate)
         self.assertIsNone(event.estimated_cost_usd)
         self.assertFalse(event.is_simulated)
+        self.assertEqual(event.template_type, "general")
+        self.assertNotIn("PRIVATE PROMPT CONTENT", repr(event.__dict__))
         field_names = {field.name for field in AIPerformanceEvent._meta.fields}
         self.assertNotIn("query", field_names)
         self.assertNotIn("user", field_names)
@@ -55,6 +63,12 @@ class A10PerformanceLoggingTests(TestCase):
             __import__("planner.views", fromlist=["time"]).time.perf_counter(),
             {
                 "answer": "Break the task into steps.",
+                "structured_plan": {
+                    "goal": "Break the task into steps.", "time_period": "Not specified",
+                    "priorities": [], "tasks_or_phases": ["Break into steps"],
+                    "deadlines": [], "recommended_next_steps": ["Choose a first step"],
+                },
+                "template_type": "general",
                 "retrieved_chunks": [],
                 "latency_seconds": .12,
                 "stage_latencies": {"embedding": .02, "retrieval": .01, "generation": .07},
@@ -72,6 +86,8 @@ class A10PerformanceLoggingTests(TestCase):
     def test_relevance_abstention_is_logged_separately(self, generate):
         generate.return_value = {
             "answer": "I cannot answer that from the guidance.",
+            "structured_plan": None,
+            "template_type": "general",
             "outcome": "abstention",
             "retrieved_chunks": [{"id": "CHUNK_2", "text": "guidance", "score": .2}],
             "latency_seconds": .03,

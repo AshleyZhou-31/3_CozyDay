@@ -63,7 +63,7 @@ class FakeGenTokenizer:
 class FakeGenModel:
     device = "cpu"
 
-    def __init__(self, text="Priority: test\nSchedule:\n1. Do it.\nReason: because.", new_tokens=20, error=None):
+    def __init__(self, text='{"goal":"test","time_period":"Not specified","priorities":[],"tasks_or_phases":["Do it."],"deadlines":[],"recommended_next_steps":[]}', new_tokens=20, error=None):
         self.text = text
         self.new_tokens = new_tokens
         self.error = error
@@ -85,7 +85,7 @@ def _fake_embedding_info(vectors_by_text):
     }
 
 
-def _fake_generation_info(answer_text="Priority: test\nSchedule:\n1. Do it.\nReason: because.", error=None):
+def _fake_generation_info(answer_text='{"goal":"test","time_period":"Not specified","priorities":[],"tasks_or_phases":["Do it."],"deadlines":[],"recommended_next_steps":[]}', error=None):
     tokenizer = FakeGenTokenizer()
     tokenizer.text = answer_text
     return {
@@ -113,7 +113,7 @@ def _fake_engine(chunk_text="Split a semester paper into milestones.", answer_te
         "chunk_lookup": chunk_lookup,
         "embedding_info": _fake_embedding_info({"a planning question": (1.0, 0.0, 0.0)}),
         "generation_info": _fake_generation_info(
-            answer_text if answer_text is not None else "Priority: test\nSchedule:\n1. Do it.\nReason: because."
+            answer_text if answer_text is not None else '{"goal":"test","time_period":"Not specified","priorities":[],"tasks_or_phases":["Do it."],"deadlines":[],"recommended_next_steps":[]}'
         ),
     }
 
@@ -127,7 +127,17 @@ class AnswerQueryTests(SimpleTestCase):
     def test_happy_path_returns_full_contract(self):
         with patch.object(rag_engine, "get_engine", return_value=_fake_engine()):
             result = rag_engine.answer_query("a planning question")
-        self.assertIn("Priority: test", result["answer"])
+        self.assertIn("Goal: test", result["answer"])
+        self.assertEqual(result["template_type"], "general")
+        self.assertEqual(result["structured_plan"]["tasks_or_phases"], ["Do it."])
+
+    def test_weekly_question_uses_specialized_prompt_before_generation(self):
+        engine = _fake_engine()
+        engine["embedding_info"]["model"].vectors_by_text["Help me plan this week"] = (1.0, 0.0, 0.0)
+        with patch.object(rag_engine, "get_engine", return_value=engine):
+            result = rag_engine.answer_query("Help me plan this week")
+        self.assertEqual(result["template_type"], "weekly")
+        self.assertIn("one-week plan", engine["generation_info"]["tokenizer"].messages[0]["content"])
         self.assertEqual(result["retrieved_chunks"][0]["id"], "HYBRID_001")
         self.assertIsInstance(result["latency_seconds"], float)
         self.assertIsNone(result["warning"])
@@ -176,7 +186,7 @@ class AnswerQueryTests(SimpleTestCase):
         near max_time_seconds, not after the full slow call."""
         import time as time_module
 
-        def _slow_generate_answer(generation_info, chunks, query):
+        def _slow_generate_answer(generation_info, chunks, query, system_instruction=None):
             time_module.sleep(0.6)
             return "late answer", 0.6
 
@@ -240,7 +250,10 @@ class GenerateRagPlanTests(SimpleTestCase):
         }
         with patch("planner.rag_engine.answer_query", return_value=fake_result):
             result = generate_rag_plan("How do I plan my paper?", user=None)
-        self.assertEqual(set(result.keys()), {"answer", "retrieved_chunks", "latency_seconds", "warning"})
+        self.assertEqual(
+            set(result.keys()),
+            {"answer", "retrieved_chunks", "latency_seconds", "warning", "template_type", "structured_plan", "outcome"},
+        )
         self.assertEqual(result["answer"], "Break it into steps.")
 
     def test_engine_error_propagates_as_ragplannererror(self):

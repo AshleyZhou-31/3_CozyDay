@@ -25,7 +25,7 @@ class RAGPlannerError(Exception):
         super().__init__(self.user_message)
 
 
-def generate_rag_plan(query, user=None):
+def generate_rag_plan(query, user=None, template_type=None):
     """Run the local RAG pipeline and return the Stage 1 page contract.
 
     All failures are normalised to ``RAGPlannerError`` subclasses carrying a
@@ -34,12 +34,15 @@ def generate_rag_plan(query, user=None):
     """
     from . import rag_engine
 
-    result = rag_engine.answer_query(query, user=user)
+    result = rag_engine.answer_query(query, user=user, template_type=template_type)
     response = {
         "answer": result["answer"],
         "retrieved_chunks": result["retrieved_chunks"],
         "latency_seconds": result["latency_seconds"],
         "warning": result["warning"],
+        "template_type": result.get("template_type", template_type),
+        "structured_plan": result.get("structured_plan"),
+        "outcome": result.get("outcome"),
     }
     if result.get("stage_latencies"):
         response["stage_latencies"] = result["stage_latencies"]
