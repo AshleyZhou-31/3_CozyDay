@@ -260,3 +260,29 @@ class AIPerformanceEvent(models.Model):
     def __str__(self):
         return f"{self.get_outcome_display()} at {self.created_at:%Y-%m-%d %H:%M}"
 
+
+class AIResponseFeedback(models.Model):
+    """User-submitted accuracy rating for one logged RAG planner response.
+
+    Linked to its AIPerformanceEvent so accuracy can be reported alongside
+    that event's existing privacy-minimal fields (query category, template
+    type, best similarity score, latency, outcome) without storing prompt
+    or answer text here. One rating per event: resubmitting updates it in
+    place rather than creating a second row, since there is no user ID on
+    the event to use for ownership checks or de-duplication.
+    """
+
+    class Rating(models.TextChoices):
+        ACCURATE = "accurate", "Accurate"
+        PARTIALLY_ACCURATE = "partially_accurate", "Partially accurate"
+        NOT_ACCURATE = "not_accurate", "Not accurate"
+
+    event = models.OneToOneField(
+        AIPerformanceEvent, on_delete=models.CASCADE, related_name="feedback"
+    )
+    rating = models.CharField(max_length=20, choices=Rating.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.get_rating_display()} for event #{self.event_id}"

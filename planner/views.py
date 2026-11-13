@@ -4,10 +4,10 @@ from django.shortcuts import redirect, render
 from django.template import loader
 from django.views import View
 from django.views.generic import DetailView, ListView
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotAllowed
 
 from django.db.models import Count, Q
-from .models import AIPerformanceEvent, Category, PlanItem
+from .models import AIPerformanceEvent, AIResponseFeedback, Category, PlanItem
 from .plan_templates import TEMPLATE_TYPES, detect_plan_type, parse_structured_plan
 from .forms import AIPlannerForm, AIRAGPlannerForm, PlanItemForm
 from .ai_planner import AIPlannerError, generate_plan
@@ -19,6 +19,8 @@ from django.contrib.auth import login
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
 
 from io import BytesIO
 
@@ -326,7 +328,7 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0,
     query_category = categorize_query(query)
 
     try:
-        AIPerformanceEvent.objects.create(
+        return AIPerformanceEvent.objects.create(
             outcome=outcome,
             total_latency_ms=max(0, round((time.perf_counter() - started_at) * 1000)),
             embedding_latency_ms=milliseconds(stage_latencies.get("embedding")),
@@ -342,6 +344,7 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0,
     except Exception as exc:
         # Analytics persistence is best-effort and must not expose a user's prompt.
         logger.warning("Could not persist AI performance event (%s)", type(exc).__name__)
+        return None
 
 
 @login_required
@@ -355,6 +358,7 @@ def system_analytics(request):
     now = timezone.now()
     events = list(
         AIPerformanceEvent.objects.filter(created_at__gte=now - timedelta(days=30))
+        .select_related("feedback")
     )
     latencies = [event.total_latency_ms for event in events]
     mean_latency = statistics.fmean(latencies) if latencies else None
@@ -425,6 +429,79 @@ def system_analytics(request):
             "error": sum(e.outcome == AIPerformanceEvent.Outcome.ERROR for e in cat_events),
         })
 
+    _LENGTH_BUCKETS = [
+        ("very_short", "Under 20 chars", 0, 20),
+        ("short", "20-50 chars", 20, 50),
+        ("medium", "50-100 chars", 50, 100),
+        ("long", "100-200 chars", 100, 200),
+        ("very_long", "200+ chars", 200, None),
+    ]
+
+    def _bucket_length(length):
+        if length is None:
+            return "unknown"
+        for key, _label, lo, hi in _LENGTH_BUCKETS:
+            if length >= lo and (hi is None or length < hi):
+                return key
+        return "unknown"
+
+    length_rows = [{"key": key, "label": label, "count": 0} for key, label, _, _ in _LENGTH_BUCKETS]
+    length_rows.append({"key": "unknown", "label": "Unknown", "count": 0})
+    _length_by_key = {row["key"]: row for row in length_rows}
+    for event in events:
+        _length_by_key[_bucket_length(event.query_length_chars)]["count"] += 1
+    for row in length_rows:
+        row["percent"] = (row["count"] / outcome_total * 100) if outcome_total else 0
+
+    rated_events = [event for event in events if getattr(event, "feedback", None) is not None]
+    feedback_rows = [
+        {
+            "key": key,
+            "label": label,
+            "count": sum(1 for event in rated_events if event.feedback.rating == key),
+        }
+        for key, label in AIResponseFeedback.Rating.choices
+    ]
+    total_feedback = len(rated_events)
+    for row in feedback_rows:
+        row["percent"] = (row["count"] / total_feedback * 100) if total_feedback else 0
+    accurate_count = next(
+        (row["count"] for row in feedback_rows if row["key"] == AIResponseFeedback.Rating.ACCURATE),
+        0,
+    )
+    accuracy_rate = round(accurate_count / total_feedback * 100, 1) if total_feedback else None
+
+    template_rows = []
+    for key, label in AIPerformanceEvent._meta.get_field("template_type").choices or []:
+        tpl_events = [event for event in events if event.template_type == key]
+        tpl_latencies = [event.total_latency_ms for event in tpl_events]
+        template_rows.append({
+            "label": label,
+            "count": len(tpl_events),
+            "mean_latency": round(statistics.fmean(tpl_latencies)) if tpl_latencies else None,
+            "success": sum(event.outcome == AIPerformanceEvent.Outcome.SUCCESS for event in tpl_events),
+            "abstention": sum(event.outcome == AIPerformanceEvent.Outcome.ABSTENTION for event in tpl_events),
+            "error": sum(event.outcome == AIPerformanceEvent.Outcome.ERROR for event in tpl_events),
+        })
+    untyped_count = sum(event.template_type is None for event in events)
+    template_rows.append({
+        "label": "Unknown",
+        "count": untyped_count,
+        "mean_latency": None,
+        "success": sum(
+            event.outcome == AIPerformanceEvent.Outcome.SUCCESS
+            for event in events if event.template_type is None
+        ),
+        "abstention": sum(
+            event.outcome == AIPerformanceEvent.Outcome.ABSTENTION
+            for event in events if event.template_type is None
+        ),
+        "error": sum(
+            event.outcome == AIPerformanceEvent.Outcome.ERROR
+            for event in events if event.template_type is None
+        ),
+    })
+
     context = {
         "event_count": outcome_total,
         "mean_latency": round(mean_latency) if mean_latency is not None else None,
@@ -435,6 +512,11 @@ def system_analytics(request):
         "daily": daily,
         "category_rows": category_rows,
         "comparison_rows": comparison_rows,
+        "length_rows": length_rows,
+        "feedback_rows": feedback_rows,
+        "total_feedback": total_feedback,
+        "accuracy_rate": accuracy_rate,
+        "template_rows": template_rows,
         "success_rate": round(next((x["percent"] for x in outcomes if x["key"] == "success"), 0), 1),
         "abstention_rate": round(next((x["percent"] for x in outcomes if x["key"] == "abstention"), 0), 1),
         "error_rate": round(next((x["percent"] for x in outcomes if x["key"] == "error"), 0), 1),
@@ -908,13 +990,24 @@ def ai_rag_planner(request):
                         if scores and max(scores) < threshold
                         else AIPerformanceEvent.Outcome.SUCCESS
                     )
-                _record_ai_performance(
+                event = _record_ai_performance(
                     outcome=outcome,
                     started_at=request_started,
                     result=result,
                     validation_ms=validation_ms,
                     query=form.cleaned_data["query"],
                     template_type=template_type,
+                )
+                result["event_id"] = event.pk if event is not None else None
+                relevance_scores = [
+                    chunk["score"]
+                    for chunk in result["retrieved_chunks"]
+                    if chunk.get("score") is not None
+                ]
+                best_relevance = max(relevance_scores) if relevance_scores else None
+                result["best_relevance_score"] = best_relevance
+                result["best_relevance_percent"] = (
+                    round(best_relevance * 100, 1) if best_relevance is not None else None
                 )
                 result.setdefault("warning", None)
                 result["query"] = form.cleaned_data["query"]
@@ -951,3 +1044,27 @@ def ai_rag_planner(request):
         "planner/ai_rag_planner.html",
         {"form": form, "result": result, "error_message": error_message},
     )
+
+
+@login_required
+def submit_ai_feedback(request, event_id):
+    """Record (or update) a user's accuracy rating for one logged response.
+
+    Deliberately performs no ownership check against the requesting user:
+    AIPerformanceEvent carries no user ID by design (see its docstring), so
+    there is nothing to check ownership against. Any authenticated user who
+    knows a valid event id can rate it. This is a documented trade-off, not
+    an oversight -- see docs/a10_refinement/README.md.
+    """
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    event = get_object_or_404(AIPerformanceEvent, pk=event_id)
+    rating = request.POST.get("rating")
+    if rating not in AIResponseFeedback.Rating.values:
+        messages.error(request, "That feedback option was not recognized.")
+        return redirect("planner:ai-rag-planner")
+
+    AIResponseFeedback.objects.update_or_create(event=event, defaults={"rating": rating})
+    messages.success(request, "Thanks for your feedback.")
+    return redirect("planner:ai-rag-planner")
