@@ -4,6 +4,7 @@ from django.urls import reverse
 from unittest.mock import patch
 
 from planner.models import AIPerformanceEvent, AIResponseFeedback
+from planner.views import _make_feedback_token
 
 
 SUCCESS_RESULT = {
@@ -45,15 +46,20 @@ class RelevanceScoreDisplayTests(TestCase):
         self.assertContains(response, "81.0%")
 
     @patch("planner.views.generate_rag_plan")
-    def test_event_id_is_included_for_the_feedback_form(self, generate):
+    def test_event_id_and_feedback_token_are_included_for_the_feedback_form(self, generate):
         generate.return_value = dict(SUCCESS_RESULT)
 
         self.client.post(reverse("planner:ai-rag-planner"), {"query": "A valid question"})
 
         response = self.client.post(reverse("planner:ai-rag-planner"), {"query": "Another one"})
+        # event_id in the rendered result should reference a real, just-created event
         new_event_id = response.context["result"]["event_id"]
         self.assertIsNotNone(new_event_id)
         self.assertTrue(AIPerformanceEvent.objects.filter(pk=new_event_id).exists())
+        # and the token it's rendered with must actually validate for that event
+        token = response.context["result"]["feedback_token"]
+        self.assertIsNotNone(token)
+        self.assertContains(response, token)
 
     @patch("planner.views.generate_rag_plan")
     def test_no_retrieved_chunks_leaves_relevance_score_none(self, generate):
@@ -71,9 +77,10 @@ class FeedbackSubmissionTests(TestCase):
     def setUp(self):
         self.event = AIPerformanceEvent.objects.create(outcome="success", total_latency_ms=100)
         self.url = reverse("planner:ai-rag-planner-feedback", args=[self.event.pk])
+        self.token = _make_feedback_token(self.event.pk)
 
     def test_anonymous_submission_redirects_to_login(self):
-        response = self.client.post(self.url, {"rating": "accurate"})
+        response = self.client.post(self.url, {"rating": "accurate", "token": self.token})
         self.assertRedirects(response, f"/login/?next={self.url}")
         self.assertFalse(AIResponseFeedback.objects.exists())
 
@@ -83,22 +90,24 @@ class FeedbackSubmissionTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 405)
 
-    def test_valid_rating_creates_feedback_record(self):
+    def test_valid_rating_with_correct_token_creates_feedback_record(self):
         user = get_user_model().objects.create_user(username="fb-valid", password="test-password-123")
         self.client.force_login(user)
 
-        response = self.client.post(self.url, {"rating": "accurate"}, follow=True)
+        response = self.client.post(
+            self.url, {"rating": "accurate", "token": self.token}, follow=True
+        )
 
         self.assertRedirects(response, reverse("planner:ai-rag-planner"))
         feedback = AIResponseFeedback.objects.get(event=self.event)
         self.assertEqual(feedback.rating, AIResponseFeedback.Rating.ACCURATE)
 
-    def test_resubmitting_feedback_updates_rather_than_duplicates(self):
+    def test_resubmitting_with_correct_token_updates_rather_than_duplicates(self):
         user = get_user_model().objects.create_user(username="fb-resubmit", password="test-password-123")
         self.client.force_login(user)
 
-        self.client.post(self.url, {"rating": "accurate"})
-        self.client.post(self.url, {"rating": "not_accurate"})
+        self.client.post(self.url, {"rating": "accurate", "token": self.token})
+        self.client.post(self.url, {"rating": "not_accurate", "token": self.token})
 
         self.assertEqual(AIResponseFeedback.objects.filter(event=self.event).count(), 1)
         feedback = AIResponseFeedback.objects.get(event=self.event)
@@ -108,7 +117,7 @@ class FeedbackSubmissionTests(TestCase):
         user = get_user_model().objects.create_user(username="fb-invalid", password="test-password-123")
         self.client.force_login(user)
 
-        self.client.post(self.url, {"rating": "definitely_maybe"})
+        self.client.post(self.url, {"rating": "definitely_maybe", "token": self.token})
 
         self.assertFalse(AIResponseFeedback.objects.filter(event=self.event).exists())
 
@@ -117,9 +126,42 @@ class FeedbackSubmissionTests(TestCase):
         self.client.force_login(user)
 
         bad_url = reverse("planner:ai-rag-planner-feedback", args=[999999])
-        response = self.client.post(bad_url, {"rating": "accurate"})
+        response = self.client.post(bad_url, {"rating": "accurate", "token": self.token})
 
         self.assertEqual(response.status_code, 404)
+
+    def test_missing_token_is_rejected_without_creating_a_record(self):
+        user = get_user_model().objects.create_user(username="fb-no-token", password="test-password-123")
+        self.client.force_login(user)
+
+        response = self.client.post(self.url, {"rating": "accurate"})
+
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(AIResponseFeedback.objects.exists())
+
+    def test_token_minted_for_a_different_event_is_rejected(self):
+        # Simulates another session that was shown a token for ITS OWN event
+        # trying to reuse it to rate this one, relying on event ids being
+        # sequential and guessable -- this must fail even though the token
+        # itself is a real, validly-signed token.
+        other_event = AIPerformanceEvent.objects.create(outcome="success", total_latency_ms=100)
+        other_token = _make_feedback_token(other_event.pk)
+        user = get_user_model().objects.create_user(username="fb-wrong-token", password="test-password-123")
+        self.client.force_login(user)
+
+        response = self.client.post(self.url, {"rating": "accurate", "token": other_token})
+
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(AIResponseFeedback.objects.filter(event=self.event).exists())
+
+    def test_garbage_token_is_rejected(self):
+        user = get_user_model().objects.create_user(username="fb-garbage-token", password="test-password-123")
+        self.client.force_login(user)
+
+        response = self.client.post(self.url, {"rating": "accurate", "token": "not-a-real-token"})
+
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(AIResponseFeedback.objects.exists())
 
 
 class DashboardRefinementWidgetTests(TestCase):
@@ -153,7 +195,7 @@ class DashboardRefinementWidgetTests(TestCase):
         self.assertEqual(rows["unknown"]["count"], 1)
         self.assertEqual(rows["medium"]["count"], 0)
 
-    def test_feedback_distribution_and_accuracy_rate(self):
+    def test_feedback_distribution_and_weighted_accuracy(self):
         self._event(rating=AIResponseFeedback.Rating.ACCURATE)
         self._event(rating=AIResponseFeedback.Rating.ACCURATE)
         self._event(rating=AIResponseFeedback.Rating.NOT_ACCURATE)
@@ -161,11 +203,25 @@ class DashboardRefinementWidgetTests(TestCase):
 
         response = self.client.get(self.url)
         self.assertEqual(response.context["total_feedback"], 3)
+        # No "partially accurate" ratings in this mix, so the weighted score
+        # happens to equal the old accurate-only share: (1+1+0)/3 * 100.
         self.assertEqual(response.context["accuracy_rate"], round(2 / 3 * 100, 1))
         rows = {row["key"]: row for row in response.context["feedback_rows"]}
         self.assertEqual(rows["accurate"]["count"], 2)
         self.assertEqual(rows["not_accurate"]["count"], 1)
         self.assertEqual(rows["partially_accurate"]["count"], 0)
+
+    def test_weighted_accuracy_gives_partial_credit_unlike_an_accurate_only_share(self):
+        # 1 accurate + 1 partially accurate. An accurate-only share would
+        # read 50.0% (only the "accurate" one counts); the weighted score
+        # must read 75.0% (1.0 + 0.5) / 2, proving partial credit is applied
+        # rather than this metric being the old calculation under a new label.
+        self._event(rating=AIResponseFeedback.Rating.ACCURATE)
+        self._event(rating=AIResponseFeedback.Rating.PARTIALLY_ACCURATE)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.context["accuracy_rate"], 75.0)
 
     def test_accuracy_rate_is_none_when_no_feedback_submitted(self):
         self._event()
@@ -186,3 +242,19 @@ class DashboardRefinementWidgetTests(TestCase):
         self.assertEqual(rows["Weekly plan"]["success"], 1)
         self.assertEqual(rows["Weekly plan"]["error"], 1)
         self.assertEqual(rows["Unknown"]["count"], 1)
+
+    def test_template_performance_includes_rated_count_and_weighted_score_per_template(self):
+        self._event(template_type="weekly", rating=AIResponseFeedback.Rating.ACCURATE)
+        self._event(template_type="weekly", rating=AIResponseFeedback.Rating.NOT_ACCURATE)
+        self._event(template_type="weekly")  # unrated -- excluded from both rated count and score
+        self._event(template_type="monthly", rating=AIResponseFeedback.Rating.PARTIALLY_ACCURATE)
+
+        response = self.client.get(self.url)
+        rows = {row["label"]: row for row in response.context["template_rows"]}
+
+        self.assertEqual(rows["Weekly plan"]["rated"], 2)
+        self.assertEqual(rows["Weekly plan"]["weighted_accuracy"], 50.0)  # (1.0 + 0.0) / 2 * 100
+        self.assertEqual(rows["Monthly plan"]["rated"], 1)
+        self.assertEqual(rows["Monthly plan"]["weighted_accuracy"], 50.0)  # 0.5 / 1 * 100
+        self.assertEqual(rows["General"]["rated"], 0)
+        self.assertIsNone(rows["General"]["weighted_accuracy"])

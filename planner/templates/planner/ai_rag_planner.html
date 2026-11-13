@@ -81,6 +81,7 @@
                     <strong>Was this accurate?</strong>
                     <form method="post" action="{% url 'planner:ai-rag-planner-feedback' result.event_id %}" class="rag-feedback-form">
                         {% csrf_token %}
+                        <input type="hidden" name="token" value="{{ result.feedback_token }}">
                         <button type="submit" name="rating" value="accurate" class="cz-button cz-button--secondary">Accurate</button>
                         <button type="submit" name="rating" value="partially_accurate" class="cz-button cz-button--secondary">Partially accurate</button>
                         <button type="submit" name="rating" value="not_accurate" class="cz-button cz-button--secondary">Not accurate</button>

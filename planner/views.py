@@ -21,6 +21,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
+from django.core import signing
 
 from io import BytesIO
 
@@ -42,6 +43,55 @@ from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_GET
 
 logger = logging.getLogger(__name__)
+
+_FEEDBACK_TOKEN_SALT = "planner.ai_feedback"
+
+
+def _make_feedback_token(event_id):
+    """Mint a signed token tying one logged event id to this one response.
+
+    Using Django's cryptographic signing instead of trusting the sequential
+    event id on its own means a user can only submit feedback for an event
+    they were just shown the token for on the result page -- they cannot
+    guess or increment their way into rating a *different* event, and no
+    user or session identifier needs to be stored to enforce that.
+    """
+    return signing.Signer(salt=_FEEDBACK_TOKEN_SALT).sign(str(event_id))
+
+
+def _verify_feedback_token(event_id, token):
+    """Check that `token` was minted for exactly this `event_id`."""
+    if not token:
+        return False
+    try:
+        unsigned = signing.Signer(salt=_FEEDBACK_TOKEN_SALT).unsign(token)
+    except signing.BadSignature:
+        return False
+    return unsigned == str(event_id)
+
+
+_RATING_WEIGHTS = {
+    AIResponseFeedback.Rating.ACCURATE: 1.0,
+    AIResponseFeedback.Rating.PARTIALLY_ACCURATE: 0.5,
+    AIResponseFeedback.Rating.NOT_ACCURATE: 0.0,
+}
+
+
+def _weighted_accuracy_percent(rated_events):
+    """Weighted accuracy score across a set of already-rated events.
+
+    Each rating contributes a weight -- 1.0 for "accurate", 0.5 for
+    "partially accurate", 0.0 for "not accurate" -- instead of counting
+    only exact "accurate" ratings the way the first version of this
+    dashboard did, which gave a partially-correct response zero credit,
+    scoring it identically to a flatly wrong one. Returns None when
+    nothing has been rated yet, rather than dividing by zero.
+    """
+    if not rated_events:
+        return None
+    total_weight = sum(_RATING_WEIGHTS[event.feedback.rating] for event in rated_events)
+    return round(total_weight / len(rated_events) * 100, 1)
+
 
 def home(request):
     """Render the CozyDay landing page."""
@@ -465,16 +515,15 @@ def system_analytics(request):
     total_feedback = len(rated_events)
     for row in feedback_rows:
         row["percent"] = (row["count"] / total_feedback * 100) if total_feedback else 0
-    accurate_count = next(
-        (row["count"] for row in feedback_rows if row["key"] == AIResponseFeedback.Rating.ACCURATE),
-        0,
-    )
-    accuracy_rate = round(accurate_count / total_feedback * 100, 1) if total_feedback else None
+    # Weighted rather than "accurate-only": a partially accurate response
+    # gets half credit instead of being scored identically to a wrong one.
+    accuracy_rate = _weighted_accuracy_percent(rated_events)
 
     template_rows = []
     for key, label in AIPerformanceEvent._meta.get_field("template_type").choices or []:
         tpl_events = [event for event in events if event.template_type == key]
         tpl_latencies = [event.total_latency_ms for event in tpl_events]
+        tpl_rated = [event for event in tpl_events if getattr(event, "feedback", None) is not None]
         template_rows.append({
             "label": label,
             "count": len(tpl_events),
@@ -482,24 +531,20 @@ def system_analytics(request):
             "success": sum(event.outcome == AIPerformanceEvent.Outcome.SUCCESS for event in tpl_events),
             "abstention": sum(event.outcome == AIPerformanceEvent.Outcome.ABSTENTION for event in tpl_events),
             "error": sum(event.outcome == AIPerformanceEvent.Outcome.ERROR for event in tpl_events),
+            "rated": len(tpl_rated),
+            "weighted_accuracy": _weighted_accuracy_percent(tpl_rated),
         })
-    untyped_count = sum(event.template_type is None for event in events)
+    untyped_events = [event for event in events if event.template_type is None]
+    untyped_rated = [event for event in untyped_events if getattr(event, "feedback", None) is not None]
     template_rows.append({
         "label": "Unknown",
-        "count": untyped_count,
+        "count": len(untyped_events),
         "mean_latency": None,
-        "success": sum(
-            event.outcome == AIPerformanceEvent.Outcome.SUCCESS
-            for event in events if event.template_type is None
-        ),
-        "abstention": sum(
-            event.outcome == AIPerformanceEvent.Outcome.ABSTENTION
-            for event in events if event.template_type is None
-        ),
-        "error": sum(
-            event.outcome == AIPerformanceEvent.Outcome.ERROR
-            for event in events if event.template_type is None
-        ),
+        "success": sum(event.outcome == AIPerformanceEvent.Outcome.SUCCESS for event in untyped_events),
+        "abstention": sum(event.outcome == AIPerformanceEvent.Outcome.ABSTENTION for event in untyped_events),
+        "error": sum(event.outcome == AIPerformanceEvent.Outcome.ERROR for event in untyped_events),
+        "rated": len(untyped_rated),
+        "weighted_accuracy": _weighted_accuracy_percent(untyped_rated),
     })
 
     context = {
@@ -999,6 +1044,9 @@ def ai_rag_planner(request):
                     template_type=template_type,
                 )
                 result["event_id"] = event.pk if event is not None else None
+                result["feedback_token"] = (
+                    _make_feedback_token(event.pk) if event is not None else None
+                )
                 relevance_scores = [
                     chunk["score"]
                     for chunk in result["retrieved_chunks"]
@@ -1050,16 +1098,22 @@ def ai_rag_planner(request):
 def submit_ai_feedback(request, event_id):
     """Record (or update) a user's accuracy rating for one logged response.
 
-    Deliberately performs no ownership check against the requesting user:
-    AIPerformanceEvent carries no user ID by design (see its docstring), so
-    there is nothing to check ownership against. Any authenticated user who
-    knows a valid event id can rate it. This is a documented trade-off, not
-    an oversight -- see docs/a10_refinement/README.md.
+    Requires a signed feedback token minted when that specific event's
+    result page was rendered (see `_make_feedback_token`), not just a valid
+    event id. AIPerformanceEvent still carries no user ID by design (see its
+    docstring), so this does not check "ownership" in the account sense --
+    it checks that the request actually came from the result page for this
+    event, which a different session cannot forge without the server's
+    secret key, even though event ids are sequential and guessable. See
+    docs/a10_refinement/README.md for the full writeup.
     """
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
 
     event = get_object_or_404(AIPerformanceEvent, pk=event_id)
+    if not _verify_feedback_token(event_id, request.POST.get("token")):
+        return HttpResponseForbidden("Invalid or missing feedback token.")
+
     rating = request.POST.get("rating")
     if rating not in AIResponseFeedback.Rating.values:
         messages.error(request, "That feedback option was not recognized.")
