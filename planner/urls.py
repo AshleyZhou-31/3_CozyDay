@@ -17,6 +17,7 @@ urlpatterns = [
     path("system-analytics/", views.system_analytics, name="system-analytics"),
     path("ai-planner/", views.ai_planner, name="ai-planner"),
     path("ai-rag-planner/", views.ai_rag_planner, name="ai-rag-planner"),
+    path("ai-rag-planner/feedback/<int:event_id>/", views.submit_ai_feedback, name="ai-rag-planner-feedback"),
     path("api-ai-planner/", views.api_ai_planner, name="api-ai-planner"),
     path("chart/category.png", views.category_chart_png, name="category-chart-png"),
     path("reports/", views.reports, name="planitem-reports"),
