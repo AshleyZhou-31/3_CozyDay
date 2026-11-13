@@ -22,7 +22,7 @@ python manage.py check
 python manage.py test planner
 ```
 
-`query_length_chars` and `query_category` already existed as nullable fields from Stage 1's `0003_aiperformanceevent_estimated_cost_usd_and_more.py` migration, added specifically so a later stage could populate them without a schema change, so no migration was needed for that part. Two migrations are included on this branch regardless: `0004_aiperformanceevent_template_type.py`, merged in from Lin's prompt-template work on main, and `0005_alter_aiperformanceevent_query_category.py`, added after review to attach `choices=QueryCategory.choices` to the `query_category` field so the fixed category list is enforced at the database layer, not only in application code.
+`query_length_chars` and `query_category` already existed as nullable fields from Stage 1's `0003_aiperformanceevent_estimated_cost_usd_and_more.py` migration, added specifically so a later stage could populate them without a schema change, so no migration was needed for that part. Two migrations are included on this branch regardless: `0004_aiperformanceevent_template_type.py`, merged in from Lin's prompt-template work on main, and `0005_alter_aiperformanceevent_query_category.py`, added after review to attach `choices=QueryCategory.choices` to the model field so Django can validate and display the fixed category list consistently.
 
 ## Evidence
 
