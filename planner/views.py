@@ -7,6 +7,7 @@ from django.views.generic import DetailView, ListView
 from django.http import JsonResponse, HttpResponseForbidden
 
 from django.db.models import Count, Q
+from .cost_dashboard import build_cost_context
 from .models import AIPerformanceEvent, Category, PlanItem
 from .plan_templates import TEMPLATE_TYPES, detect_plan_type, parse_structured_plan
 from .forms import AIPlannerForm, AIRAGPlannerForm, PlanItemForm
@@ -362,6 +363,10 @@ def system_analytics(request):
     events = list(
         AIPerformanceEvent.objects.filter(created_at__gte=now - timedelta(days=30))
     )
+    all_event_count = len(events)
+    hide_simulated = request.GET.get("simulated") == "0"
+    if hide_simulated:
+        events = [event for event in events if not event.is_simulated]
     latencies = [event.total_latency_ms for event in events]
     mean_latency = statistics.fmean(latencies) if latencies else None
     median_latency = statistics.median(latencies) if latencies else None
@@ -445,7 +450,10 @@ def system_analytics(request):
         "abstention_rate": round(next((x["percent"] for x in outcomes if x["key"] == "abstention"), 0), 1),
         "error_rate": round(next((x["percent"] for x in outcomes if x["key"] == "error"), 0), 1),
         "has_events": bool(events),
+        "hide_simulated": hide_simulated,
+        "hidden_event_count": all_event_count - len(events),
     }
+    context.update(build_cost_context(events))
     return render(request, "planner/system_analytics.html", context)
 
 
