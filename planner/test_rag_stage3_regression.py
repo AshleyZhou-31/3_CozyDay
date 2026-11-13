@@ -22,6 +22,12 @@ CUT_OFF = (
     "4. Draft the introduction and then the first body sec"
 )
 COMPLETE = "1. Choose a topic.\n2. Outline the paper.\n3. Draft and revise."
+STRUCTURED = '{"goal":"Plan the paper","time_period":"Not specified","priorities":["Choose a topic"],"tasks_or_phases":["Outline the paper","Draft and revise"],"deadlines":[],"recommended_next_steps":["Choose a topic"]}'
+PLAN = {
+    "goal": "Plan the paper", "time_period": "Not specified",
+    "priorities": ["Choose a topic"], "tasks_or_phases": ["Outline the paper", "Draft and revise"],
+    "deadlines": [], "recommended_next_steps": ["Choose a topic"],
+}
 
 
 class FinalizeAnswerTests(SimpleTestCase):
@@ -60,43 +66,46 @@ class AnswerQueryValidationTests(SimpleTestCase):
         with patch.object(rag_engine, "get_engine", return_value=_fake_engine(answer_text=answer_text)):
             return rag_engine.answer_query("a planning question")
 
-    def test_truncated_generation_is_trimmed_with_warning(self):
-        result = self.run_query(CUT_OFF)
-        self.assertTrue(result["answer"].endswith("for every section."))
-        self.assertEqual(result["warning"], rag_engine.TRUNCATION_WARNING)
+    def test_truncated_or_unstructured_generation_is_rejected(self):
+        with self.assertRaises(rag_engine.RAGOutputError):
+            self.run_query(CUT_OFF)
 
     @override_settings(AI_PLANNER_OUTPUT_VALIDATION=False)
-    def test_switch_off_restores_baseline_behaviour_for_comparison(self):
+    @override_settings(AI_PLANNER_OUTPUT_VALIDATION=False)
+    def test_evaluation_baseline_can_disable_structured_validation(self):
         result = self.run_query(CUT_OFF)
-        self.assertTrue(result["answer"].endswith("first body sec"))
-        self.assertIsNone(result["warning"])
+        self.assertIn("first body sec", result["answer"])
+        self.assertIsNone(result["structured_plan"])
 
     def test_complete_generation_has_no_warning(self):
-        self.assertIsNone(self.run_query(COMPLETE)["warning"])
+        result = self.run_query(STRUCTURED)
+        self.assertIsNone(result["warning"])
+        self.assertEqual(result["structured_plan"]["goal"], "Plan the paper")
 
     def test_stage_latencies_are_returned(self):
-        latencies = self.run_query(COMPLETE)["stage_latencies"]
+        latencies = self.run_query(STRUCTURED)["stage_latencies"]
         self.assertEqual(set(latencies), {"embedding", "retrieval", "generation"})
         self.assertTrue(all(value >= 0 for value in latencies.values()))
 
 
 class PageShowsValidationTests(TestCase):
-    def test_page_shows_trimmed_answer_notice_and_stage_latencies(self):
+    def test_page_shows_validated_structured_answer_and_stage_latencies(self):
         user = get_user_model().objects.create_user(username="stage3_user", password="test-password")
         self.client.force_login(user)
-        trimmed, warning = rag_engine.finalize_answer(CUT_OFF)
         data = {
-            "answer": trimmed,
+            "answer": "Goal: Plan the paper\nTime period: Not specified\nPriorities:\n- Choose a topic",
+            "structured_plan": PLAN,
+            "template_type": "general",
             "retrieved_chunks": [{"id": "HYBRID_001", "text": "Split a paper.", "score": 0.7}],
             "latency_seconds": 1.5,
-            "warning": warning,
+            "warning": None,
             "stage_latencies": {"embedding": 0.1, "retrieval": 0.01, "generation": 1.2},
         }
         with patch("planner.views.generate_rag_plan", return_value=data):
             response = self.client.post(reverse("planner:ai-rag-planner"), {"query": "Break up my paper"})
-        self.assertContains(response, "reached the length limit")
+        self.assertContains(response, "Goal: Plan the paper")
+        self.assertContains(response, "Time period: Not specified")
         self.assertContains(response, "generation 1.200s")
-        self.assertNotContains(response, "first body sec")
 
 
 @override_settings(AI_PLANNER_MAX_TIME_SECONDS=5)
@@ -107,7 +116,7 @@ class RelevanceGateTests(SimpleTestCase):
     def run_query(self, query):
         # The fake encoder maps "a planning question" to the chunk vector
         # (similarity 1.0) and every other text to an orthogonal one (0.0).
-        engine = _fake_engine(answer_text="Paris is the capital of France.")
+        engine = _fake_engine(answer_text=STRUCTURED)
         with patch.object(rag_engine, "get_engine", return_value=engine):
             return rag_engine.answer_query(query), engine
 
@@ -124,12 +133,12 @@ class RelevanceGateTests(SimpleTestCase):
 
     def test_relevant_query_still_reaches_the_model(self):
         result, _ = self.run_query("a planning question")
-        self.assertEqual(result["answer"], "Paris is the capital of France.")
+        self.assertIn("Goal: Plan the paper", result["answer"])
 
     @override_settings(AI_PLANNER_MIN_RELEVANCE=0)
     def test_gate_can_be_disabled_for_baseline_comparison(self):
         result, _ = self.run_query("capital of France")
-        self.assertEqual(result["answer"], "Paris is the capital of France.")
+        self.assertIn("Goal: Plan the paper", result["answer"])
 
     @override_settings(AI_PLANNER_MIN_RELEVANCE=0.9)
     def test_threshold_is_configurable(self):
@@ -151,14 +160,17 @@ class AnswerFormattingTests(TestCase):
     def post_answer(self, answer):
         user = get_user_model().objects.create_user(username="fmt_user", password="test-password")
         self.client.force_login(user)
-        data = {"answer": answer, "retrieved_chunks": [], "latency_seconds": 0.1, "warning": None}
+        data = {
+            "answer": answer, "structured_plan": PLAN, "template_type": "general",
+            "retrieved_chunks": [], "latency_seconds": 0.1, "warning": None,
+        }
         with patch("planner.views.generate_rag_plan", return_value=data):
             return self.client.post(reverse("planner:ai-rag-planner"), {"query": "Break up my paper"})
 
     def test_line_breaks_in_the_answer_are_preserved(self):
-        response = self.post_answer("Steps:\n\n1. Pick a topic.\n2. Write an outline.")
-        self.assertContains(response, "<p>Steps:</p>")
-        self.assertContains(response, "1. Pick a topic.<br>2. Write an outline.")
+        response = self.post_answer("Goal: Plan the paper\n\nTasks or phases:\n- Outline it.")
+        self.assertContains(response, "Goal: Plan the paper")
+        self.assertContains(response, "Outline it.")
 
     def test_answer_html_is_still_escaped(self):
         response = self.post_answer("<script>alert(1)</script>\n\nDone.")

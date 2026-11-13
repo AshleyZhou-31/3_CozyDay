@@ -180,8 +180,12 @@ class Command(BaseCommand):
                 row["status"] = "validation_error"
                 row["error_message"] = " ".join(m for errs in form.errors.values() for m in errs)
             else:
-                row["status"] = "service_error"
                 row["error_message"] = response.context["error_message"] if response.context else "no context"
+                row["status"] = (
+                    "validation_error"
+                    if "could not format the plan correctly" in row["error_message"]
+                    else "service_error"
+                )
             return row
 
         row["status"] = "ok"

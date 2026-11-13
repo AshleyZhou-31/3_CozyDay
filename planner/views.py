@@ -8,6 +8,7 @@ from django.http import JsonResponse, HttpResponseForbidden
 
 from django.db.models import Count, Q
 from .models import AIPerformanceEvent, Category, PlanItem
+from .plan_templates import TEMPLATE_TYPES, detect_plan_type, parse_structured_plan
 from .forms import AIPlannerForm, AIRAGPlannerForm, PlanItemForm
 from .ai_planner import AIPlannerError, generate_plan
 from .external_ai import ExternalAIError, generate_external_plan
@@ -28,6 +29,7 @@ from matplotlib.ticker import MaxNLocator
 
 from django.utils import timezone
 import csv
+import json
 import requests
 import logging
 import math
@@ -302,7 +304,7 @@ def categorize_query(query):
     return AIPerformanceEvent.QueryCategory.OTHER
 
 
-def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0, query=None):
+def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0, query=None, template_type=None):
     """Persist aggregate timings only; logging failures must not break answers."""
     result = result if isinstance(result, dict) else {}
     stage_latencies = result.get("stage_latencies") or {}
@@ -335,6 +337,7 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0,
             retrieved_count=min(len(chunks), 65535),
             query_length_chars=query_length_chars,
             query_category=query_category,
+            template_type=template_type,
         )
     except Exception as exc:
         # Analytics persistence is best-effort and must not expose a user's prompt.
@@ -838,9 +841,12 @@ def ai_rag_planner(request):
         request_started = time.perf_counter()
         form = AIRAGPlannerForm(request.POST)
         if form.is_valid():
+            template_type = detect_plan_type(form.cleaned_data["query"])
             validation_started = None
             try:
-                result = generate_rag_plan(form.cleaned_data["query"], user=request.user)
+                result = generate_rag_plan(
+                    form.cleaned_data["query"], user=request.user, template_type=template_type
+                )
                 validation_started = time.perf_counter()
                 if (
                     not isinstance(result, dict)
@@ -850,6 +856,18 @@ def ai_rag_planner(request):
                     raise ValueError("Invalid RAG response schema")
                 if not isinstance(result.get("retrieved_chunks"), list):
                     raise ValueError("Invalid RAG response schema")
+                if result.get("template_type") not in TEMPLATE_TYPES:
+                    raise ValueError("Invalid RAG response schema")
+                if result.get("template_type") != template_type:
+                    raise ValueError("Invalid RAG response schema")
+                if (
+                    getattr(settings, "AI_PLANNER_OUTPUT_VALIDATION", True)
+                    and result.get("outcome") != AIPerformanceEvent.Outcome.ABSTENTION
+                ):
+                    try:
+                        parse_structured_plan(json.dumps(result.get("structured_plan")))
+                    except (TypeError, ValueError):
+                        raise ValueError("Invalid RAG response schema")
                 if any(
                     not isinstance(chunk, dict)
                     or not isinstance(chunk.get("id"), str)
@@ -896,6 +914,7 @@ def ai_rag_planner(request):
                     result=result,
                     validation_ms=validation_ms,
                     query=form.cleaned_data["query"],
+                    template_type=template_type,
                 )
                 result.setdefault("warning", None)
                 result["query"] = form.cleaned_data["query"]
@@ -911,6 +930,7 @@ def ai_rag_planner(request):
                         if validation_started is not None
                         else 0
                     ),
+                    template_type=template_type,
                 )
                 result = None
                 error_message = getattr(

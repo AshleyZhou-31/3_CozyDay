@@ -38,7 +38,13 @@ class AIRAGPlannerViewTests(TestCase):
 
     def test_valid_post_displays_complete_response_contract(self):
         response_data = {
-            "answer": "Break the paper into smaller steps.",
+            "answer": "Goal: Break the paper into smaller steps.",
+            "structured_plan": {
+                "goal": "Break the paper into smaller steps.", "time_period": "Not specified",
+                "priorities": [], "tasks_or_phases": ["Outline the paper"],
+                "deadlines": [], "recommended_next_steps": ["Draft an outline"],
+            },
+            "template_type": "general",
             "retrieved_chunks": [
                 {"id": "TASK-001", "text": "Start by outlining the major sections.", "score": 0.82}
             ],
@@ -54,13 +60,18 @@ class AIRAGPlannerViewTests(TestCase):
         self.assertContains(response, "TASK-001")
         self.assertContains(response, "Start by outlining the major sections.")
         self.assertContains(response, "0.125 seconds")
-        generate.assert_called_once_with("How do I break up a paper?", user=self.user)
+        generate.assert_called_once_with("How do I break up a paper?", user=self.user, template_type="general")
 
     def test_real_adapter_delegates_to_rag_engine(self):
         """Stage 2: the mock adapter is gone; generate_rag_plan now calls the
         local RAG engine directly (still mocked here so no model is loaded)."""
         fake_result = {
             "answer": "Break the paper into milestones: topic, outline, draft, revise, submit.",
+            "structured_plan": {
+                "goal": "Plan study", "time_period": "One week", "priorities": [],
+                "tasks_or_phases": ["Study"], "deadlines": [], "recommended_next_steps": ["Begin"],
+            },
+            "template_type": "weekly",
             "retrieved_chunks": [{"id": "HYBRID_002", "text": "Split into milestones.", "score": 0.91}],
             "latency_seconds": 0.42,
             "warning": None,
@@ -117,6 +128,12 @@ class AIRAGPlannerViewTests(TestCase):
     def test_untrusted_question_and_source_text_are_html_escaped(self):
         result = {
             "answer": "<script>alert(1)</script>",
+            "structured_plan": {
+                "goal": "<script>question</script>", "time_period": "Not specified",
+                "priorities": [], "tasks_or_phases": [], "deadlines": [],
+                "recommended_next_steps": [],
+            },
+            "template_type": "general",
             "retrieved_chunks": [{"id": "<b>src</b>", "text": "<img src=x>", "score": 0.2}],
             "latency_seconds": 0.01,
             "warning": None,

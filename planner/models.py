@@ -232,7 +232,20 @@ class AIPerformanceEvent(models.Model):
     max_similarity_score = models.FloatField(null=True, blank=True)
     retrieved_count = models.PositiveSmallIntegerField(default=0)
     query_length_chars = models.PositiveSmallIntegerField(null=True, blank=True)
-    query_category = models.CharField(max_length=50, null=True, blank=True)
+    query_category = models.CharField(
+        max_length=50, choices=QueryCategory.choices, null=True, blank=True
+    )
+    template_type = models.CharField(
+        max_length=20,
+        choices=(
+            ("general", "General"),
+            ("weekly", "Weekly plan"),
+            ("monthly", "Monthly plan"),
+            ("three_month", "Three-month plan"),
+        ),
+        null=True,
+        blank=True,
+    )
     input_tokens_estimate = models.PositiveIntegerField(null=True, blank=True)
     output_tokens_estimate = models.PositiveIntegerField(null=True, blank=True)
     estimated_cost_usd = models.DecimalField(

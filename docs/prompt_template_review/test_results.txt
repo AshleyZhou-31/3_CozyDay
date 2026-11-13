@@ -1,0 +1,37 @@
+Creating test database for alias 'default'...
+..RAG Planner service failed (RuntimeError)
+.....................RAG Planner service failed (RAGPlannerError)
+.RAG Planner service failed (RuntimeError)
+RAG Planner service failed (ValueError)
+.........RAG generated an invalid structured plan (ValueError)
+RAG Planner service failed (RAGOutputError)
+..RAG generated an invalid structured plan (ValueError)
+RAG Planner service failed (RAGOutputError)
+.RAG generated an invalid structured plan (ValueError)
+RAG Planner service failed (RAGOutputError)
+.................................................................................................Gemini API connection failed: ConnectionError
+..................RAG generation exceeded the 0s soft timeout
+....RAG engine packages are missing: import of chunking halted; None in sys.modules
+..RAG retrieval failed
+Traceback (most recent call last):
+  File "/workspace/scratch/6111599eb108/template_fix/planner/rag_engine.py", line 242, in answer_query
+    query_vector, embedding_latency = embed_query(engine["embedding_info"], query)
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: model crashed
+.........RAG generated an invalid structured plan (ValueError)
+............
+----------------------------------------------------------------------
+Ran 178 tests in 16.280s
+
+OK
+Destroying test database for alias 'default'...
+Found 178 test(s).
+System check identified no issues (0 silenced).

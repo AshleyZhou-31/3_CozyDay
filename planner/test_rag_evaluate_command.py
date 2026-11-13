@@ -37,12 +37,18 @@ class RagEvaluateCommandTests(TestCase):
         self.assertEqual(set(by_variant), {"baseline", "improved"})
         self.assertEqual(by_variant["baseline"]["query"], by_variant["improved"]["query"])
         self.assertEqual(by_variant["baseline"]["ends_cleanly"], "False")
-        self.assertEqual(by_variant["improved"]["ends_cleanly"], "True")
-        self.assertIn("length limit", by_variant["improved"]["warning"])
+        self.assertEqual(by_variant["improved"]["status"], "validation_error")
+        self.assertIn("could not format the plan correctly", by_variant["improved"]["error_message"])
         self.assertEqual(by_variant["baseline"]["warning"], "")
-        self.assertEqual(by_variant["improved"]["context_score"], "3")
-        self.assertEqual(by_variant["improved"]["source_paragraph_ids"], "P002 | P001")
-        self.assertNotEqual(by_variant["improved"]["generation_s"], "")
+
+    def test_improved_variant_records_a_valid_structured_plan(self):
+        valid = '{"goal":"Plan the paper","time_period":"Not specified","priorities":["Choose a topic"],"tasks_or_phases":["Outline the paper"],"deadlines":[],"recommended_next_steps":["Start an outline"]}'
+        self.engine["generation_info"]["tokenizer"].text = valid
+        with tempfile.TemporaryDirectory() as tmp:
+            rows = self.run_command(Path(tmp) / "runs.csv", "--cases", "Q1", "--variants", "improved")
+        self.assertEqual(rows[0]["status"], "ok")
+        self.assertIn("Goal: Plan the paper", rows[0]["answer"])
+        self.assertEqual(rows[0]["source_paragraph_ids"], "P002 | P001")
 
     def test_resumes_without_duplicating_rows_and_cleans_up_user(self):
         with tempfile.TemporaryDirectory() as tmp:

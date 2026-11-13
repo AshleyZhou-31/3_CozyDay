@@ -1,0 +1,201 @@
+[
+  {
+    "sample": 1,
+    "variant": "general",
+    "status": "success",
+    "plan": {
+      "goal": "Study for an exam over a week",
+      "time_period": "one week",
+      "priorities": [
+        "reading",
+        "classwork",
+        "writing"
+      ],
+      "tasks_or_phases": [
+        "Identify key topics and areas of uncertainty for each subject",
+        "Allocate time for retrieval practice, problem-solving, and reviewing mistakes",
+        "Plan flexible study sessions around class meetings and lab times",
+        "Set aside specific days for writing practice and revision",
+        "Include short checkpoints for self-testing throughout the week"
+      ],
+      "deadlines": [
+        "Complete initial topic identification by Wednesday",
+        "Start writing practice on Thursday",
+        "Review and revise writing drafts by Sunday"
+      ],
+      "recommended_next_steps": [
+        "Review progress and adjust plans as needed",
+        "Clarify dependencies between tasks",
+        "Confirm any actual calendar integration"
+      ]
+    },
+    "warning": null
+  },
+  {
+    "sample": 1,
+    "variant": "weekly",
+    "status": "success",
+    "plan": {
+      "goal": "Study for an exam over a week with balanced reading, class, and writing time.",
+      "time_period": "one week",
+      "priorities": [
+        "reading",
+        "class preparation",
+        "writing"
+      ],
+      "tasks_or_phases": [
+        "Review lecture notes and textbook sections related to upcoming exams",
+        "Complete assigned readings and practice problems",
+        "Prepare summaries and questions for class discussions",
+        "Draft essay or report based on class material",
+        "Schedule and attend class meetings",
+        "Participate actively in class discussions",
+        "Revise and finalize writing drafts",
+        "Seek feedback from peers or instructors",
+        "Plan next steps for improvement based on feedback"
+      ],
+      "deadlines": [
+        "Class meeting on Monday",
+        "Essay draft due on Wednesday",
+        "Final revision and submission on Friday"
+      ],
+      "recommended_next_steps": [
+        "Review progress against goals each day",
+        "Adjust priorities if unexpected events occur",
+        "Reflect on learning outcomes and adjust study habits accordingly"
+      ]
+    },
+    "warning": null
+  },
+  {
+    "sample": 2,
+    "variant": "general",
+    "status": "success",
+    "plan": {
+      "goal": "Prepare a research proposal",
+      "time_period": "one month",
+      "priorities": [
+        "Clarity",
+        "Completeness",
+        "Timeliness"
+      ],
+      "tasks_or_phases": [
+        "Choose a research topic",
+        "Conduct preliminary literature review",
+        "Outline key arguments and methodology",
+        "Draft initial proposal sections",
+        "Seek feedback and revisions",
+        "Finalize proposal document"
+      ],
+      "deadlines": [
+        "Preliminary topic selection: Day 5",
+        "Literature review completion: Day 10",
+        "Outline drafting: Day 20",
+        "First draft submission: Day 25",
+        "Feedback incorporation: Day 30"
+      ],
+      "recommended_next_steps": [
+        "Review CozyDay structure for clarity and completeness",
+        "Discuss progress with peers or advisor",
+        "Adjust priorities based on feedback received"
+      ]
+    },
+    "warning": null
+  },
+  {
+    "sample": 2,
+    "variant": "monthly",
+    "status": "success",
+    "plan": {
+      "goal": "Prepare a research proposal",
+      "time_period": "one month",
+      "priorities": [
+        "Clarity",
+        "Completeness",
+        "Timeliness"
+      ],
+      "tasks_or_phases": [
+        "Choose a research topic",
+        "Conduct preliminary literature review",
+        "Formulate research questions and hypotheses",
+        "Outline the methodology",
+        "Draft the proposal",
+        "Revise the proposal based on feedback"
+      ],
+      "deadlines": [
+        "Preliminary topic selection by the 5th day",
+        "Literature review completed by the 15th day",
+        "Methodology outline submitted by the 25th day",
+        "Proposal draft submitted by the 30th day"
+      ],
+      "recommended_next_steps": [
+        "Start researching the chosen topic immediately",
+        "Begin drafting the proposal once the literature review is complete"
+      ]
+    },
+    "warning": null
+  },
+  {
+    "sample": 3,
+    "variant": "general",
+    "status": "success",
+    "plan": {
+      "goal": "Finish a dissertation chapter",
+      "time_period": "three months",
+      "priorities": [
+        "diligence",
+        "quality",
+        "timeliness"
+      ],
+      "tasks_or_phases": [
+        "Identify key themes and arguments",
+        "Conduct literature review",
+        "Draft initial sections",
+        "Revise and finalize chapters"
+      ],
+      "deadlines": [
+        "Midway through the month",
+        "End of the second month",
+        "End of the third month"
+      ],
+      "recommended_next_steps": [
+        "Start drafting based on identified themes",
+        "Schedule regular check-ins with advisor",
+        "Set aside dedicated time for writing"
+      ]
+    },
+    "warning": null
+  },
+  {
+    "sample": 3,
+    "variant": "three_month",
+    "status": "success",
+    "plan": {
+      "goal": "Finish a dissertation chapter",
+      "time_period": "three months",
+      "priorities": [
+        "Identify key themes and structure",
+        "Conduct literature review",
+        "Draft initial sections"
+      ],
+      "tasks_or_phases": [
+        "Research and outline key themes",
+        "Write first draft of introduction",
+        "Complete literature review",
+        "Draft second section of chapter",
+        "Revise and finalize chapter"
+      ],
+      "deadlines": [
+        "Mid-Month 1: Complete literature review",
+        "End of Month 2: Draft second section",
+        "End of Month 3: Finalize chapter"
+      ],
+      "recommended_next_steps": [
+        "Schedule regular check-ins with advisor",
+        "Set aside dedicated writing time daily",
+        "Seek feedback on drafts for improvement"
+      ]
+    },
+    "warning": null
+  }
+]
