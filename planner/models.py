@@ -252,6 +252,8 @@ class AIPerformanceEvent(models.Model):
         max_digits=12, decimal_places=8, null=True, blank=True
     )
     is_simulated = models.BooleanField(default=False, null=True, blank=True)
+    model_name = models.CharField(max_length=100, blank=True, default="")
+    serving_backend = models.CharField(max_length=40, blank=True, default="")
 
     class Meta:
         ordering = ["-created_at"]

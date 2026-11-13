@@ -35,6 +35,7 @@ from pathlib import Path
 
 from django.conf import settings
 
+from .ai_cost import build_usage
 from .rag_planner import RAGPlannerError
 from .plan_templates import (
     TEMPLATE_TYPES,
@@ -285,6 +286,10 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None, template_t
                 "retrieval": retrieval_latency,
                 "generation": 0.0,
             },
+            "usage": build_usage(
+                generated=False, system_instruction=None, chunks=None, query=None,
+                answer=None, generation_info=engine.get("generation_info"),
+            ),
         }
 
     try:
@@ -306,6 +311,7 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None, template_t
         raise RAGOutputError()
 
     answer = answer.strip()
+    raw_answer = answer
     structured_plan = None
     if _setting("AI_PLANNER_OUTPUT_VALIDATION", True):
         try:
@@ -332,6 +338,14 @@ def answer_query(query, user=None, top_k=None, max_time_seconds=None, template_t
             "retrieval": retrieval_latency,
             "generation": generation_latency,
         },
+        "usage": build_usage(
+            generated=True,
+            system_instruction=get_template(template_type),
+            chunks=retrieval_chunks,
+            query=query,
+            answer=raw_answer,
+            generation_info=engine.get("generation_info"),
+        ),
     }
 
 

@@ -324,6 +324,7 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0,
 
     query_length_chars = min(len(query), 32767) if isinstance(query, str) else None
     query_category = categorize_query(query)
+    usage = result.get("usage") if isinstance(result.get("usage"), dict) else {}
 
     try:
         AIPerformanceEvent.objects.create(
@@ -338,6 +339,11 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0,
             query_length_chars=query_length_chars,
             query_category=query_category,
             template_type=template_type,
+            input_tokens_estimate=usage.get("input_tokens"),
+            output_tokens_estimate=usage.get("output_tokens"),
+            estimated_cost_usd=usage.get("estimated_cost_usd"),
+            model_name=usage.get("model_name") or "",
+            serving_backend=usage.get("serving_backend") or "",
         )
     except Exception as exc:
         # Analytics persistence is best-effort and must not expose a user's prompt.
