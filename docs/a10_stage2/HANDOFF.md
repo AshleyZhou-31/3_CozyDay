@@ -1,0 +1,5 @@
+# Stage 2 handoff
+
+User-behavior logging is implemented and covered by `planner.test_a10_stage2_user_behavior`. Every successful RAG Planner submission, and every submission that fails after the form validated, now records a derived character count and a fixed-category label for its query; invalid submissions still leave both empty, and the raw query text itself is never stored. The dashboard at `/planitems/system-analytics/` adds a daily request-volume chart, a category breakdown, and a topic-vs-outcome table, built with the same CSS patterns as Stage 1's existing charts.
+
+Before the next stage, apply all migrations through `0005_alter_aiperformanceevent_query_category.py` (this branch adds that migration, plus `0004_aiperformanceevent_template_type.py` merged in from Lin's work) and confirm the three new panels render against real data rather than the empty state. The screenshot documents a populated dashboard across all five categories, not the empty state Stage 1 captured. Query-length and query-category fields are now live; token/cost estimate and `is_simulated` fields remain unpopulated and ready for Stage 3.

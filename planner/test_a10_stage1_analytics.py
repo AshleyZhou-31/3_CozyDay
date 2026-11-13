@@ -43,8 +43,12 @@ class A10PerformanceLoggingTests(TestCase):
         self.assertEqual(event.generation_latency_ms, 70)
         self.assertEqual(event.max_similarity_score, .72)
         self.assertEqual(event.retrieved_count, 1)
-        self.assertIsNone(event.query_length_chars)
-        self.assertIsNone(event.query_category)
+        # A9/Stage 2: query_length_chars and query_category are now populated
+        # on success. This query is 43 characters and contains "private",
+        # which matches the privacy_sharing category under the documented
+        # keyword precedence order.
+        self.assertEqual(event.query_length_chars, 43)
+        self.assertEqual(event.query_category, AIPerformanceEvent.QueryCategory.PRIVACY_SHARING)
         self.assertIsNone(event.input_tokens_estimate)
         self.assertIsNone(event.output_tokens_estimate)
         self.assertIsNone(event.estimated_cost_usd)
