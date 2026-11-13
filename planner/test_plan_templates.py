@@ -20,6 +20,23 @@ class PlanTypeSelectionTests(SimpleTestCase):
         self.assertEqual(detect_plan_type("Make a plan for the next month"), MONTHLY)
         self.assertEqual(detect_plan_type("Build a 3-month research plan"), THREE_MONTH)
 
+    def test_review_requested_timeframes(self):
+        for query, expected in (("this week", WEEKLY), ("four weeks", MONTHLY),
+                                ("next month", MONTHLY), ("12 weeks", THREE_MONTH)):
+            with self.subTest(query=query):
+                self.assertEqual(detect_plan_type(query), expected)
+
+    def test_long_horizon_precedes_task_granularity(self):
+        cases = (("four-week plan", MONTHLY), ("4 week plan", MONTHLY),
+                 ("Weekly milestones for four weeks", MONTHLY),
+                 ("Create a weekly schedule for next month", MONTHLY),
+                 ("I have one month to prepare a research proposal", MONTHLY),
+                 ("Weekly tasks for a twelve-week plan", THREE_MONTH),
+                 ("Monthly milestones for three months", THREE_MONTH))
+        for query, expected in cases:
+            with self.subTest(query=query):
+                self.assertEqual(detect_plan_type(query), expected)
+
     def test_unknown_or_ambiguous_horizon_falls_back_to_general(self):
         self.assertEqual(detect_plan_type("Help me organize my thesis"), GENERAL)
         self.assertEqual(get_template("not-a-template"), get_template(GENERAL))

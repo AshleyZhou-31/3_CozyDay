@@ -16,10 +16,11 @@ THREE_MONTH = "three_month"
 
 TEMPLATE_TYPES = (GENERAL, WEEKLY, MONTHLY, THREE_MONTH)
 
+# Longer planning horizons take precedence over weekly task granularity.
 _DETECTORS = (
-    (THREE_MONTH, re.compile(r"\b(?:three|3)\s*[- ]?months?\b|\bquarter(?:ly)?\b|\b90[ -]?days?\b|\b12\s+weeks?\b", re.I)),
+    (THREE_MONTH, re.compile(r"\b(?:three|3)[\s-]*months?\b|\bquarter(?:ly)?\b|\b90[ -]?days?\b|\b(?:twelve|12)[\s-]+weeks?\b", re.I)),
+    (MONTHLY, re.compile(r"\b(?:monthly|this month|next month|month(?:ly)? plan|month|30[ -]?days?|(?:four|4)[\s-]+weeks?)\b", re.I)),
     (WEEKLY, re.compile(r"\b(?:weekly|this week|next week|week(?:ly)? plan|week|7[ -]?days?)\b", re.I)),
-    (MONTHLY, re.compile(r"\b(?:monthly|this month|next month|month(?:ly)? plan|30[ -]?days?|four weeks?)\b", re.I)),
 )
 
 _COMMON = """Return exactly one valid JSON object, with no Markdown fences or text before or after it.

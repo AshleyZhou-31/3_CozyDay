@@ -19,14 +19,16 @@ RAG relevance gate.
 With the local models installed, run:
 
 ```bash
-python manage.py compare_prompt_templates
+python manage.py compare_prompt_templates --output docs/prompt_template_review/comparison_results.json --max-time-seconds 300
 ```
 
 The command runs three fixed representative planning questions through both
-the general prompt and the detected specialized prompt, then prints the
-validated plans. It does not store the sample questions or create analytics
-events. Compare whether specialized outputs use the intended horizon and
-whether all six fields remain complete and actionable.
+the general prompt and the detected specialized prompt, then prints and saves
+outputs from those fixed public examples. Each completed variant is saved
+immediately; a complete run has six records. Errors and abstentions are retained
+and cause a nonzero exit status. No production queries are read and no analytics
+events are created. See [review evidence](prompt_template_review/README.md) for
+the evaluation method, current evidence status, and test count.
 
 ## Adding a template
 
