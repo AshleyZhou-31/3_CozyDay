@@ -77,6 +77,72 @@
     </section>
   </div>
 
-  <p class="metrics-privacy">Privacy: analytics records contain timing, outcome, relevance score, retrieved count, derived query category, and query character count only. They do not store prompts, answers, retrieved text, or user IDs. Dashboard access is limited to staff accounts.</p>
+  <section class="cost-section" aria-labelledby="cost-heading">
+    <header class="cost-header">
+      <p class="metrics-eyebrow">COST AND TOKEN USAGE · ESTIMATED</p>
+      <h2 id="cost-heading">Estimated cost and token usage</h2>
+      <p>Cost is an estimate: tokens × an assumed price per 1,000 tokens (input ${{ price_input_per_1k }}, output ${{ price_output_per_1k }}). The local model has no per-request bill, so these figures show relative cost, not an invoice.</p>
+    </header>
+
+    {% if simulated_count or hidden_event_count %}
+    <p class="metrics-sim-note" role="status">
+      {% if hide_simulated %}Showing real requests only; {{ hidden_event_count }} simulated record{{ hidden_event_count|pluralize }} hidden.
+      <a href="{% url 'planner:system-analytics' %}">Include simulated records</a>
+      {% else %}Includes {{ simulated_count }} simulated record{{ simulated_count|pluralize }} (<code>is_simulated</code>) generated for demonstration. Figures are not real usage.
+      <a href="{% url 'planner:system-analytics' %}?simulated=0">Show real requests only</a>{% endif %}
+    </p>
+    {% endif %}
+
+    {% if not cost_has_data %}<p class="metrics-empty" role="status">No cost data has been recorded yet. Estimates appear after the first RAG Planner request.</p>{% endif %}
+
+    <div class="metrics-kpis metrics-kpis--cost" aria-label="Cost summary">
+      <article class="metric-card"><span>Total estimated cost</span><strong>{{ total_cost_text }}</strong><small>Last 30 days, USD</small></article>
+      <article class="metric-card"><span>Mean cost per request</span><strong>{{ mean_cost_text }}</strong><small>Abstentions count as $0</small></article>
+      <article class="metric-card"><span>Total tokens</span><strong>{{ total_tokens }}</strong><small>{{ input_tokens }} in · {{ output_tokens }} out</small></article>
+      <article class="metric-card"><span>Mean generation time</span><strong>{% if mean_generation_ms != None %}{{ mean_generation_ms }}<small> ms</small>{% else %}—{% endif %}</strong><small>Successful answers only</small></article>
+    </div>
+
+    <div class="metrics-grid">
+      <section class="metric-panel" aria-labelledby="cost-category-title">
+        <div class="panel-heading"><div><h2 id="cost-category-title">Estimated cost by topic</h2><p>Total estimated USD per query category</p></div></div>
+        <div class="outcome-list">
+          {% for row in cost_category_rows %}<div class="outcome-row"><div class="outcome-label"><span>{{ row.label }}</span><strong>{{ row.total_cost_text }} <small>({{ row.count }} request{{ row.count|pluralize }})</small></strong></div><div class="outcome-track"><span class="outcome-fill" style="width: {{ row.cost_width }}%"></span></div></div>{% endfor %}
+        </div>
+        <p class="chart-caption">Estimated, not billed. Bar length is relative to the most expensive topic.</p>
+      </section>
+
+      <section class="metric-panel" aria-labelledby="token-usage-title">
+        <div class="panel-heading"><div><h2 id="token-usage-title">Token usage by topic</h2><p>Input plus output tokens per query category</p></div></div>
+        <div class="outcome-list">
+          {% for row in cost_category_rows %}<div class="outcome-row"><div class="outcome-label"><span>{{ row.label }}</span><strong>{{ row.token_total }} <small>({{ row.input_tokens }} in · {{ row.output_tokens }} out)</small></strong></div><div class="outcome-track"><span class="outcome-fill" style="width: {{ row.token_width }}%"></span></div></div>{% endfor %}
+        </div>
+        <p class="chart-caption">Token counts are estimates from the model tokenizer; no prompt or answer text is stored.</p>
+      </section>
+
+      <section class="metric-panel metric-panel--wide" aria-labelledby="cost-time-title">
+        <div class="panel-heading"><div><h2 id="cost-time-title">Cost vs. generation time by topic</h2><p>Mean per successful request</p></div></div>
+        <table class="comparison-table">
+          <thead><tr><th scope="col">Topic</th><th scope="col">Requests</th><th scope="col">Mean cost</th><th scope="col">Mean output tokens</th><th scope="col">Mean generation time</th></tr></thead>
+          <tbody>
+            {% for row in cost_category_rows %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.count }}</td><td>{{ row.mean_cost_text }}</td><td>{% if row.mean_output_tokens != None %}{{ row.mean_output_tokens }}{% else %}—{% endif %}</td><td>{% if row.mean_generation_ms != None %}{{ row.mean_generation_ms }} ms{% else %}—{% endif %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+        <p class="chart-caption">Compare mean cost with mean generation time for each topic. Output tokens drive both, so topics with longer answers tend to cost more and take longer.</p>
+      </section>
+
+      <section class="metric-panel metric-panel--wide" aria-labelledby="backend-title">
+        <div class="panel-heading"><div><h2 id="backend-title">Serving backend comparison</h2><p>Model and backend recorded for each request</p></div></div>
+        <table class="comparison-table">
+          <thead><tr><th scope="col">Backend</th><th scope="col">Model</th><th scope="col">Requests</th><th scope="col">Mean latency</th><th scope="col">Mean generation time</th><th scope="col">Mean cost</th></tr></thead>
+          <tbody>
+            {% for row in backend_rows %}<tr><th scope="row">{{ row.backend }}</th><td>{{ row.model }}</td><td>{{ row.count }}</td><td>{% if row.mean_latency_ms != None %}{{ row.mean_latency_ms }} ms{% else %}—{% endif %}</td><td>{% if row.mean_generation_ms != None %}{{ row.mean_generation_ms }} ms{% else %}—{% endif %}</td><td>{{ row.mean_cost_text }}</td></tr>{% empty %}<tr><td colspan="6">No requests recorded yet.</td></tr>{% endfor %}
+          </tbody>
+        </table>
+        <p class="chart-caption">Requests logged before backend tracking was added appear as “Not recorded”.</p>
+      </section>
+    </div>
+  </section>
+
+  <p class="metrics-privacy">Privacy: analytics records contain timing, outcome, relevance score, retrieved count, derived query category, query character count, estimated token counts, estimated cost, and model/backend labels only. They do not store prompts, answers, retrieved text, or user IDs. Dashboard access is limited to staff accounts.</p>
 </div>
 {% endblock %}
