@@ -31,6 +31,12 @@
         </form>
     </section>
 
+    {% if messages %}
+        {% for message in messages %}
+            <div role="status" class="cz-callout {% if message.tags == 'error' %}cz-callout--error{% else %}cz-callout--warn{% endif %}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     {% if error_message %}
         <div role="alert" class="cz-callout cz-callout--error">
             <strong>We could not create a response.</strong>
@@ -42,6 +48,9 @@
         <section class="cz-card" aria-labelledby="rag-result-heading">
             <h3 id="rag-result-heading">Planning response</h3>
             <div class="rag-question"><strong>Your question</strong><p>{{ result.query }}</p></div>
+            {% if result.best_relevance_score != None %}
+                <p class="cz-muted rag-relevance">Best match relevance: {{ result.best_relevance_score|floatformat:3 }} ({{ result.best_relevance_percent|floatformat:1 }}%)</p>
+            {% endif %}
             <div class="rag-answer"><strong>Suggested next steps</strong>{{ result.answer|linebreaks }}</div>
 
             <details class="rag-sources">
@@ -66,6 +75,19 @@
                 retrieval {{ result.stage_latencies.retrieval|floatformat:3 }}s,
                 generation {{ result.stage_latencies.generation|floatformat:3 }}s){% endif %}</p>
             {% if result.warning %}<p role="status" class="cz-callout cz-callout--warn">{{ result.warning }}</p>{% endif %}
+
+            {% if result.event_id %}
+                <div class="rag-feedback" role="group" aria-label="Rate this response">
+                    <strong>Was this accurate?</strong>
+                    <form method="post" action="{% url 'planner:ai-rag-planner-feedback' result.event_id %}" class="rag-feedback-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="token" value="{{ result.feedback_token }}">
+                        <button type="submit" name="rating" value="accurate" class="cz-button cz-button--secondary">Accurate</button>
+                        <button type="submit" name="rating" value="partially_accurate" class="cz-button cz-button--secondary">Partially accurate</button>
+                        <button type="submit" name="rating" value="not_accurate" class="cz-button cz-button--secondary">Not accurate</button>
+                    </form>
+                </div>
+            {% endif %}
         </section>
     {% endif %}
 </div>

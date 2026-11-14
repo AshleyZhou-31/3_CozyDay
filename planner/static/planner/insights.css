@@ -490,3 +490,6 @@
         min-height: 100px;
     }
 }
+
+.rag-feedback { margin-top: 1rem; }
+.rag-feedback-form { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.5rem; }

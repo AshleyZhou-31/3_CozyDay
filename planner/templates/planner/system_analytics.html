@@ -21,6 +21,7 @@
     <article class="metric-card"><span>Mean latency</span><strong>{% if mean_latency != None %}{{ mean_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>End-to-end server pipeline</small></article>
     <article class="metric-card"><span>Median latency</span><strong>{% if median_latency != None %}{{ median_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>50th percentile</small></article>
     <article class="metric-card"><span>P95 latency</span><strong>{% if p95_latency != None %}{{ p95_latency }}<small> ms</small>{% else %}—{% endif %}</strong><small>95th percentile</small></article>
+    <article class="metric-card"><span>Weighted accuracy score</span><strong>{% if accuracy_rate != None %}{{ accuracy_rate|floatformat:1 }}%{% else %}—{% endif %}</strong><small>{{ total_feedback }} response{{ total_feedback|pluralize }} rated &middot; accurate=1, partial=0.5, not accurate=0</small></article>
   </section>
 
   {% if not has_events %}<p class="metrics-empty" role="status">No RAG Planner requests have been recorded yet. Metrics will appear here after the first request.</p>{% endif %}
@@ -75,8 +76,35 @@
       </table>
       <p class="chart-caption">Query length is character count only; no query text is stored or displayed.</p>
     </section>
+
+    <section class="metric-panel" aria-labelledby="length-dist-title">
+      <div class="panel-heading"><div><h2 id="length-dist-title">Query length distribution</h2><p>Share of requests in the last 30 days</p></div></div>
+      <div class="outcome-list">
+        {% for row in length_rows %}<div class="outcome-row"><div class="outcome-label"><span class="outcome-dot outcome-dot--{{ row.key }}"></span><span>{{ row.label }}</span><strong>{{ row.count }} <small>({{ row.percent|floatformat:1 }}%)</small></strong></div><div class="outcome-track"><span class="outcome-fill outcome-fill--{{ row.key }}" style="width: {{ row.percent }}%"></span></div></div>{% endfor %}
+      </div>
+      <p class="chart-caption">Buckets are based on character count only; no query text is stored.</p>
+    </section>
+
+    <section class="metric-panel" aria-labelledby="feedback-dist-title">
+      <div class="panel-heading"><div><h2 id="feedback-dist-title">Feedback distribution</h2><p>{{ total_feedback }} of {{ event_count }} requests rated</p></div></div>
+      <div class="outcome-list">
+        {% for row in feedback_rows %}<div class="outcome-row"><div class="outcome-label"><span class="outcome-dot outcome-dot--{{ row.key }}"></span><span>{{ row.label }}</span><strong>{{ row.count }} <small>({{ row.percent|floatformat:1 }}%)</small></strong></div><div class="outcome-track"><span class="outcome-fill outcome-fill--{{ row.key }}" style="width: {{ row.percent }}%"></span></div></div>{% endfor %}
+      </div>
+      <p class="chart-caption">Feedback is optional; most requests will show no rating.</p>
+    </section>
+
+    <section class="metric-panel metric-panel--wide" aria-labelledby="template-comparison-title">
+      <div class="panel-heading"><div><h2 id="template-comparison-title">Template performance</h2><p>Last 30 days · requests, mean latency, and outcome split by detected plan template</p></div></div>
+      <table class="comparison-table">
+        <thead><tr><th scope="col">Template</th><th scope="col">Requests</th><th scope="col">Mean latency</th><th scope="col">Success</th><th scope="col">Abstention</th><th scope="col">Error</th><th scope="col">Rated</th><th scope="col">Weighted score</th></tr></thead>
+        <tbody>
+          {% for row in template_rows %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.count }}</td><td>{% if row.mean_latency != None %}{{ row.mean_latency }} ms{% else %}—{% endif %}</td><td>{{ row.success }}</td><td>{{ row.abstention }}</td><td>{{ row.error }}</td><td>{{ row.rated }}</td><td>{% if row.weighted_accuracy != None %}{{ row.weighted_accuracy|floatformat:1 }}%{% else %}—{% endif %}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+      <p class="chart-caption">Template is detected from the cleaned query (weekly, monthly, three-month, or general); "Unknown" covers requests logged before template detection existed. Rated and Weighted score use the same accurate=1 / partially accurate=0.5 / not accurate=0 weighting as the Weighted accuracy score KPI above, computed only from that template's own rated responses.</p>
+    </section>
   </div>
 
-  <p class="metrics-privacy">Privacy: analytics records contain timing, outcome, relevance score, retrieved count, derived query category, and query character count only. They do not store prompts, answers, retrieved text, or user IDs. Dashboard access is limited to staff accounts.</p>
+  <p class="metrics-privacy">Privacy: analytics records contain timing, outcome, relevance score, retrieved count, derived query category and character count, detected template type, and an optional accuracy rating only. They do not store prompts, answers, retrieved text, or user IDs. Dashboard access is limited to staff accounts.</p>
 </div>
 {% endblock %}
