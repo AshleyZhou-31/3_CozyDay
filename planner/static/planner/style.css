@@ -1027,3 +1027,42 @@ li {
         width: 100%;
     }
 }
+
+/* A10 Stage 3: fluid typography and spacing.
+   Sizes use rem and clamp() so text and gutters scale smoothly between a
+   320 px phone and a wide desktop instead of jumping at fixed breakpoints. */
+:root {
+    --font-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+    --font-h1: clamp(1.65rem, 1.3rem + 1.6vw, 2.4rem);
+    --font-h2: clamp(1.3rem, 1.1rem + 0.9vw, 1.75rem);
+    --font-h3: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
+    --space-gutter: clamp(0.75rem, 3vw, 1.5rem);
+}
+
+body {
+    font-size: var(--font-body);
+}
+
+main {
+    width: calc(100% - 2 * var(--space-gutter));
+    margin: clamp(0.875rem, 2.5vw, 2rem) auto clamp(0.75rem, 2vw, 1.25rem);
+    padding: clamp(1.25rem, 4vw, 2.75rem) clamp(1.1rem, 4vw, 2.75rem);
+    border-radius: clamp(0.875rem, 2vw, 1.25rem);
+}
+
+main h1 {
+    font-size: var(--font-h1);
+}
+
+main h2 {
+    font-size: var(--font-h2);
+}
+
+main h3 {
+    font-size: var(--font-h3);
+}
+
+footer {
+    padding: clamp(0.75rem, 2vw, 1rem) var(--space-gutter) clamp(1.25rem, 3vw, 1.9rem);
+    font-size: clamp(0.8rem, 0.78rem + 0.1vw, 0.9rem);
+}

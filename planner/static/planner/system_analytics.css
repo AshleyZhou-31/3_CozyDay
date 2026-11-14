@@ -3,3 +3,10 @@
 .cost-section{margin-top:clamp(1.6rem,4vw,2.6rem)}.cost-header h2{font-size:clamp(1.4rem,2.4vw,1.9rem);margin:0 0 .4rem;color:#263b33}.cost-header p:not(.metrics-eyebrow){color:#68756e;max-width:720px;line-height:1.55}.metrics-kpis--cost{grid-template-columns:repeat(4,minmax(0,1fr))}.metrics-sim-note{padding:.8rem 1.1rem;border-radius:12px;background:#fff6dd;color:#6a5313;line-height:1.5}.metrics-sim-note a{color:inherit;font-weight:700}
 @media(max-width:900px){.metrics-kpis--cost{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.metrics-kpis--cost{grid-template-columns:minmax(0,1fr)}}
+
+.metric-panel,.metric-card{min-width:0}.metric-card strong{font-size:clamp(1.5rem,1.2rem + 1.2vw,2rem)}.metric-panel{padding:clamp(1rem,2.4vw,1.4rem) clamp(1rem,2.6vw,1.5rem)}.metrics-privacy{font-size:clamp(.75rem,.72rem + .12vw,.82rem)}
+@media(max-width:560px){.latency-column:not(:nth-child(3n+1)) .latency-date{display:none}.latency-value{font-size:.6rem}.comparison-table{font-size:.82rem}}
+@media(max-width:560px){.comparison-table{display:block;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.comparison-table th,.comparison-table td{padding:.5rem .45rem}}
+@media(max-width:560px){.comparison-table th,.comparison-table td{white-space:nowrap;overflow-wrap:normal}.outcome-label,.stage-label{flex-direction:column;align-items:flex-start;gap:.1rem;overflow-wrap:normal}}
+
+.metrics-kpis,.metrics-kpis--cost{grid-template-columns:repeat(auto-fit,minmax(min(100%,9.5rem),1fr))}.metric-card strong,.metric-card>span,.metric-card>small{overflow-wrap:normal}.metric-card strong{white-space:nowrap}.metric-card strong small{white-space:nowrap}

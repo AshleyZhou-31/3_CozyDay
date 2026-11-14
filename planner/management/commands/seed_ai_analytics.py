@@ -18,7 +18,8 @@ Safety properties:
 
 The values are illustrative, not measurements. Ranges follow the verified A9
 evaluation (generation 3-21 s, embedding 0.015-0.04 s, retrieval <= 0.03 s,
-in-scope best relevance 0.527-0.762, out-of-scope 0.02-0.18). All simulated
+in-scope best relevance 0.527-0.762, out-of-scope 0.02-0.18); input tokens
+are based on the first real requests (about 890 each). All simulated
 requests use the ``transformers-local`` backend because no other backend has
 been measured, so the backend comparison stays honest.
 """
@@ -103,7 +104,9 @@ def build_record(rng):
         return base
 
     output_tokens = rng.randint(90, 300)
-    input_tokens = rng.randint(380, 700)
+    # Real prompts carry the template plus three retrieved chunks; the first real
+    # requests measured about 890 input tokens each, so simulate around that.
+    input_tokens = rng.randint(650, 1100)
     # Longer answers take longer: roughly 30-70 ms per generated token, which
     # keeps generation inside the 3-21 s range measured in the A9 evaluation.
     generation = min(21000, max(3000, int(output_tokens * rng.uniform(30, 70))))

@@ -194,6 +194,12 @@ AI_COST_INPUT_USD_PER_1K = _env_price("AI_COST_INPUT_USD_PER_1K", 0.0002)
 AI_COST_OUTPUT_USD_PER_1K = _env_price("AI_COST_OUTPUT_USD_PER_1K", 0.0004)
 AI_SERVING_BACKEND = os.environ.get("AI_SERVING_BACKEND", "transformers-local")
 
+# Optional error monitoring. Does nothing unless SENTRY_DSN is set; see
+# cozyday/monitoring.py for what is (and is not) sent.
+from cozyday.monitoring import init_sentry  # noqa: E402
+
+SENTRY_ENABLED = init_sentry()
+
 # External AI planner. The secret is environment-only and never committed.
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
