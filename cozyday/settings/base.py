@@ -178,6 +178,31 @@ except ValueError:
 # A9 Stage 3: trim answers cut off by the token limit (set to 0 to disable).
 AI_PLANNER_OUTPUT_VALIDATION = os.environ.get("AI_PLANNER_OUTPUT_VALIDATION", "1") not in ("0", "false", "False")
 
+
+def _env_price(name, default):
+    try:
+        value = float(os.environ.get(name, default))
+    except ValueError:
+        return default
+    return value if value >= 0 else default
+
+
+# A10 Stage 3: estimated-cost assumptions. A local model has no per-request
+# bill. The primary cost metric is local compute:
+#   generation_seconds / 3600 x AI_HARDWARE_RATE_USD_PER_HOUR.
+# The per-1,000-token prices are a secondary, API-equivalent estimate only.
+# Every dashboard figure derived from these is labelled "estimated".
+AI_HARDWARE_RATE_USD_PER_HOUR = _env_price("AI_HARDWARE_RATE_USD_PER_HOUR", 0.50)
+AI_COST_INPUT_USD_PER_1K = _env_price("AI_COST_INPUT_USD_PER_1K", 0.0002)
+AI_COST_OUTPUT_USD_PER_1K = _env_price("AI_COST_OUTPUT_USD_PER_1K", 0.0004)
+AI_SERVING_BACKEND = os.environ.get("AI_SERVING_BACKEND", "transformers-local")
+
+# Optional error monitoring. Does nothing unless SENTRY_DSN is set; see
+# cozyday/monitoring.py for what is (and is not) sent.
+from cozyday.monitoring import init_sentry  # noqa: E402
+
+SENTRY_ENABLED = init_sentry()
+
 # External AI planner. The secret is environment-only and never committed.
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")

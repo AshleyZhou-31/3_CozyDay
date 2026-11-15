@@ -15,6 +15,12 @@
     <a class="metrics-back" href="{% url 'planner:ai-rag-planner' %}">Open RAG Planner</a>
   </header>
 
+  {% if include_simulated %}
+  <p class="metrics-sim-note metrics-sim-note--active" role="status"><strong>Simulated data included.</strong> This page currently mixes {{ simulated_count }} simulated demonstration record{{ simulated_count|pluralize }} (<code>is_simulated</code>) with real requests, so figures do not describe real usage. <a href="{% url 'planner:system-analytics' %}">Show real requests only</a></p>
+  {% elif hidden_event_count %}
+  <p class="metrics-sim-note" role="status">Showing real requests only. {{ hidden_event_count }} simulated demonstration record{{ hidden_event_count|pluralize }} hidden. <a href="{% url 'planner:system-analytics' %}?simulated=1">Include simulated records</a></p>
+  {% endif %}
+
   <section class="metrics-kpis" aria-label="Performance summary">
     <article class="metric-card"><span>Requests</span><strong>{{ event_count }}</strong><small>Recorded in the last 30 days</small></article>
     <article class="metric-card"><span>Success rate</span><strong>{% if has_events %}{{ success_rate|floatformat:1 }}%{% else %}—{% endif %}</strong><small>Successful responses</small></article>
@@ -105,6 +111,65 @@
     </section>
   </div>
 
-  <p class="metrics-privacy">Privacy: analytics records contain timing, outcome, relevance score, retrieved count, derived query category and character count, detected template type, and an optional accuracy rating only. They do not store prompts, answers, retrieved text, or user IDs. Dashboard access is limited to staff accounts.</p>
+  <section class="cost-section" aria-labelledby="cost-heading">
+    <header class="cost-header">
+      <p class="metrics-eyebrow">COST AND TOKEN USAGE · ESTIMATED</p>
+      <h2 id="cost-heading">Estimated cost and token usage</h2>
+      <p>The model runs on CozyDay's own hardware, so the primary cost estimate is local compute: generation time ÷ 3600 × an assumed hardware rate of ${{ hardware_rate_per_hour|floatformat:2 }} per hour. Token counts are shown separately as a usage metric. These figures are estimates, not an invoice.</p>
+    </header>
+
+    {% if not cost_has_data %}<p class="metrics-empty" role="status">No cost data has been recorded yet. Estimates appear after the first RAG Planner request.</p>{% endif %}
+
+    <div class="metrics-kpis metrics-kpis--cost" aria-label="Cost summary">
+      <article class="metric-card"><span>Total estimated cost</span><strong>{{ total_cost_text }}</strong><small>Local compute · {{ generation_hours_text }} generation hours</small></article>
+      <article class="metric-card"><span>Mean cost per request</span><strong>{{ mean_cost_text }}</strong><small>Local compute · abstentions count as $0</small></article>
+      <article class="metric-card"><span>Total tokens</span><strong>{{ total_tokens }}</strong><small>Usage metric · {{ input_tokens }} in · {{ output_tokens }} out</small></article>
+      <article class="metric-card"><span>Mean generation time</span><strong>{% if mean_generation_ms != None %}{{ mean_generation_ms }}<small> ms</small>{% else %}—{% endif %}</strong><small>Successful answers only</small></article>
+    </div>
+
+    <article class="metric-card metric-card--secondary"><span>API-equivalent estimate (secondary)</span><strong>{{ api_equivalent_total_text }}</strong><small>Tokens × an assumed API price (input ${{ price_input_per_1k }}, output ${{ price_output_per_1k }} per 1K tokens). Not the local model's actual cost; shown only for comparison with hosted APIs.</small></article>
+
+    <div class="metrics-grid">
+      <section class="metric-panel" aria-labelledby="cost-category-title">
+        <div class="panel-heading"><div><h2 id="cost-category-title">Estimated cost by topic</h2><p>Total local-compute cost (USD) per query category</p></div></div>
+        <div class="outcome-list">
+          {% for row in cost_category_rows %}<div class="outcome-row"><div class="outcome-label"><span>{{ row.label }}</span><strong>{{ row.total_cost_text }} <small>({{ row.count }} request{{ row.count|pluralize }})</small></strong></div><div class="outcome-track"><span class="outcome-fill" style="width: {{ row.cost_width }}%"></span></div></div>{% endfor %}
+        </div>
+        <p class="chart-caption">Estimated local-compute cost, not billed. Bar length is relative to the most expensive topic.</p>
+      </section>
+
+      <section class="metric-panel" aria-labelledby="token-usage-title">
+        <div class="panel-heading"><div><h2 id="token-usage-title">Token usage by topic</h2><p>Input plus output tokens per query category</p></div></div>
+        <div class="outcome-list">
+          {% for row in cost_category_rows %}<div class="outcome-row"><div class="outcome-label"><span>{{ row.label }}</span><strong>{{ row.token_total }} <small>({{ row.input_tokens }} in · {{ row.output_tokens }} out)</small></strong></div><div class="outcome-track"><span class="outcome-fill" style="width: {{ row.token_width }}%"></span></div></div>{% endfor %}
+        </div>
+        <p class="chart-caption">Token counts are estimates from the model tokenizer; no prompt or answer text is stored.</p>
+      </section>
+
+      <section class="metric-panel metric-panel--wide" aria-labelledby="cost-time-title">
+        <div class="panel-heading"><div><h2 id="cost-time-title">Cost vs. generation time by topic</h2><p>Mean per request (abstentions count as $0)</p></div></div>
+        <table class="comparison-table">
+          <thead><tr><th scope="col">Topic</th><th scope="col">Requests</th><th scope="col">Mean cost (local compute)</th><th scope="col">Mean output tokens</th><th scope="col">Mean generation time</th><th scope="col">Mean cost (API-equivalent, secondary)</th></tr></thead>
+          <tbody>
+            {% for row in cost_category_rows %}<tr><th scope="row">{{ row.label }}</th><td>{{ row.count }}</td><td>{{ row.mean_cost_text }}</td><td>{% if row.mean_output_tokens != None %}{{ row.mean_output_tokens }}{% else %}—{% endif %}</td><td>{% if row.mean_generation_ms != None %}{{ row.mean_generation_ms }} ms{% else %}—{% endif %}</td><td>{{ row.api_equivalent_text }}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+        <p class="chart-caption">Local-compute cost is generation time at the hourly hardware rate, so it follows generation time by construction. The API-equivalent column follows token counts instead and is a secondary estimate only.</p>
+      </section>
+
+      <section class="metric-panel metric-panel--wide" aria-labelledby="backend-title">
+        <div class="panel-heading"><div><h2 id="backend-title">Serving backend comparison</h2><p>Model and backend recorded for each request</p></div></div>
+        <table class="comparison-table">
+          <thead><tr><th scope="col">Backend</th><th scope="col">Model</th><th scope="col">Requests</th><th scope="col">Mean latency</th><th scope="col">Mean generation time</th><th scope="col">Mean cost</th></tr></thead>
+          <tbody>
+            {% for row in backend_rows %}<tr><th scope="row">{{ row.backend }}</th><td>{{ row.model }}</td><td>{{ row.count }}</td><td>{% if row.mean_latency_ms != None %}{{ row.mean_latency_ms }} ms{% else %}—{% endif %}</td><td>{% if row.mean_generation_ms != None %}{{ row.mean_generation_ms }} ms{% else %}—{% endif %}</td><td>{{ row.mean_cost_text }}</td></tr>{% empty %}<tr><td colspan="6">No requests recorded yet.</td></tr>{% endfor %}
+          </tbody>
+        </table>
+        <p class="chart-caption">Requests that failed before the model produced an answer, and requests logged before backend tracking was added, appear as “Not recorded”.</p>
+      </section>
+    </div>
+  </section>
+
+  <p class="metrics-privacy">Privacy: analytics records contain timing, outcome, relevance score, retrieved count, derived query category and character count, detected template type, estimated token counts, estimated cost, model/backend labels, and an optional accuracy rating only. They do not store prompts, answers, retrieved text, or user IDs. Dashboard access is limited to staff accounts.</p>
 </div>
 {% endblock %}

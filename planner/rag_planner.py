@@ -46,4 +46,6 @@ def generate_rag_plan(query, user=None, template_type=None):
     }
     if result.get("stage_latencies"):
         response["stage_latencies"] = result["stage_latencies"]
+    if result.get("usage"):
+        response["usage"] = result["usage"]
     return response

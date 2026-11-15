@@ -7,6 +7,7 @@ from django.views.generic import DetailView, ListView
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotAllowed
 
 from django.db.models import Count, Q
+from .cost_dashboard import build_cost_context
 from .models import AIPerformanceEvent, AIResponseFeedback, Category, PlanItem
 from .plan_templates import TEMPLATE_TYPES, detect_plan_type, parse_structured_plan
 from .forms import AIPlannerForm, AIRAGPlannerForm, PlanItemForm
@@ -376,6 +377,7 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0,
 
     query_length_chars = min(len(query), 32767) if isinstance(query, str) else None
     query_category = categorize_query(query)
+    usage = result.get("usage") if isinstance(result.get("usage"), dict) else {}
 
     try:
         return AIPerformanceEvent.objects.create(
@@ -390,6 +392,11 @@ def _record_ai_performance(*, outcome, started_at, result=None, validation_ms=0,
             query_length_chars=query_length_chars,
             query_category=query_category,
             template_type=template_type,
+            input_tokens_estimate=usage.get("input_tokens"),
+            output_tokens_estimate=usage.get("output_tokens"),
+            estimated_cost_usd=usage.get("estimated_cost_usd"),
+            model_name=usage.get("model_name") or "",
+            serving_backend=usage.get("serving_backend") or "",
         )
     except Exception as exc:
         # Analytics persistence is best-effort and must not expose a user's prompt.
@@ -410,6 +417,12 @@ def system_analytics(request):
         AIPerformanceEvent.objects.filter(created_at__gte=now - timedelta(days=30))
         .select_related("feedback")
     )
+    all_event_count = len(events)
+    # Real records only by default; simulated demonstration records appear only
+    # when explicitly requested with ?simulated=1.
+    include_simulated = request.GET.get("simulated") == "1"
+    if not include_simulated:
+        events = [event for event in events if not event.is_simulated]
     latencies = [event.total_latency_ms for event in events]
     mean_latency = statistics.fmean(latencies) if latencies else None
     median_latency = statistics.median(latencies) if latencies else None
@@ -566,7 +579,10 @@ def system_analytics(request):
         "abstention_rate": round(next((x["percent"] for x in outcomes if x["key"] == "abstention"), 0), 1),
         "error_rate": round(next((x["percent"] for x in outcomes if x["key"] == "error"), 0), 1),
         "has_events": bool(events),
+        "include_simulated": include_simulated,
+        "hidden_event_count": all_event_count - len(events),
     }
+    context.update(build_cost_context(events))
     return render(request, "planner/system_analytics.html", context)
 
 
