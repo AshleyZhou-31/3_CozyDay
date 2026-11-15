@@ -667,3 +667,31 @@ records the answer, retrieved chunks, scores, and latency. Warm the models befor
 in-person demonstration; the first request may take several minutes to download and
 load them, and measured generation took about 5–21 seconds per in-scope question on
 the Stage 3 MacBook Air run.
+
+---
+
+## A10 AI System Evaluation & Analytics Dashboard
+
+Staff users can monitor the RAG Planner at
+`/planitems/system-analytics/`. The integrated dashboard covers system
+performance, privacy-minimal user behavior, optional accuracy feedback, and
+estimated local-compute/token usage. It shows real requests by default;
+`?simulated=1` adds a clearly labelled, deterministic demonstration dataset.
+
+Final setup, reviewer-account creation, production QA, requirement mapping,
+and the Canvas checklist are in
+[`docs/a10_stage4/README.md`](docs/a10_stage4/README.md). In brief:
+
+```bash
+python manage.py migrate
+python manage.py seed_ai_analytics
+export A10_REVIEWER_PASSWORD='<password supplied in Canvas>'
+python manage.py setup_a10_reviewer --username mohitg2
+unset A10_REVIEWER_PASSWORD
+python manage.py check
+python manage.py test
+```
+
+Analytics records never store raw prompts, answers, retrieved text, or user
+IDs. Dashboard access is staff-only, and simulated records are excluded unless
+the viewer explicitly requests them.
